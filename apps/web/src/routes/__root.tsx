@@ -16,6 +16,17 @@ import { Toaster } from "@/components/ui/sonner";
 import { link, type orpc } from "@/utils/orpc";
 
 import "../index.css";
+import { ErrorComponent } from "@/components/error";
+import { NotFound, NotFoundPublic } from "@/components/not-found";
+import { authClient } from "@/lib/auth-client";
+
+function RootNotFound() {
+	const { data: session } = authClient.useSession();
+	if (session) {
+		return <NotFound />;
+	}
+	return <NotFoundPublic />;
+}
 
 export interface RouterAppContext {
 	orpc: typeof orpc;
@@ -24,6 +35,8 @@ export interface RouterAppContext {
 
 export const Route = createRootRouteWithContext<RouterAppContext>()({
 	component: RootComponent,
+	notFoundComponent: RootNotFound,
+	errorComponent: ErrorComponent,
 	head: () => ({
 		meta: [
 			{

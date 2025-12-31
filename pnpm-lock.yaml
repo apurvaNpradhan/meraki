@@ -287,6 +287,9 @@ importers:
       '@meraki/env':
         specifier: workspace:*
         version: link:../../packages/env
+      '@meraki/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       '@orpc/client':
         specifier: 'catalog:'
         version: 1.13.2
@@ -332,6 +335,9 @@ importers:
       react-dom:
         specifier: 19.2.3
         version: 19.2.3(react@19.2.3)
+      react-hook-form:
+        specifier: ^7.69.0
+        version: 7.69.0(react@19.2.3)
       shadcn:
         specifier: ^3.6.2
         version: 3.6.2(@types/node@22.19.3)(hono@4.11.3)(typescript@5.9.3)
@@ -538,6 +544,15 @@ importers:
       alchemy:
         specifier: 'catalog:'
         version: 0.82.2(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9)(vite@6.4.1(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(workerd@1.20251217.0)(wrangler@4.54.0(@cloudflare/workers-types@4.20251231.0))
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+
+  packages/shared:
+    devDependencies:
+      '@meraki/config':
+        specifier: workspace:*
+        version: link:../config
       typescript:
         specifier: 'catalog:'
         version: 5.9.3

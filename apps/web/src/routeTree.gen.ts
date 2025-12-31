@@ -12,8 +12,12 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as publicRouteRouteImport } from './routes/(public)/route'
 import { Route as authenticatedRouteRouteImport } from './routes/(authenticated)/route'
 import { Route as publicIndexRouteImport } from './routes/(public)/index'
-import { Route as publicLoginRouteImport } from './routes/(public)/login'
+import { Route as publicTosRouteImport } from './routes/(public)/tos'
+import { Route as publicSignUpRouteImport } from './routes/(public)/sign-up'
+import { Route as publicSignInRouteImport } from './routes/(public)/sign-in'
+import { Route as publicPrivacyRouteImport } from './routes/(public)/privacy'
 import { Route as authenticatedHomeRouteImport } from './routes/(authenticated)/home'
+import { Route as publicSignResetPasswordRouteImport } from './routes/(public)/sign/reset-password'
 
 const publicRouteRoute = publicRouteRouteImport.update({
   id: '/(public)',
@@ -28,9 +32,24 @@ const publicIndexRoute = publicIndexRouteImport.update({
   path: '/',
   getParentRoute: () => publicRouteRoute,
 } as any)
-const publicLoginRoute = publicLoginRouteImport.update({
-  id: '/login',
-  path: '/login',
+const publicTosRoute = publicTosRouteImport.update({
+  id: '/tos',
+  path: '/tos',
+  getParentRoute: () => publicRouteRoute,
+} as any)
+const publicSignUpRoute = publicSignUpRouteImport.update({
+  id: '/sign-up',
+  path: '/sign-up',
+  getParentRoute: () => publicRouteRoute,
+} as any)
+const publicSignInRoute = publicSignInRouteImport.update({
+  id: '/sign-in',
+  path: '/sign-in',
+  getParentRoute: () => publicRouteRoute,
+} as any)
+const publicPrivacyRoute = publicPrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => publicRouteRoute,
 } as any)
 const authenticatedHomeRoute = authenticatedHomeRouteImport.update({
@@ -38,37 +57,72 @@ const authenticatedHomeRoute = authenticatedHomeRouteImport.update({
   path: '/home',
   getParentRoute: () => authenticatedRouteRoute,
 } as any)
+const publicSignResetPasswordRoute = publicSignResetPasswordRouteImport.update({
+  id: '/sign/reset-password',
+  path: '/sign/reset-password',
+  getParentRoute: () => publicRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/home': typeof authenticatedHomeRoute
-  '/login': typeof publicLoginRoute
+  '/privacy': typeof publicPrivacyRoute
+  '/sign-in': typeof publicSignInRoute
+  '/sign-up': typeof publicSignUpRoute
+  '/tos': typeof publicTosRoute
   '/': typeof publicIndexRoute
+  '/sign/reset-password': typeof publicSignResetPasswordRoute
 }
 export interface FileRoutesByTo {
   '/home': typeof authenticatedHomeRoute
-  '/login': typeof publicLoginRoute
+  '/privacy': typeof publicPrivacyRoute
+  '/sign-in': typeof publicSignInRoute
+  '/sign-up': typeof publicSignUpRoute
+  '/tos': typeof publicTosRoute
   '/': typeof publicIndexRoute
+  '/sign/reset-password': typeof publicSignResetPasswordRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(authenticated)': typeof authenticatedRouteRouteWithChildren
   '/(public)': typeof publicRouteRouteWithChildren
   '/(authenticated)/home': typeof authenticatedHomeRoute
-  '/(public)/login': typeof publicLoginRoute
+  '/(public)/privacy': typeof publicPrivacyRoute
+  '/(public)/sign-in': typeof publicSignInRoute
+  '/(public)/sign-up': typeof publicSignUpRoute
+  '/(public)/tos': typeof publicTosRoute
   '/(public)/': typeof publicIndexRoute
+  '/(public)/sign/reset-password': typeof publicSignResetPasswordRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/home' | '/login' | '/'
+  fullPaths:
+    | '/home'
+    | '/privacy'
+    | '/sign-in'
+    | '/sign-up'
+    | '/tos'
+    | '/'
+    | '/sign/reset-password'
   fileRoutesByTo: FileRoutesByTo
-  to: '/home' | '/login' | '/'
+  to:
+    | '/home'
+    | '/privacy'
+    | '/sign-in'
+    | '/sign-up'
+    | '/tos'
+    | '/'
+    | '/sign/reset-password'
   id:
     | '__root__'
     | '/(authenticated)'
     | '/(public)'
     | '/(authenticated)/home'
-    | '/(public)/login'
+    | '/(public)/privacy'
+    | '/(public)/sign-in'
+    | '/(public)/sign-up'
+    | '/(public)/tos'
     | '/(public)/'
+    | '/(public)/sign/reset-password'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -99,11 +153,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof publicIndexRouteImport
       parentRoute: typeof publicRouteRoute
     }
-    '/(public)/login': {
-      id: '/(public)/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof publicLoginRouteImport
+    '/(public)/tos': {
+      id: '/(public)/tos'
+      path: '/tos'
+      fullPath: '/tos'
+      preLoaderRoute: typeof publicTosRouteImport
+      parentRoute: typeof publicRouteRoute
+    }
+    '/(public)/sign-up': {
+      id: '/(public)/sign-up'
+      path: '/sign-up'
+      fullPath: '/sign-up'
+      preLoaderRoute: typeof publicSignUpRouteImport
+      parentRoute: typeof publicRouteRoute
+    }
+    '/(public)/sign-in': {
+      id: '/(public)/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof publicSignInRouteImport
+      parentRoute: typeof publicRouteRoute
+    }
+    '/(public)/privacy': {
+      id: '/(public)/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof publicPrivacyRouteImport
       parentRoute: typeof publicRouteRoute
     }
     '/(authenticated)/home': {
@@ -112,6 +187,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/home'
       preLoaderRoute: typeof authenticatedHomeRouteImport
       parentRoute: typeof authenticatedRouteRoute
+    }
+    '/(public)/sign/reset-password': {
+      id: '/(public)/sign/reset-password'
+      path: '/sign/reset-password'
+      fullPath: '/sign/reset-password'
+      preLoaderRoute: typeof publicSignResetPasswordRouteImport
+      parentRoute: typeof publicRouteRoute
     }
   }
 }
@@ -128,13 +210,21 @@ const authenticatedRouteRouteWithChildren =
   authenticatedRouteRoute._addFileChildren(authenticatedRouteRouteChildren)
 
 interface publicRouteRouteChildren {
-  publicLoginRoute: typeof publicLoginRoute
+  publicPrivacyRoute: typeof publicPrivacyRoute
+  publicSignInRoute: typeof publicSignInRoute
+  publicSignUpRoute: typeof publicSignUpRoute
+  publicTosRoute: typeof publicTosRoute
   publicIndexRoute: typeof publicIndexRoute
+  publicSignResetPasswordRoute: typeof publicSignResetPasswordRoute
 }
 
 const publicRouteRouteChildren: publicRouteRouteChildren = {
-  publicLoginRoute: publicLoginRoute,
+  publicPrivacyRoute: publicPrivacyRoute,
+  publicSignInRoute: publicSignInRoute,
+  publicSignUpRoute: publicSignUpRoute,
+  publicTosRoute: publicTosRoute,
   publicIndexRoute: publicIndexRoute,
+  publicSignResetPasswordRoute: publicSignResetPasswordRoute,
 }
 
 const publicRouteRouteWithChildren = publicRouteRoute._addFileChildren(

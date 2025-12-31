@@ -1,0 +1,19 @@
+{
+	"name": "@meraki/shared",
+	"type": "module",
+	"exports": {
+		".": {
+			"default": "./src/index.ts"
+		},
+		"./*": {
+			"default": "./src/*.ts"
+		},
+		"./constants": "./src/constants/index.ts"
+	},
+
+	"devDependencies": {
+		"typescript": "catalog:",
+		"@meraki/config": "workspace:*"
+	},
+	"dependencies": {}
+}

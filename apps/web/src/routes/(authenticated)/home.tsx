@@ -2,14 +2,12 @@ import { createFileRoute } from "@tanstack/react-router";
 import AppLayout from "@/components/layout/app-layout";
 import { ModeToggle } from "@/components/mode-toggle";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { authClient } from "@/lib/auth-client";
 
 export const Route = createFileRoute("/(authenticated)/home")({
 	component: RouteComponent,
 });
 
 function RouteComponent() {
-	const { isPending, data } = authClient.useSession();
 	return (
 		<AppLayout header={<Header />}>
 			<div className="mt-5 flex flex-col gap-4 px-4">

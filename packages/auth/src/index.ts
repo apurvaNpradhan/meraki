@@ -22,6 +22,18 @@ export const auth = betterAuth({
 	//     maxAge: 60,
 	//   },
 	// },
+	socialProviders: {
+		github: {
+			enabled: true,
+			clientId: env.GITHUB_CLIENT_ID,
+			clientSecret: env.GITHUB_CLIENT_SECRET,
+		},
+		/* 	google:{
+			enabled:true,
+			clientId:env.GOOGLE_CLIENT_ID,
+			clientSecret:env.GOOGLE_CLIENT_SECRET,
+		} */
+	},
 	secret: env.BETTER_AUTH_SECRET,
 	baseURL: env.BETTER_AUTH_URL,
 	advanced: {

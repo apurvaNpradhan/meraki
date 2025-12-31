@@ -1,166 +1,231 @@
-import { useForm } from "@tanstack/react-form";
-import { useNavigate } from "@tanstack/react-router";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { env } from "@meraki/env/web";
+import {
+	IconBrandGithubFilled,
+	IconBrandGoogleFilled,
+} from "@tabler/icons-react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import z from "zod";
-
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+	Field,
+	FieldDescription,
+	FieldError,
+	FieldGroup,
+	FieldLabel,
+	FieldSeparator,
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
+import { cn } from "@/lib/utils";
 
-import Loader from "./loader";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
+const signUpSchema = z
+	.object({
+		name: z.string().min(2, "Name must be at least 2 characters"),
+		email: z.string().email("Invalid email address"),
+		password: z.string().min(8, "Password must be at least 8 characters"),
+		confirmPassword: z
+			.string()
+			.min(8, "Password must be at least 8 characters"),
+	})
+	.refine((data) => data.password === data.confirmPassword, {
+		message: "Passwords do not match",
+		path: ["confirmPassword"],
+	});
+
+type SignUpValues = z.infer<typeof signUpSchema>;
 
 export default function SignUpForm({
-	onSwitchToSignIn,
-}: {
-	onSwitchToSignIn: () => void;
-}) {
-	const navigate = useNavigate({
-		from: "/",
-	});
-	const { isPending } = authClient.useSession();
-
-	const form = useForm({
+	className,
+	...props
+}: React.ComponentProps<"div">) {
+	const navigate = useNavigate();
+	const form = useForm<SignUpValues>({
+		resolver: zodResolver(signUpSchema),
 		defaultValues: {
+			name: "",
 			email: "",
 			password: "",
-			name: "",
-		},
-		onSubmit: async ({ value }) => {
-			await authClient.signUp.email(
-				{
-					email: value.email,
-					password: value.password,
-					name: value.name,
-				},
-				{
-					onSuccess: () => {
-						navigate({
-							to: "/dashboard",
-						});
-						toast.success("Sign up successful");
-					},
-					onError: (error) => {
-						toast.error(error.error.message || error.error.statusText);
-					},
-				},
-			);
-		},
-		validators: {
-			onSubmit: z.object({
-				name: z.string().min(2, "Name must be at least 2 characters"),
-				email: z.email("Invalid email address"),
-				password: z.string().min(8, "Password must be at least 8 characters"),
-			}),
+			confirmPassword: "",
 		},
 	});
 
-	if (isPending) {
-		return <Loader />;
-	}
+	const handleSocialSignIn = async (provider: "google" | "github") => {
+		await authClient.signIn.social({
+			provider,
+			callbackURL: `${env.VITE_BASE_URL}/home`,
+		});
+	};
+
+	const onSubmit = async (data: SignUpValues) => {
+		await authClient.signUp.email(
+			{
+				email: data.email,
+				password: data.password,
+				name: data.name,
+			},
+			{
+				onSuccess: () => {
+					navigate({ to: "/home" });
+					toast.success("Sign up successful");
+				},
+				onError: (error) => {
+					toast.error(error.error.message);
+				},
+			},
+		);
+	};
 
 	return (
-		<div className="mx-auto mt-10 w-full max-w-md p-6">
-			<h1 className="mb-6 text-center font-bold text-3xl">Create Account</h1>
-
-			<form
-				onSubmit={(e) => {
-					e.preventDefault();
-					e.stopPropagation();
-					form.handleSubmit();
-				}}
-				className="space-y-4"
-			>
-				<div>
-					<form.Field name="name">
-						{(field) => (
-							<div className="space-y-2">
-								<Label htmlFor={field.name}>Name</Label>
-								<Input
-									id={field.name}
-									name={field.name}
-									value={field.state.value}
-									onBlur={field.handleBlur}
-									onChange={(e) => field.handleChange(e.target.value)}
-								/>
-								{field.state.meta.errors.map((error) => (
-									<p key={error?.message} className="text-red-500">
-										{error?.message}
-									</p>
-								))}
+		<div className={cn("flex flex-col gap-6", className)} {...props}>
+			<Card className="p-0">
+				<CardContent className="p-0">
+					<form className="p-6 md:p-8" onSubmit={form.handleSubmit(onSubmit)}>
+						<FieldGroup>
+							<div className="flex flex-col items-center gap-2 text-center">
+								<h1 className="font-bold text-2xl">Create your account</h1>
+								<p className="text-balance text-muted-foreground text-sm">
+									Enter your email below to create your account
+								</p>
 							</div>
-						)}
-					</form.Field>
-				</div>
 
-				<div>
-					<form.Field name="email">
-						{(field) => (
-							<div className="space-y-2">
-								<Label htmlFor={field.name}>Email</Label>
-								<Input
-									id={field.name}
-									name={field.name}
-									type="email"
-									value={field.state.value}
-									onBlur={field.handleBlur}
-									onChange={(e) => field.handleChange(e.target.value)}
+							<Field>
+								<FieldLabel htmlFor="name">Name</FieldLabel>
+								<Controller
+									control={form.control}
+									name="name"
+									render={({ field, fieldState }) => (
+										<>
+											<Input {...field} id="name" placeholder="John Doe" />
+											{fieldState.error && (
+												<FieldError errors={[fieldState.error]} />
+											)}
+										</>
+									)}
 								/>
-								{field.state.meta.errors.map((error) => (
-									<p key={error?.message} className="text-red-500">
-										{error?.message}
-									</p>
-								))}
-							</div>
-						)}
-					</form.Field>
-				</div>
+							</Field>
 
-				<div>
-					<form.Field name="password">
-						{(field) => (
-							<div className="space-y-2">
-								<Label htmlFor={field.name}>Password</Label>
-								<Input
-									id={field.name}
-									name={field.name}
-									type="password"
-									value={field.state.value}
-									onBlur={field.handleBlur}
-									onChange={(e) => field.handleChange(e.target.value)}
+							<Field>
+								<FieldLabel htmlFor="email">Email</FieldLabel>
+								<Controller
+									control={form.control}
+									name="email"
+									render={({ field, fieldState }) => (
+										<>
+											<Input
+												{...field}
+												id="email"
+												type="email"
+												placeholder="m@example.com"
+											/>
+											{fieldState.error && (
+												<FieldError errors={[fieldState.error]} />
+											)}
+										</>
+									)}
 								/>
-								{field.state.meta.errors.map((error) => (
-									<p key={error?.message} className="text-red-500">
-										{error?.message}
-									</p>
-								))}
-							</div>
-						)}
-					</form.Field>
-				</div>
+								<FieldDescription>
+									We&apos;ll use this to contact you. We will not share your
+									email with anyone else.
+								</FieldDescription>
+							</Field>
 
-				<form.Subscribe>
-					{(state) => (
-						<Button
-							type="submit"
-							className="w-full"
-							disabled={!state.canSubmit || state.isSubmitting}
-						>
-							{state.isSubmitting ? "Submitting..." : "Sign Up"}
-						</Button>
-					)}
-				</form.Subscribe>
-			</form>
+							<Field>
+								<Field className="grid grid-cols-2 gap-4">
+									<Field>
+										<FieldLabel htmlFor="password">Password</FieldLabel>
+										<Controller
+											control={form.control}
+											name="password"
+											render={({ field, fieldState }) => (
+												<>
+													<Input
+														{...field}
+														id="password"
+														type="password"
+														autoComplete="new-password"
+													/>
+													{fieldState.error && (
+														<FieldError errors={[fieldState.error]} />
+													)}
+												</>
+											)}
+										/>
+									</Field>
+									<Field>
+										<FieldLabel htmlFor="confirm-password">
+											Confirm Password
+										</FieldLabel>
+										<Controller
+											control={form.control}
+											name="confirmPassword"
+											render={({ field, fieldState }) => (
+												<>
+													<Input
+														{...field}
+														id="confirm-password"
+														type="password"
+														autoComplete="new-password"
+													/>
+													{fieldState.error && (
+														<FieldError errors={[fieldState.error]} />
+													)}
+												</>
+											)}
+										/>
+									</Field>
+								</Field>
+								<FieldDescription>
+									Must be at least 8 characters long.
+								</FieldDescription>
+							</Field>
 
-			<div className="mt-4 text-center">
-				<Button
-					variant="link"
-					onClick={onSwitchToSignIn}
-					className="text-indigo-600 hover:text-indigo-800"
-				>
-					Already have an account? Sign In
-				</Button>
-			</div>
+							<Field>
+								<Button type="submit" disabled={form.formState.isSubmitting}>
+									{form.formState.isSubmitting
+										? "Creating..."
+										: "Create Account"}
+								</Button>
+							</Field>
+							<FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
+								Or continue with
+							</FieldSeparator>
+							<Field className="grid grid-cols-2 gap-4">
+								<Button
+									variant="outline"
+									type="button"
+									onClick={() => handleSocialSignIn("github")}
+								>
+									<IconBrandGithubFilled className="mr-2 h-4 w-4" />
+									Github
+								</Button>
+								<Button
+									variant="outline"
+									type="button"
+									onClick={() => handleSocialSignIn("google")}
+								>
+									<IconBrandGoogleFilled className="mr-2 h-4 w-4" />
+									Google
+								</Button>
+							</Field>
+							<FieldDescription className="text-center">
+								Already have an account?{" "}
+								<Link to="/sign-in" className="text-primary hover:underline">
+									Sign in
+								</Link>
+							</FieldDescription>
+						</FieldGroup>
+					</form>
+				</CardContent>
+			</Card>
+			<FieldDescription className="px-6 text-center">
+				By clicking continue, you agree to our{" "}
+				<Link to="/tos">Terms of Service</Link> and{" "}
+				<Link to="/privacy">Privacy Policy</Link>.
+			</FieldDescription>
 		</div>
 	);
 }

@@ -22,6 +22,8 @@ export const server = await Worker("server", {
 	compatibility: "node",
 	bindings: {
 		DATABASE_URL: alchemy.secret.env.DATABASE_URL!,
+		GITHUB_CLIENT_ID: alchemy.env.GITHUB_CLIENT_ID!,
+		GITHUB_CLIENT_SECRET: alchemy.env.GITHUB_CLIENT_SECRET!,
 		CORS_ORIGIN: alchemy.env.CORS_ORIGIN!,
 		BETTER_AUTH_SECRET: alchemy.secret.env.BETTER_AUTH_SECRET!,
 		BETTER_AUTH_URL: alchemy.env.BETTER_AUTH_URL!,
