@@ -1,5 +1,5 @@
 {
-  "name": "@meraki/config",
-  "version": "0.0.0",
-  "private": true
+	"name": "@meraki/config",
+	"version": "0.0.0",
+	"private": true
 }

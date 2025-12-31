@@ -1,3 +1,3 @@
 {
-  "extends": "@meraki/config/tsconfig.base.json"
+	"extends": "@meraki/config/tsconfig.base.json"
 }

@@ -1,25 +1,25 @@
 {
-  "name": "@meraki/auth",
-  "type": "module",
-  "exports": {
-    ".": {
-      "default": "./src/index.ts"
-    },
-    "./*": {
-      "default": "./src/*.ts"
-    }
-  },
-  "scripts": {},
-  "devDependencies": {
-    "typescript": "catalog:",
-    "@meraki/config": "workspace:*"
-  },
-  "dependencies": {
-    "better-auth": "catalog:",
-    "@better-auth/expo": "catalog:",
-    "dotenv": "catalog:",
-    "zod": "catalog:",
-    "@meraki/env": "workspace:*",
-    "@meraki/db": "workspace:*"
-  }
+	"name": "@meraki/auth",
+	"type": "module",
+	"exports": {
+		".": {
+			"default": "./src/index.ts"
+		},
+		"./*": {
+			"default": "./src/*.ts"
+		}
+	},
+	"scripts": {},
+	"devDependencies": {
+		"typescript": "catalog:",
+		"@meraki/config": "workspace:*"
+	},
+	"dependencies": {
+		"better-auth": "catalog:",
+		"@better-auth/expo": "catalog:",
+		"dotenv": "catalog:",
+		"zod": "catalog:",
+		"@meraki/env": "workspace:*",
+		"@meraki/db": "workspace:*"
+	}
 }
