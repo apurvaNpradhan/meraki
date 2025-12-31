@@ -1,4 +1,5 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import { ModalProvider } from "@/components/providers/modal-provider";
 import { authClient } from "@/lib/auth-client";
 
 export const Route = createFileRoute("/(authenticated)")({
@@ -16,5 +17,10 @@ export const Route = createFileRoute("/(authenticated)")({
 });
 
 function RouteComponent() {
-	return <Outlet />;
+	return (
+		<>
+			<Outlet />
+			<ModalProvider />
+		</>
+	);
 }
