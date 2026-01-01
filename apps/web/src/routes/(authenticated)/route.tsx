@@ -2,7 +2,6 @@ import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { NotFound } from "@/components/not-found";
 import { ModalProvider } from "@/components/providers/modal-provider";
 import { authClient } from "@/lib/auth-client";
-import { getCachedSession, sessionQueryOptions } from "@/lib/queries/session";
 
 export const Route = createFileRoute("/(authenticated)")({
 	component: RouteComponent,
@@ -16,12 +15,23 @@ export const Route = createFileRoute("/(authenticated)")({
 			});
 		} else if (
 			session.data?.user.onboardingCompleted === null &&
-			location.pathname !== "/onboarding"
+			location.pathname.startsWith("/onboarding") === false
 		) {
 			redirect({
-				to: "/onboarding",
+				to: "/onboarding/org",
 				throw: true,
 			});
+		}
+
+		if (
+			!session.data?.session.activeOrganizationId &&
+			(session.data?.user as any).defaultOrganizationId
+		) {
+			await authClient.organization.setActive({
+				organizationId: (session.data?.user as any).defaultOrganizationId,
+			});
+			const newSession = await authClient.getSession();
+			return { session: newSession };
 		}
 		return { session };
 	},

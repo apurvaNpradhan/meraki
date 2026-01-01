@@ -28,6 +28,7 @@ import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { useModal } from "@/stores/modal";
 import { NavUser } from "./nav-user";
+import { NavWorkspace } from "./nav-workspace";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const { data: session, isPending } = authClient.useSession();
@@ -36,7 +37,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		<Sidebar collapsible="icon" {...props} variant="inset" className="p-0">
 			<SidebarHeader className="px-0">
 				{isPending && <Skeleton />}
-				{!isPending && session && <NavUser user={session?.user} />}
+				{!isPending && session && <NavWorkspace />}
 			</SidebarHeader>
 			<SidebarContent className="flex flex-col gap-5 text-muted-foreground">
 				<SidebarGroup className="p-0">

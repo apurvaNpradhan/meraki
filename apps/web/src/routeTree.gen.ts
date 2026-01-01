@@ -16,9 +16,12 @@ import { Route as publicTosRouteImport } from './routes/(public)/tos'
 import { Route as publicSignUpRouteImport } from './routes/(public)/sign-up'
 import { Route as publicSignInRouteImport } from './routes/(public)/sign-in'
 import { Route as publicPrivacyRouteImport } from './routes/(public)/privacy'
-import { Route as authenticatedOnboardingRouteImport } from './routes/(authenticated)/onboarding'
 import { Route as authenticatedHomeRouteImport } from './routes/(authenticated)/home'
+import { Route as authenticatedOnboardingRouteRouteImport } from './routes/(authenticated)/onboarding/route'
 import { Route as publicSignResetPasswordRouteImport } from './routes/(public)/sign/reset-password'
+import { Route as authenticatedWorkspaceNewRouteImport } from './routes/(authenticated)/workspace/new'
+import { Route as authenticatedOnboardingWorkspaceRouteImport } from './routes/(authenticated)/onboarding/workspace'
+import { Route as authenticatedOnboardingCompleteRouteImport } from './routes/(authenticated)/onboarding/complete'
 
 const publicRouteRoute = publicRouteRouteImport.update({
   id: '/(public)',
@@ -53,87 +56,124 @@ const publicPrivacyRoute = publicPrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => publicRouteRoute,
 } as any)
-const authenticatedOnboardingRoute = authenticatedOnboardingRouteImport.update({
-  id: '/onboarding',
-  path: '/onboarding',
-  getParentRoute: () => authenticatedRouteRoute,
-} as any)
 const authenticatedHomeRoute = authenticatedHomeRouteImport.update({
   id: '/home',
   path: '/home',
   getParentRoute: () => authenticatedRouteRoute,
 } as any)
+const authenticatedOnboardingRouteRoute =
+  authenticatedOnboardingRouteRouteImport.update({
+    id: '/onboarding',
+    path: '/onboarding',
+    getParentRoute: () => authenticatedRouteRoute,
+  } as any)
 const publicSignResetPasswordRoute = publicSignResetPasswordRouteImport.update({
   id: '/sign/reset-password',
   path: '/sign/reset-password',
   getParentRoute: () => publicRouteRoute,
 } as any)
+const authenticatedWorkspaceNewRoute =
+  authenticatedWorkspaceNewRouteImport.update({
+    id: '/workspace/new',
+    path: '/workspace/new',
+    getParentRoute: () => authenticatedRouteRoute,
+  } as any)
+const authenticatedOnboardingWorkspaceRoute =
+  authenticatedOnboardingWorkspaceRouteImport.update({
+    id: '/workspace',
+    path: '/workspace',
+    getParentRoute: () => authenticatedOnboardingRouteRoute,
+  } as any)
+const authenticatedOnboardingCompleteRoute =
+  authenticatedOnboardingCompleteRouteImport.update({
+    id: '/complete',
+    path: '/complete',
+    getParentRoute: () => authenticatedOnboardingRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
+  '/onboarding': typeof authenticatedOnboardingRouteRouteWithChildren
   '/home': typeof authenticatedHomeRoute
-  '/onboarding': typeof authenticatedOnboardingRoute
   '/privacy': typeof publicPrivacyRoute
   '/sign-in': typeof publicSignInRoute
   '/sign-up': typeof publicSignUpRoute
   '/tos': typeof publicTosRoute
   '/': typeof publicIndexRoute
+  '/onboarding/complete': typeof authenticatedOnboardingCompleteRoute
+  '/onboarding/workspace': typeof authenticatedOnboardingWorkspaceRoute
+  '/workspace/new': typeof authenticatedWorkspaceNewRoute
   '/sign/reset-password': typeof publicSignResetPasswordRoute
 }
 export interface FileRoutesByTo {
+  '/onboarding': typeof authenticatedOnboardingRouteRouteWithChildren
   '/home': typeof authenticatedHomeRoute
-  '/onboarding': typeof authenticatedOnboardingRoute
   '/privacy': typeof publicPrivacyRoute
   '/sign-in': typeof publicSignInRoute
   '/sign-up': typeof publicSignUpRoute
   '/tos': typeof publicTosRoute
   '/': typeof publicIndexRoute
+  '/onboarding/complete': typeof authenticatedOnboardingCompleteRoute
+  '/onboarding/workspace': typeof authenticatedOnboardingWorkspaceRoute
+  '/workspace/new': typeof authenticatedWorkspaceNewRoute
   '/sign/reset-password': typeof publicSignResetPasswordRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(authenticated)': typeof authenticatedRouteRouteWithChildren
   '/(public)': typeof publicRouteRouteWithChildren
+  '/(authenticated)/onboarding': typeof authenticatedOnboardingRouteRouteWithChildren
   '/(authenticated)/home': typeof authenticatedHomeRoute
-  '/(authenticated)/onboarding': typeof authenticatedOnboardingRoute
   '/(public)/privacy': typeof publicPrivacyRoute
   '/(public)/sign-in': typeof publicSignInRoute
   '/(public)/sign-up': typeof publicSignUpRoute
   '/(public)/tos': typeof publicTosRoute
   '/(public)/': typeof publicIndexRoute
+  '/(authenticated)/onboarding/complete': typeof authenticatedOnboardingCompleteRoute
+  '/(authenticated)/onboarding/workspace': typeof authenticatedOnboardingWorkspaceRoute
+  '/(authenticated)/workspace/new': typeof authenticatedWorkspaceNewRoute
   '/(public)/sign/reset-password': typeof publicSignResetPasswordRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/home'
     | '/onboarding'
+    | '/home'
     | '/privacy'
     | '/sign-in'
     | '/sign-up'
     | '/tos'
     | '/'
+    | '/onboarding/complete'
+    | '/onboarding/workspace'
+    | '/workspace/new'
     | '/sign/reset-password'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/home'
     | '/onboarding'
+    | '/home'
     | '/privacy'
     | '/sign-in'
     | '/sign-up'
     | '/tos'
     | '/'
+    | '/onboarding/complete'
+    | '/onboarding/workspace'
+    | '/workspace/new'
     | '/sign/reset-password'
   id:
     | '__root__'
     | '/(authenticated)'
     | '/(public)'
-    | '/(authenticated)/home'
     | '/(authenticated)/onboarding'
+    | '/(authenticated)/home'
     | '/(public)/privacy'
     | '/(public)/sign-in'
     | '/(public)/sign-up'
     | '/(public)/tos'
     | '/(public)/'
+    | '/(authenticated)/onboarding/complete'
+    | '/(authenticated)/onboarding/workspace'
+    | '/(authenticated)/workspace/new'
     | '/(public)/sign/reset-password'
   fileRoutesById: FileRoutesById
 }
@@ -193,18 +233,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof publicPrivacyRouteImport
       parentRoute: typeof publicRouteRoute
     }
-    '/(authenticated)/onboarding': {
-      id: '/(authenticated)/onboarding'
-      path: '/onboarding'
-      fullPath: '/onboarding'
-      preLoaderRoute: typeof authenticatedOnboardingRouteImport
-      parentRoute: typeof authenticatedRouteRoute
-    }
     '/(authenticated)/home': {
       id: '/(authenticated)/home'
       path: '/home'
       fullPath: '/home'
       preLoaderRoute: typeof authenticatedHomeRouteImport
+      parentRoute: typeof authenticatedRouteRoute
+    }
+    '/(authenticated)/onboarding': {
+      id: '/(authenticated)/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof authenticatedOnboardingRouteRouteImport
       parentRoute: typeof authenticatedRouteRoute
     }
     '/(public)/sign/reset-password': {
@@ -214,17 +254,58 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof publicSignResetPasswordRouteImport
       parentRoute: typeof publicRouteRoute
     }
+    '/(authenticated)/workspace/new': {
+      id: '/(authenticated)/workspace/new'
+      path: '/workspace/new'
+      fullPath: '/workspace/new'
+      preLoaderRoute: typeof authenticatedWorkspaceNewRouteImport
+      parentRoute: typeof authenticatedRouteRoute
+    }
+    '/(authenticated)/onboarding/workspace': {
+      id: '/(authenticated)/onboarding/workspace'
+      path: '/workspace'
+      fullPath: '/onboarding/workspace'
+      preLoaderRoute: typeof authenticatedOnboardingWorkspaceRouteImport
+      parentRoute: typeof authenticatedOnboardingRouteRoute
+    }
+    '/(authenticated)/onboarding/complete': {
+      id: '/(authenticated)/onboarding/complete'
+      path: '/complete'
+      fullPath: '/onboarding/complete'
+      preLoaderRoute: typeof authenticatedOnboardingCompleteRouteImport
+      parentRoute: typeof authenticatedOnboardingRouteRoute
+    }
   }
 }
 
+interface authenticatedOnboardingRouteRouteChildren {
+  authenticatedOnboardingCompleteRoute: typeof authenticatedOnboardingCompleteRoute
+  authenticatedOnboardingWorkspaceRoute: typeof authenticatedOnboardingWorkspaceRoute
+}
+
+const authenticatedOnboardingRouteRouteChildren: authenticatedOnboardingRouteRouteChildren =
+  {
+    authenticatedOnboardingCompleteRoute: authenticatedOnboardingCompleteRoute,
+    authenticatedOnboardingWorkspaceRoute:
+      authenticatedOnboardingWorkspaceRoute,
+  }
+
+const authenticatedOnboardingRouteRouteWithChildren =
+  authenticatedOnboardingRouteRoute._addFileChildren(
+    authenticatedOnboardingRouteRouteChildren,
+  )
+
 interface authenticatedRouteRouteChildren {
+  authenticatedOnboardingRouteRoute: typeof authenticatedOnboardingRouteRouteWithChildren
   authenticatedHomeRoute: typeof authenticatedHomeRoute
-  authenticatedOnboardingRoute: typeof authenticatedOnboardingRoute
+  authenticatedWorkspaceNewRoute: typeof authenticatedWorkspaceNewRoute
 }
 
 const authenticatedRouteRouteChildren: authenticatedRouteRouteChildren = {
+  authenticatedOnboardingRouteRoute:
+    authenticatedOnboardingRouteRouteWithChildren,
   authenticatedHomeRoute: authenticatedHomeRoute,
-  authenticatedOnboardingRoute: authenticatedOnboardingRoute,
+  authenticatedWorkspaceNewRoute: authenticatedWorkspaceNewRoute,
 }
 
 const authenticatedRouteRouteWithChildren =
