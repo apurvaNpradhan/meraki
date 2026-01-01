@@ -7,6 +7,7 @@ import {
 	createRootRouteWithContext,
 	HeadContent,
 	Outlet,
+	redirect,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { useState } from "react";
@@ -17,11 +18,15 @@ import { link, type orpc } from "@/utils/orpc";
 
 import "../index.css";
 import { ErrorComponent } from "@/components/error";
+import Loader from "@/components/loader";
 import { NotFound, NotFoundPublic } from "@/components/not-found";
 import { authClient } from "@/lib/auth-client";
 
 function RootNotFound() {
-	const { data: session } = authClient.useSession();
+	const { data: session, isPending } = authClient.useSession();
+	if (isPending) {
+		return <Loader />;
+	}
 	if (session) {
 		return <NotFound />;
 	}

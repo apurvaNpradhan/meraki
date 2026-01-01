@@ -4,6 +4,7 @@ import * as schema from "@meraki/db/schema/auth";
 import { env } from "@meraki/env/server";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { customSession } from "better-auth/plugins";
 
 export const auth = betterAuth({
 	database: drizzleAdapter(db, {
@@ -36,6 +37,17 @@ export const auth = betterAuth({
 	},
 	secret: env.BETTER_AUTH_SECRET,
 	baseURL: env.BETTER_AUTH_URL,
+	user: {
+		additionalFields: {
+			onboardingCompleted: {
+				type: "date",
+				required: false,
+				defaultValue: null,
+				//Update this field when creating the onboarding screens.
+				input: true,
+			},
+		},
+	},
 	advanced: {
 		defaultCookieAttributes: {
 			sameSite: "none",
@@ -49,5 +61,16 @@ export const auth = betterAuth({
 		//   domain: "<your-workers-subdomain>",
 		// },
 	},
-	plugins: [expo()],
+	plugins: [
+		expo(),
+		customSession(async ({ user, session }) => {
+			return {
+				...session,
+				user: {
+					...user,
+					onboardingCompleted: (user as any).onboardingCompleted,
+				},
+			};
+		}),
+	],
 });

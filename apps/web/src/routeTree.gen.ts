@@ -16,6 +16,7 @@ import { Route as publicTosRouteImport } from './routes/(public)/tos'
 import { Route as publicSignUpRouteImport } from './routes/(public)/sign-up'
 import { Route as publicSignInRouteImport } from './routes/(public)/sign-in'
 import { Route as publicPrivacyRouteImport } from './routes/(public)/privacy'
+import { Route as authenticatedOnboardingRouteImport } from './routes/(authenticated)/onboarding'
 import { Route as authenticatedHomeRouteImport } from './routes/(authenticated)/home'
 import { Route as publicSignResetPasswordRouteImport } from './routes/(public)/sign/reset-password'
 
@@ -52,6 +53,11 @@ const publicPrivacyRoute = publicPrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => publicRouteRoute,
 } as any)
+const authenticatedOnboardingRoute = authenticatedOnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => authenticatedRouteRoute,
+} as any)
 const authenticatedHomeRoute = authenticatedHomeRouteImport.update({
   id: '/home',
   path: '/home',
@@ -65,6 +71,7 @@ const publicSignResetPasswordRoute = publicSignResetPasswordRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/home': typeof authenticatedHomeRoute
+  '/onboarding': typeof authenticatedOnboardingRoute
   '/privacy': typeof publicPrivacyRoute
   '/sign-in': typeof publicSignInRoute
   '/sign-up': typeof publicSignUpRoute
@@ -74,6 +81,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/home': typeof authenticatedHomeRoute
+  '/onboarding': typeof authenticatedOnboardingRoute
   '/privacy': typeof publicPrivacyRoute
   '/sign-in': typeof publicSignInRoute
   '/sign-up': typeof publicSignUpRoute
@@ -86,6 +94,7 @@ export interface FileRoutesById {
   '/(authenticated)': typeof authenticatedRouteRouteWithChildren
   '/(public)': typeof publicRouteRouteWithChildren
   '/(authenticated)/home': typeof authenticatedHomeRoute
+  '/(authenticated)/onboarding': typeof authenticatedOnboardingRoute
   '/(public)/privacy': typeof publicPrivacyRoute
   '/(public)/sign-in': typeof publicSignInRoute
   '/(public)/sign-up': typeof publicSignUpRoute
@@ -97,6 +106,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/home'
+    | '/onboarding'
     | '/privacy'
     | '/sign-in'
     | '/sign-up'
@@ -106,6 +116,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/home'
+    | '/onboarding'
     | '/privacy'
     | '/sign-in'
     | '/sign-up'
@@ -117,6 +128,7 @@ export interface FileRouteTypes {
     | '/(authenticated)'
     | '/(public)'
     | '/(authenticated)/home'
+    | '/(authenticated)/onboarding'
     | '/(public)/privacy'
     | '/(public)/sign-in'
     | '/(public)/sign-up'
@@ -181,6 +193,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof publicPrivacyRouteImport
       parentRoute: typeof publicRouteRoute
     }
+    '/(authenticated)/onboarding': {
+      id: '/(authenticated)/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof authenticatedOnboardingRouteImport
+      parentRoute: typeof authenticatedRouteRoute
+    }
     '/(authenticated)/home': {
       id: '/(authenticated)/home'
       path: '/home'
@@ -200,10 +219,12 @@ declare module '@tanstack/react-router' {
 
 interface authenticatedRouteRouteChildren {
   authenticatedHomeRoute: typeof authenticatedHomeRoute
+  authenticatedOnboardingRoute: typeof authenticatedOnboardingRoute
 }
 
 const authenticatedRouteRouteChildren: authenticatedRouteRouteChildren = {
   authenticatedHomeRoute: authenticatedHomeRoute,
+  authenticatedOnboardingRoute: authenticatedOnboardingRoute,
 }
 
 const authenticatedRouteRouteWithChildren =
