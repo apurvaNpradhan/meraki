@@ -11,19 +11,21 @@
 	},
 	"scripts": {},
 	"dependencies": {
-		"@orpc/server": "catalog:",
+		"@meraki/auth": "workspace:*",
+		"@meraki/db": "workspace:*",
+		"@meraki/env": "workspace:*",
+		"@meraki/shared": "workspace:*",
 		"@orpc/client": "catalog:",
 		"@orpc/openapi": "catalog:",
+		"@orpc/server": "catalog:",
 		"@orpc/zod": "catalog:",
-		"hono": "catalog:",
 		"dotenv": "catalog:",
-		"zod": "catalog:",
-		"@meraki/env": "workspace:*",
-		"@meraki/auth": "workspace:*",
-		"@meraki/db": "workspace:*"
+		"fractional-indexing": "^3.2.0",
+		"hono": "catalog:",
+		"zod": "catalog:"
 	},
 	"devDependencies": {
-		"typescript": "catalog:",
-		"@meraki/config": "workspace:*"
+		"@meraki/config": "workspace:*",
+		"typescript": "catalog:"
 	}
 }

@@ -48,7 +48,7 @@ export const auth = betterAuth({
 			defaultOrganizationId: {
 				type: "string",
 				required: true,
-				defaultValue: "",
+				defaultValue: null,
 				input: true,
 			},
 		},

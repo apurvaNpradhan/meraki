@@ -67,7 +67,7 @@ importers:
         version: 4.3.4
     devDependencies:
       '@biomejs/biome':
-        specifier: ^2.3.10
+        specifier: ^2.2.0
         version: 2.3.10
       '@cloudflare/workers-types':
         specifier: 'catalog:'
@@ -82,10 +82,10 @@ importers:
         specifier: ^9.1.7
         version: 9.1.7
       lint-staged:
-        specifier: ^16.2.7
+        specifier: ^16.1.2
         version: 16.2.7
       turbo:
-        specifier: ^2.7.2
+        specifier: ^2.6.3
         version: 2.7.2
       typescript:
         specifier: 'catalog:'
@@ -411,6 +411,9 @@ importers:
       '@meraki/env':
         specifier: workspace:*
         version: link:../env
+      '@meraki/shared':
+        specifier: workspace:*
+        version: link:../shared
       '@orpc/client':
         specifier: 'catalog:'
         version: 1.13.2
@@ -426,6 +429,9 @@ importers:
       dotenv:
         specifier: 'catalog:'
         version: 17.2.3
+      fractional-indexing:
+        specifier: ^3.2.0
+        version: 3.2.0
       hono:
         specifier: 'catalog:'
         version: 4.11.3
@@ -5066,6 +5072,10 @@ packages:
   forwarded@0.2.0:
     resolution: {integrity: sha512-buRG0fpBtRHSTCOASe6hD258tEubFoRLb4ZNA6NxMVHNw2gOcwHo9wyablzMzOA5z9xA9L1KNjk/Nt6MT9aYow==}
     engines: {node: '>= 0.6'}
+
+  fractional-indexing@3.2.0:
+    resolution: {integrity: sha512-PcOxmqwYCW7O2ovKRU8OoQQj2yqTfEB/yeTYk4gPid6dN5ODRfU1hXd9tTVZzax/0NkO7AxpHykvZnT1aYp/BQ==}
+    engines: {node: ^14.13.1 || >=16.0.0}
 
   freeport-async@2.0.0:
     resolution: {integrity: sha512-K7od3Uw45AJg00XUmy15+Hae2hOcgKcmN3/EF6Y7i01O0gaqiRx8sUSpsb9+BRNL8RPBrhzPsVfy8q9ADlJuWQ==}
@@ -13217,6 +13227,8 @@ snapshots:
       fetch-blob: 3.2.0
 
   forwarded@0.2.0: {}
+
+  fractional-indexing@3.2.0: {}
 
   freeport-async@2.0.0: {}
 

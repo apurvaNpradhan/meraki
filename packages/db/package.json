@@ -5,6 +5,7 @@
 		".": {
 			"default": "./src/index.ts"
 		},
+		"./utils": "./src/utils/index.ts",
 		"./*": {
 			"default": "./src/*.ts"
 		}
@@ -16,17 +17,18 @@
 		"db:migrate": "drizzle-kit migrate"
 	},
 	"devDependencies": {
-		"drizzle-kit": "^0.31.8",
+		"@meraki/config": "workspace:*",
 		"@types/ws": "^8.18.1",
-		"typescript": "catalog:",
-		"@meraki/config": "workspace:*"
+		"drizzle-kit": "^0.31.8",
+		"typescript": "catalog:"
 	},
 	"dependencies": {
-		"drizzle-orm": "^0.45.1",
+		"@meraki/env": "workspace:*",
 		"@neondatabase/serverless": "^1.0.2",
-		"ws": "^8.18.3",
 		"dotenv": "catalog:",
-		"zod": "catalog:",
-		"@meraki/env": "workspace:*"
+		"drizzle-orm": "^0.45.1",
+		"drizzle-zod": "0.8.3",
+		"ws": "^8.18.3",
+		"zod": "catalog:"
 	}
 }

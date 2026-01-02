@@ -28,7 +28,7 @@ function RouteComponent() {
 	const form = useForm({});
 	const onSubmit = async () => {
 		if (!orgName || !orgSlug) {
-			navigate({ to: "/onboarding/org" });
+			navigate({ to: "/onboarding/workspace" });
 			return;
 		}
 		const { data, error } = await authClient.organization.create({
@@ -53,7 +53,7 @@ function RouteComponent() {
 	useEffect(() => {
 		if (!useOnboardingStore.persist.hasHydrated()) return;
 		if (!orgName || !orgSlug) {
-			navigate({ to: "/onboarding/org" });
+			navigate({ to: "/onboarding/workspace" });
 		}
 	}, [useOnboardingStore.persist.hasHydrated(), orgName, orgSlug]);
 	return (
