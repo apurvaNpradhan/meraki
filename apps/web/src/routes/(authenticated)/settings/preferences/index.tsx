@@ -9,13 +9,6 @@ import {
 	ItemGroup,
 	ItemTitle,
 } from "@/components/ui/item";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
 
 export const Route = createFileRoute("/(authenticated)/settings/preferences/")({
 	component: RouteComponent,

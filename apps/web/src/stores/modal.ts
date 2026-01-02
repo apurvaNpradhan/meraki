@@ -2,9 +2,9 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
 export const MODAL_TYPES = [
-	"CREATE_AREA",
-	"UPDATE_AREA",
-	"DELETE_AREA",
+	"CREATE_SPACE",
+	"UPDATE_SPACE",
+	"DELETE_SPACE",
 ] as const;
 
 export type ModalType = (typeof MODAL_TYPES)[number];

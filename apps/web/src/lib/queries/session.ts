@@ -1,4 +1,3 @@
-import type { auth } from "@meraki/auth";
 import type { QueryClient } from "@tanstack/react-query";
 import {
 	queryOptions,

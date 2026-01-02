@@ -1,5 +1,4 @@
 import React from "react";
-import { AppSidebar } from "@/components/layout/sidebar/app-sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { SettingSidebar } from "./sidebar/setting-sidebar";

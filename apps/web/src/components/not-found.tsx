@@ -1,4 +1,4 @@
-import { IconError404, IconFaceIdError } from "@tabler/icons-react";
+import { IconFaceIdError } from "@tabler/icons-react";
 import { Link } from "@tanstack/react-router";
 import MainLayout from "./layout/app-layout";
 import { buttonVariants } from "./ui/button";

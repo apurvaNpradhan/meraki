@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import AppLayout from "@/components/layout/app-layout";
-import { ModeToggle } from "@/components/mode-toggle";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
 export const Route = createFileRoute("/(authenticated)/home")({

@@ -1,9 +1,7 @@
 import { sql } from "drizzle-orm";
 import {
 	bigint,
-	bigserial,
 	index,
-	integer,
 	pgTable,
 	text,
 	uniqueIndex,
@@ -55,6 +53,7 @@ export const spaces = pgTable(
 );
 export const SelectSpace = createSelectSchema(spaces).omit({
 	id: true,
+	createdBy: true,
 	organizationId: true,
 });
 export const InsertSpace = createInsertSchema(spaces, {
@@ -68,7 +67,6 @@ export const InsertSpace = createInsertSchema(spaces, {
 });
 export const UpdateSpace = createUpdateSchema(spaces).omit({
 	publicId: true,
-	createdBy: true,
 	organizationId: true,
 	createdAt: true,
 	updatedAt: true,

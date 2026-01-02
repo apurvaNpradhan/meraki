@@ -1,11 +1,11 @@
 import {
 	IconCaretRightFilled,
-	IconChevronCompactDown,
 	IconHome,
 	IconInbox,
 	IconPlus,
 	IconSearch,
 } from "@tabler/icons-react";
+import { useNavigate } from "@tanstack/react-router";
 import * as React from "react";
 import {
 	Collapsible,
@@ -27,36 +27,56 @@ import { useRouteActive } from "@/hooks/use-active-route";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { useModal } from "@/stores/modal";
-import { NavUser } from "./nav-user";
 import { NavWorkspace } from "./nav-workspace";
+import { SidebarSpaceList } from "./sidebar-space-list";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-	const { data: session, isPending } = authClient.useSession();
+	const { data: session, isPending: isSessionPending } =
+		authClient.useSession();
+	const { isPending: isWorkspacesPending } = authClient.useListOrganizations();
+
+	const isPending = isSessionPending || isWorkspacesPending;
+
 	const isActive = useRouteActive();
+	const navigate = useNavigate();
 	return (
 		<Sidebar collapsible="icon" {...props} variant="inset" className="p-0">
 			<SidebarHeader className="px-0">
-				{isPending && <Skeleton />}
+				{isPending ? <Skeleton className="h-12 w-full" /> : null}
 				{!isPending && session && <NavWorkspace />}
 			</SidebarHeader>
 			<SidebarContent className="flex flex-col gap-5 text-muted-foreground">
-				<SidebarGroup className="p-0">
-					<SidebarGroupContent className="flex flex-col gap-1">
-						<SidebarMenuButton size={"sm"}>
-							<IconSearch />
-							Search
-						</SidebarMenuButton>
-						<SidebarMenuButton size={"sm"} isActive={isActive("/home")}>
-							<IconHome />
-							Home
-						</SidebarMenuButton>
-						<SidebarMenuButton size={"sm"} isActive={isActive("/inbox")}>
-							<IconInbox />
-							Inbox
-						</SidebarMenuButton>
-					</SidebarGroupContent>
-				</SidebarGroup>
-				<NavAreas />
+				{isPending ? (
+					<div className="flex flex-col gap-2 p-2">
+						<Skeleton className="h-8 w-full" />
+						<Skeleton className="h-8 w-full" />
+						<Skeleton className="h-8 w-full" />
+					</div>
+				) : (
+					<>
+						<SidebarGroup className="p-0">
+							<SidebarGroupContent className="flex flex-col gap-1">
+								<SidebarMenuButton size={"sm"}>
+									<IconSearch />
+									Search
+								</SidebarMenuButton>
+								<SidebarMenuButton
+									size={"sm"}
+									isActive={isActive("/home")}
+									onClick={() => navigate({ to: "/home" })}
+								>
+									<IconHome />
+									Home
+								</SidebarMenuButton>
+								<SidebarMenuButton size={"sm"} isActive={isActive("/inbox")}>
+									<IconInbox />
+									Inbox
+								</SidebarMenuButton>
+							</SidebarGroupContent>
+						</SidebarGroup>
+						<NavAreas />
+					</>
+				)}
 			</SidebarContent>
 			<SidebarFooter />
 		</Sidebar>
@@ -90,9 +110,9 @@ function NavAreas() {
 						onClick={(e) => {
 							e.stopPropagation();
 							open({
-								type: "CREATE_AREA",
-								title: "Create Area",
-								description: "Create a new area",
+								type: "CREATE_SPACE",
+								title: "Create Space",
+								description: "Create a new sapce",
 								closeOnClickOutside: true,
 							});
 						}}
@@ -102,7 +122,9 @@ function NavAreas() {
 				</div>
 
 				<CollapsibleContent>
-					<SidebarGroupContent />
+					<SidebarGroupContent>
+						<SidebarSpaceList />
+					</SidebarGroupContent>
 				</CollapsibleContent>
 			</Collapsible>
 		</SidebarGroup>

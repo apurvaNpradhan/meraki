@@ -49,6 +49,8 @@ export const spaceRouter = {
 		.input(
 			InsertSpace.omit({
 				organizationId: true,
+				slug: true,
+				position: true,
 				createdBy: true,
 			}),
 		)
@@ -106,6 +108,8 @@ export const spaceRouter = {
 					flow: z.enum(["starter", "project_management", "custom"]).optional(),
 				}).omit({
 					organizationId: true,
+					position: true,
+					slug: true,
 					createdBy: true,
 				}),
 				customStatusInput: z.array(InsertStatusGroupWithStatuses).optional(),
@@ -232,7 +236,7 @@ export const spaceRouter = {
 					organizationId,
 				});
 				if (!existingSpace) throw errors.NOT_FOUND;
-				await spaceRepo.softDeleteSpace({
+				return await spaceRepo.softDeleteSpace({
 					id: existingSpace.id,
 					organizationId,
 				});

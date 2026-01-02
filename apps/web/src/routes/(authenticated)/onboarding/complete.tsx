@@ -1,17 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
-import { FieldError } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
 import { useOnboardingStore } from "@/features/store";
 import { authClient } from "@/lib/auth-client";
 
@@ -55,7 +47,7 @@ function RouteComponent() {
 		if (!orgName || !orgSlug) {
 			navigate({ to: "/onboarding/workspace" });
 		}
-	}, [useOnboardingStore.persist.hasHydrated(), orgName, orgSlug]);
+	}, [orgName, orgSlug, navigate]);
 	return (
 		<div className="flex h-svh w-full items-center justify-center">
 			<Card className="w-full max-w-md">

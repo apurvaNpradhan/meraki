@@ -7,7 +7,6 @@ import {
 	createRootRouteWithContext,
 	HeadContent,
 	Outlet,
-	redirect,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { useState } from "react";

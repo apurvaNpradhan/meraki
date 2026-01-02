@@ -1,15 +1,11 @@
 import { and, asc, desc, eq, isNull } from "drizzle-orm";
 import { db } from "..";
 import { type InsertSpace, spaces, type UpdateSpace } from "../schema/space";
-import { type InsertStatusGroupWithStatuses, statuses } from "../schema/status";
+import type { InsertStatusGroupWithStatuses } from "../schema/status";
 import { initializeStatuses } from "./status";
 
 export const createSpace = async (data: InsertSpace) => {
-	const [space] = await db.insert(spaces).values(data).returning({
-		publicId: spaces.publicId,
-		name: spaces.name,
-		slug: spaces.slug,
-	});
+	const [space] = await db.insert(spaces).values(data).returning();
 	return space;
 };
 
@@ -19,18 +15,12 @@ export const createSpaceWithStatuses = async (args: {
 	customData?: InsertStatusGroupWithStatuses[];
 }) => {
 	const space = await db.transaction(async (tx) => {
-		const [space] = await tx.insert(spaces).values(args.data).returning({
-			publicId: spaces.publicId,
-			name: spaces.name,
-			slug: spaces.slug,
-			id: spaces.id,
-		});
+		const [space] = await tx.insert(spaces).values(args.data).returning();
 		if (space) {
 			await initializeStatuses(tx, space.id, {
 				flow: args.flow,
 				customData: args.customData,
 			});
-			delete space.id;
 			return space;
 		}
 	});

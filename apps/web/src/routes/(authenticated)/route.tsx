@@ -1,10 +1,4 @@
-import {
-	createFileRoute,
-	Outlet,
-	redirect,
-	useLocation,
-} from "@tanstack/react-router";
-import { useEffect } from "react";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { NotFound } from "@/components/not-found";
 import { ModalProvider } from "@/components/providers/modal-provider";
 import { authClient } from "@/lib/auth-client";

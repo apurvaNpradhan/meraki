@@ -24,6 +24,7 @@ import { Route as publicSignResetPasswordRouteImport } from './routes/(public)/s
 import { Route as authenticatedWorkspaceNewRouteImport } from './routes/(authenticated)/workspace/new'
 import { Route as authenticatedOnboardingWorkspaceRouteImport } from './routes/(authenticated)/onboarding/workspace'
 import { Route as authenticatedOnboardingCompleteRouteImport } from './routes/(authenticated)/onboarding/complete'
+import { Route as authenticatedSpacesSlugIndexRouteImport } from './routes/(authenticated)/spaces/$slug/index'
 import { Route as authenticatedSettingsPreferencesIndexRouteImport } from './routes/(authenticated)/settings/preferences/index'
 
 const publicRouteRoute = publicRouteRouteImport.update({
@@ -105,6 +106,12 @@ const authenticatedOnboardingCompleteRoute =
     path: '/complete',
     getParentRoute: () => authenticatedOnboardingRouteRoute,
   } as any)
+const authenticatedSpacesSlugIndexRoute =
+  authenticatedSpacesSlugIndexRouteImport.update({
+    id: '/spaces/$slug/',
+    path: '/spaces/$slug/',
+    getParentRoute: () => authenticatedRouteRoute,
+  } as any)
 const authenticatedSettingsPreferencesIndexRoute =
   authenticatedSettingsPreferencesIndexRouteImport.update({
     id: '/preferences/',
@@ -127,6 +134,7 @@ export interface FileRoutesByFullPath {
   '/sign/reset-password': typeof publicSignResetPasswordRoute
   '/settings/': typeof authenticatedSettingsIndexRoute
   '/settings/preferences': typeof authenticatedSettingsPreferencesIndexRoute
+  '/spaces/$slug': typeof authenticatedSpacesSlugIndexRoute
 }
 export interface FileRoutesByTo {
   '/onboarding': typeof authenticatedOnboardingRouteRouteWithChildren
@@ -142,6 +150,7 @@ export interface FileRoutesByTo {
   '/sign/reset-password': typeof publicSignResetPasswordRoute
   '/settings': typeof authenticatedSettingsIndexRoute
   '/settings/preferences': typeof authenticatedSettingsPreferencesIndexRoute
+  '/spaces/$slug': typeof authenticatedSpacesSlugIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -161,6 +170,7 @@ export interface FileRoutesById {
   '/(public)/sign/reset-password': typeof publicSignResetPasswordRoute
   '/(authenticated)/settings/': typeof authenticatedSettingsIndexRoute
   '/(authenticated)/settings/preferences/': typeof authenticatedSettingsPreferencesIndexRoute
+  '/(authenticated)/spaces/$slug/': typeof authenticatedSpacesSlugIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -179,6 +189,7 @@ export interface FileRouteTypes {
     | '/sign/reset-password'
     | '/settings/'
     | '/settings/preferences'
+    | '/spaces/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/onboarding'
@@ -194,6 +205,7 @@ export interface FileRouteTypes {
     | '/sign/reset-password'
     | '/settings'
     | '/settings/preferences'
+    | '/spaces/$slug'
   id:
     | '__root__'
     | '/(authenticated)'
@@ -212,6 +224,7 @@ export interface FileRouteTypes {
     | '/(public)/sign/reset-password'
     | '/(authenticated)/settings/'
     | '/(authenticated)/settings/preferences/'
+    | '/(authenticated)/spaces/$slug/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -326,6 +339,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authenticatedOnboardingCompleteRouteImport
       parentRoute: typeof authenticatedOnboardingRouteRoute
     }
+    '/(authenticated)/spaces/$slug/': {
+      id: '/(authenticated)/spaces/$slug/'
+      path: '/spaces/$slug'
+      fullPath: '/spaces/$slug'
+      preLoaderRoute: typeof authenticatedSpacesSlugIndexRouteImport
+      parentRoute: typeof authenticatedRouteRoute
+    }
     '/(authenticated)/settings/preferences/': {
       id: '/(authenticated)/settings/preferences/'
       path: '/preferences'
@@ -375,6 +395,7 @@ interface authenticatedRouteRouteChildren {
   authenticatedSettingsRouteRoute: typeof authenticatedSettingsRouteRouteWithChildren
   authenticatedHomeRoute: typeof authenticatedHomeRoute
   authenticatedWorkspaceNewRoute: typeof authenticatedWorkspaceNewRoute
+  authenticatedSpacesSlugIndexRoute: typeof authenticatedSpacesSlugIndexRoute
 }
 
 const authenticatedRouteRouteChildren: authenticatedRouteRouteChildren = {
@@ -383,6 +404,7 @@ const authenticatedRouteRouteChildren: authenticatedRouteRouteChildren = {
   authenticatedSettingsRouteRoute: authenticatedSettingsRouteRouteWithChildren,
   authenticatedHomeRoute: authenticatedHomeRoute,
   authenticatedWorkspaceNewRoute: authenticatedWorkspaceNewRoute,
+  authenticatedSpacesSlugIndexRoute: authenticatedSpacesSlugIndexRoute,
 }
 
 const authenticatedRouteRouteWithChildren =

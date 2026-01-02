@@ -1,7 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
 	bigint,
-	bigserial,
 	boolean,
 	index,
 	pgEnum,
@@ -110,6 +109,8 @@ export const UpdateStatus = createUpdateSchema(statuses).omit({
 	deletedAt: true,
 });
 
+export const StatusTypes = createSelectSchema(statusTypeEnum);
+export type StatusType = z.infer<typeof StatusTypes>;
 export type SelectStatusGroup = z.infer<typeof SelectStatusGroup>;
 export type InsertStatusGroup = z.infer<typeof InsertStatusGroup>;
 export type UpdateStatusGroup = z.infer<typeof UpdateStatusGroup>;
