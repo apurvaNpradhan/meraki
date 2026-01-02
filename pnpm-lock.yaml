@@ -10,8 +10,8 @@ catalogs:
       specifier: ^1.4.9
       version: 1.4.9
     '@cloudflare/workers-types':
-      specifier: ^4.20251213.0
-      version: 4.20251231.0
+      specifier: ^4.20260101.0
+      version: 4.20260101.0
     '@orpc/client':
       specifier: ^1.12.2
       version: 1.13.2
@@ -31,7 +31,7 @@ catalogs:
       specifier: ^5.90.12
       version: 5.90.16
     '@types/node':
-      specifier: ^22.13.14
+      specifier: ^22.19.3
       version: 22.19.3
     alchemy:
       specifier: ^0.82.1
@@ -40,17 +40,17 @@ catalogs:
       specifier: ^1.4.9
       version: 1.4.9
     dotenv:
-      specifier: ^17.2.2
+      specifier: ^17.2.3
       version: 17.2.3
     hono:
       specifier: ^4.8.2
       version: 4.11.3
     typescript:
-      specifier: ^5
+      specifier: ^5.9.3
       version: 5.9.3
     zod:
-      specifier: ^4.1.13
-      version: 4.3.2
+      specifier: ^4.3.3
+      version: 4.3.4
 
 importers:
 
@@ -64,14 +64,14 @@ importers:
         version: 17.2.3
       zod:
         specifier: 'catalog:'
-        version: 4.3.2
+        version: 4.3.4
     devDependencies:
       '@biomejs/biome':
-        specifier: ^2.2.0
+        specifier: ^2.3.10
         version: 2.3.10
       '@cloudflare/workers-types':
         specifier: 'catalog:'
-        version: 4.20251231.0
+        version: 4.20260101.0
       '@meraki/config':
         specifier: workspace:*
         version: link:packages/config
@@ -82,10 +82,10 @@ importers:
         specifier: ^9.1.7
         version: 9.1.7
       lint-staged:
-        specifier: ^16.1.2
+        specifier: ^16.2.7
         version: 16.2.7
       turbo:
-        specifier: ^2.6.3
+        specifier: ^2.7.2
         version: 2.7.2
       typescript:
         specifier: 'catalog:'
@@ -95,7 +95,7 @@ importers:
     dependencies:
       '@better-auth/expo':
         specifier: 'catalog:'
-        version: 1.4.9(@better-auth/core@1.4.9(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.2))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0))(better-auth@1.4.9(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20251231.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(solid-js@1.9.10))(expo-constants@18.0.12)(expo-linking@8.0.11)(expo-network@8.0.8(expo@54.0.30)(react@19.1.0))(expo-web-browser@15.0.10(expo@54.0.30)(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0)))
+        version: 1.4.9(@better-auth/core@1.4.9(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.4))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0))(better-auth@1.4.9(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20260101.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(solid-js@1.9.10))(expo-constants@18.0.12)(expo-linking@8.0.11)(expo-network@8.0.8(expo@54.0.30)(react@19.1.0))(expo-web-browser@15.0.10(expo@54.0.30)(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0)))
       '@expo/vector-icons':
         specifier: ^15.0.2
         version: 15.0.3(expo-font@14.0.10(expo@54.0.30)(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
@@ -128,7 +128,7 @@ importers:
         version: 5.90.16(react@19.1.0)
       better-auth:
         specifier: 'catalog:'
-        version: 1.4.9(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20251231.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(solid-js@1.9.10)
+        version: 1.4.9(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20260101.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(solid-js@1.9.10)
       dotenv:
         specifier: 'catalog:'
         version: 17.2.3
@@ -197,7 +197,7 @@ importers:
         version: 0.5.2(@babel/core@7.28.5)(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
       zod:
         specifier: 'catalog:'
-        version: 4.3.2
+        version: 4.3.4
     devDependencies:
       '@babel/core':
         specifier: ^7.26.10
@@ -234,10 +234,10 @@ importers:
         version: 1.13.2(ws@8.18.3)
       '@orpc/zod':
         specifier: 'catalog:'
-        version: 1.13.2(@orpc/contract@1.13.2)(@orpc/server@1.13.2(ws@8.18.3))(ws@8.18.3)(zod@4.3.2)
+        version: 1.13.2(@orpc/contract@1.13.2)(@orpc/server@1.13.2(ws@8.18.3))(ws@8.18.3)(zod@4.3.4)
       better-auth:
         specifier: 'catalog:'
-        version: 1.4.9(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20251231.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.10)
+        version: 1.4.9(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20260101.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.10)
       dotenv:
         specifier: 'catalog:'
         version: 17.2.3
@@ -246,11 +246,11 @@ importers:
         version: 4.11.3
       zod:
         specifier: 'catalog:'
-        version: 4.3.2
+        version: 4.3.4
     devDependencies:
       '@cloudflare/workers-types':
         specifier: 'catalog:'
-        version: 4.20251231.0
+        version: 4.20260101.0
       '@meraki/config':
         specifier: workspace:*
         version: link:../../packages/config
@@ -259,7 +259,7 @@ importers:
         version: 22.19.3
       alchemy:
         specifier: 'catalog:'
-        version: 0.82.2(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9)(vite@6.4.1(@types/node@22.19.3)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(workerd@1.20251210.0)(wrangler@4.54.0(@cloudflare/workers-types@4.20251231.0))
+        version: 0.82.2(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9)(vite@6.4.1(@types/node@22.19.3)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(workerd@1.20251210.0)(wrangler@4.54.0(@cloudflare/workers-types@4.20260101.0))
       tsdown:
         specifier: ^0.16.5
         version: 0.16.8(typescript@5.9.3)
@@ -268,7 +268,7 @@ importers:
         version: 5.9.3
       wrangler:
         specifier: ^4.54.0
-        version: 4.54.0(@cloudflare/workers-types@4.20251231.0)
+        version: 4.54.0(@cloudflare/workers-types@4.20260101.0)
 
   apps/web:
     dependencies:
@@ -316,7 +316,7 @@ importers:
         version: 1.144.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       better-auth:
         specifier: 'catalog:'
-        version: 1.4.9(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20251231.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.10)
+        version: 1.4.9(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20260101.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.10)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -352,7 +352,7 @@ importers:
         version: 1.4.0
       zod:
         specifier: 'catalog:'
-        version: 4.3.2
+        version: 4.3.4
       zustand:
         specifier: ^5.0.9
         version: 5.0.9(@types/react@19.2.7)(react@19.2.3)(use-sync-external-store@1.6.0(react@19.2.3))
@@ -386,7 +386,7 @@ importers:
         version: 4.7.0(vite@6.4.1(@types/node@22.19.3)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))
       alchemy:
         specifier: 'catalog:'
-        version: 0.82.2(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9)(vite@6.4.1(@types/node@22.19.3)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(workerd@1.20251217.0)(wrangler@4.54.0(@cloudflare/workers-types@4.20251231.0))
+        version: 0.82.2(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9)(vite@6.4.1(@types/node@22.19.3)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(workerd@1.20251217.0)(wrangler@4.54.0(@cloudflare/workers-types@4.20260101.0))
       postcss:
         specifier: ^8.5.3
         version: 8.5.6
@@ -422,7 +422,7 @@ importers:
         version: 1.13.2(ws@8.18.3)
       '@orpc/zod':
         specifier: 'catalog:'
-        version: 1.13.2(@orpc/contract@1.13.2)(@orpc/server@1.13.2(ws@8.18.3))(ws@8.18.3)(zod@4.3.2)
+        version: 1.13.2(@orpc/contract@1.13.2)(@orpc/server@1.13.2(ws@8.18.3))(ws@8.18.3)(zod@4.3.4)
       dotenv:
         specifier: 'catalog:'
         version: 17.2.3
@@ -431,7 +431,7 @@ importers:
         version: 4.11.3
       zod:
         specifier: 'catalog:'
-        version: 4.3.2
+        version: 4.3.4
     devDependencies:
       '@meraki/config':
         specifier: workspace:*
@@ -444,7 +444,7 @@ importers:
     dependencies:
       '@better-auth/expo':
         specifier: 'catalog:'
-        version: 1.4.9(@better-auth/core@1.4.9(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.2))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0))(better-auth@1.4.9(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20251231.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.10))(expo-constants@18.0.12)(expo-linking@8.0.11)(expo-network@8.0.8(expo@54.0.30)(react@19.2.3))(expo-web-browser@15.0.10(expo@54.0.30)(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.2.7)(react@19.2.3)))
+        version: 1.4.9(@better-auth/core@1.4.9(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.4))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0))(better-auth@1.4.9(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20260101.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.10))(expo-constants@18.0.12)(expo-linking@8.0.11)(expo-network@8.0.8(expo@54.0.30)(react@19.2.3))(expo-web-browser@15.0.10(expo@54.0.30)(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.2.7)(react@19.2.3)))
       '@meraki/db':
         specifier: workspace:*
         version: link:../db
@@ -453,13 +453,13 @@ importers:
         version: link:../env
       better-auth:
         specifier: 'catalog:'
-        version: 1.4.9(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20251231.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.10)
+        version: 1.4.9(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20260101.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.10)
       dotenv:
         specifier: 'catalog:'
         version: 17.2.3
       zod:
         specifier: 'catalog:'
-        version: 4.3.2
+        version: 4.3.4
     devDependencies:
       '@meraki/config':
         specifier: workspace:*
@@ -483,13 +483,16 @@ importers:
         version: 17.2.3
       drizzle-orm:
         specifier: ^0.45.1
-        version: 0.45.1(@cloudflare/workers-types@4.20251231.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9)
+        version: 0.45.1(@cloudflare/workers-types@4.20260101.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9)
+      drizzle-zod:
+        specifier: 0.8.3
+        version: 0.8.3(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20260101.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9))(zod@4.3.4)
       ws:
         specifier: ^8.18.3
         version: 8.18.3
       zod:
         specifier: 'catalog:'
-        version: 4.3.2
+        version: 4.3.4
     devDependencies:
       '@meraki/config':
         specifier: workspace:*
@@ -508,13 +511,13 @@ importers:
     dependencies:
       '@t3-oss/env-core':
         specifier: ^0.13.1
-        version: 0.13.10(typescript@5.9.3)(zod@4.3.2)
+        version: 0.13.10(typescript@5.9.3)(zod@4.3.4)
       dotenv:
         specifier: 'catalog:'
         version: 17.2.3
       zod:
         specifier: 'catalog:'
-        version: 4.3.2
+        version: 4.3.4
     devDependencies:
       '@meraki/config':
         specifier: workspace:*
@@ -536,14 +539,14 @@ importers:
         version: 17.2.3
       zod:
         specifier: 'catalog:'
-        version: 4.3.2
+        version: 4.3.4
     devDependencies:
       '@meraki/config':
         specifier: workspace:*
         version: link:../config
       alchemy:
         specifier: 'catalog:'
-        version: 0.82.2(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9)(vite@6.4.1(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(workerd@1.20251217.0)(wrangler@4.54.0(@cloudflare/workers-types@4.20251231.0))
+        version: 0.82.2(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9)(vite@6.4.1(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(workerd@1.20251217.0)(wrangler@4.54.0(@cloudflare/workers-types@4.20260101.0))
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1395,8 +1398,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@cloudflare/workers-types@4.20251231.0':
-    resolution: {integrity: sha512-XOP7h2y9Nu3ECuZM9S7w3g4GSliTgj6SEEkYj6G6d3TEQtOiV/cHXuI/fKiLj8Z9+qJK/RLLcKkX14NxajrXCw==}
+  '@cloudflare/workers-types@4.20260101.0':
+    resolution: {integrity: sha512-C28o4U1T4dPe8avLv1xMQ4MtSE6G4skbVA3VfVZIrpTqklvO+homKB1uFEtNbuZlaKg+Znv8sjmGQUInTH17gA==}
 
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -4612,6 +4615,12 @@ packages:
       sqlite3:
         optional: true
 
+  drizzle-zod@0.8.3:
+    resolution: {integrity: sha512-66yVOuvGhKJnTdiqj1/Xaaz9/qzOdRJADpDa68enqS6g3t0kpNkwNYjUuaeXgZfO/UWuIM9HIhSlJ6C5ZraMww==}
+    peerDependencies:
+      drizzle-orm: '>=0.36.0'
+      zod: ^3.25.0 || ^4.0.0
+
   dts-resolver@2.1.3:
     resolution: {integrity: sha512-bihc7jPC90VrosXNzK0LTE2cuLP6jr0Ro8jk+kMugHReJVLIpHz/xadeq3MhuwyO4TD4OA3L1Q8pBBFRc08Tsw==}
     engines: {node: '>=20.19.0'}
@@ -7505,8 +7514,8 @@ packages:
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
-  zod@4.3.2:
-    resolution: {integrity: sha512-b8L8yn4rIVfiXyHAmnr52/ZEpDumlT0bmxiq3Ws1ybrinhflGpt12Hvv54kYnEsGPRs6o/Ka3/ppA2OWY21IVg==}
+  zod@4.3.4:
+    resolution: {integrity: sha512-Zw/uYiiyF6pUT1qmKbZziChgNPRu+ZRneAsMUDU6IwmXdWt5JwcUfy2bvLOCUtz5UniaN/Zx5aFttZYbYc7O/A==}
 
   zustand@5.0.9:
     resolution: {integrity: sha512-ALBtUj0AfjJt3uNRQoL1tL2tMvj6Gp/6e39dnfT6uzpelGru8v1tPOGBzayOWbPJvujM8JojDk3E1LxeFisBNg==}
@@ -8576,46 +8585,46 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.2.7
 
-  '@better-auth/core@1.4.9(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.2))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0)':
+  '@better-auth/core@1.4.9(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.4))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0)':
     dependencies:
       '@better-auth/utils': 0.3.0
       '@better-fetch/fetch': 1.1.21
       '@standard-schema/spec': 1.1.0
-      better-call: 1.1.7(zod@4.3.2)
+      better-call: 1.1.7(zod@4.3.4)
       jose: 6.1.3
       kysely: 0.28.9
       nanostores: 1.1.0
-      zod: 4.3.2
+      zod: 4.3.4
 
-  '@better-auth/expo@1.4.9(@better-auth/core@1.4.9(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.2))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0))(better-auth@1.4.9(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20251231.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(solid-js@1.9.10))(expo-constants@18.0.12)(expo-linking@8.0.11)(expo-network@8.0.8(expo@54.0.30)(react@19.1.0))(expo-web-browser@15.0.10(expo@54.0.30)(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0)))':
+  '@better-auth/expo@1.4.9(@better-auth/core@1.4.9(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.4))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0))(better-auth@1.4.9(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20260101.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(solid-js@1.9.10))(expo-constants@18.0.12)(expo-linking@8.0.11)(expo-network@8.0.8(expo@54.0.30)(react@19.1.0))(expo-web-browser@15.0.10(expo@54.0.30)(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0)))':
     dependencies:
-      '@better-auth/core': 1.4.9(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.2))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0)
+      '@better-auth/core': 1.4.9(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.4))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0)
       '@better-fetch/fetch': 1.1.21
-      better-auth: 1.4.9(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20251231.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(solid-js@1.9.10)
-      better-call: 1.1.7(zod@4.3.2)
-      zod: 4.3.2
+      better-auth: 1.4.9(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20260101.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(solid-js@1.9.10)
+      better-call: 1.1.7(zod@4.3.4)
+      zod: 4.3.4
     optionalDependencies:
       expo-constants: 18.0.12(expo@54.0.30)(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))
       expo-linking: 8.0.11(expo@54.0.30)(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
       expo-network: 8.0.8(expo@54.0.30)(react@19.1.0)
       expo-web-browser: 15.0.10(expo@54.0.30)(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))
 
-  '@better-auth/expo@1.4.9(@better-auth/core@1.4.9(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.2))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0))(better-auth@1.4.9(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20251231.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.10))(expo-constants@18.0.12)(expo-linking@8.0.11)(expo-network@8.0.8(expo@54.0.30)(react@19.2.3))(expo-web-browser@15.0.10(expo@54.0.30)(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.2.7)(react@19.2.3)))':
+  '@better-auth/expo@1.4.9(@better-auth/core@1.4.9(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.4))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0))(better-auth@1.4.9(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20260101.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.10))(expo-constants@18.0.12)(expo-linking@8.0.11)(expo-network@8.0.8(expo@54.0.30)(react@19.2.3))(expo-web-browser@15.0.10(expo@54.0.30)(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.2.7)(react@19.2.3)))':
     dependencies:
-      '@better-auth/core': 1.4.9(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.2))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0)
+      '@better-auth/core': 1.4.9(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.4))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0)
       '@better-fetch/fetch': 1.1.21
-      better-auth: 1.4.9(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20251231.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.10)
-      better-call: 1.1.7(zod@4.3.2)
-      zod: 4.3.2
+      better-auth: 1.4.9(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20260101.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.10)
+      better-call: 1.1.7(zod@4.3.4)
+      zod: 4.3.4
     optionalDependencies:
       expo-constants: 18.0.12(expo@54.0.30)(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.2.7)(react@19.2.3))
       expo-linking: 8.0.11(expo@54.0.30)(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.2.7)(react@19.2.3))(react@19.2.3)
       expo-network: 8.0.8(expo@54.0.30)(react@19.2.3)
       expo-web-browser: 15.0.10(expo@54.0.30)(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.2.7)(react@19.2.3))
 
-  '@better-auth/telemetry@1.4.9(@better-auth/core@1.4.9(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.2))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0))':
+  '@better-auth/telemetry@1.4.9(@better-auth/core@1.4.9(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.4))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0))':
     dependencies:
-      '@better-auth/core': 1.4.9(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.2))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0)
+      '@better-auth/core': 1.4.9(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.4))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0)
       '@better-auth/utils': 0.3.0
       '@better-fetch/fetch': 1.1.21
 
@@ -8710,7 +8719,7 @@ snapshots:
   '@cloudflare/workerd-windows-64@1.20251217.0':
     optional: true
 
-  '@cloudflare/workers-types@4.20251231.0': {}
+  '@cloudflare/workers-types@4.20260101.0': {}
 
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
@@ -9993,7 +10002,7 @@ snapshots:
     transitivePeerDependencies:
       - '@opentelemetry/api'
 
-  '@orpc/zod@1.13.2(@orpc/contract@1.13.2)(@orpc/server@1.13.2(ws@8.18.3))(ws@8.18.3)(zod@4.3.2)':
+  '@orpc/zod@1.13.2(@orpc/contract@1.13.2)(@orpc/server@1.13.2(ws@8.18.3))(ws@8.18.3)(zod@4.3.4)':
     dependencies:
       '@orpc/contract': 1.13.2
       '@orpc/json-schema': 1.13.2(ws@8.18.3)
@@ -10002,7 +10011,7 @@ snapshots:
       '@orpc/shared': 1.13.2
       escape-string-regexp: 5.0.0
       wildcard-match: 5.1.4
-      zod: 4.3.2
+      zod: 4.3.4
     transitivePeerDependencies:
       - '@opentelemetry/api'
       - crossws
@@ -11228,10 +11237,10 @@ snapshots:
 
   '@standard-schema/utils@0.3.0': {}
 
-  '@t3-oss/env-core@0.13.10(typescript@5.9.3)(zod@4.3.2)':
+  '@t3-oss/env-core@0.13.10(typescript@5.9.3)(zod@4.3.4)':
     optionalDependencies:
       typescript: 5.9.3
-      zod: 4.3.2
+      zod: 4.3.4
 
   '@tabler/icons-react@3.36.0(react@19.2.3)':
     dependencies:
@@ -11526,7 +11535,7 @@ snapshots:
 
   '@types/pg@8.16.0':
     dependencies:
-      '@types/node': 22.19.3
+      '@types/node': 25.0.3
       pg-protocol: 1.10.3
       pg-types: 2.2.0
 
@@ -11622,17 +11631,17 @@ snapshots:
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
 
-  alchemy@0.82.2(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9)(vite@6.4.1(@types/node@22.19.3)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(workerd@1.20251210.0)(wrangler@4.54.0(@cloudflare/workers-types@4.20251231.0)):
+  alchemy@0.82.2(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9)(vite@6.4.1(@types/node@22.19.3)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(workerd@1.20251210.0)(wrangler@4.54.0(@cloudflare/workers-types@4.20260101.0)):
     dependencies:
       '@aws-sdk/credential-providers': 3.958.0
       '@cloudflare/unenv-preset': 2.7.7(unenv@2.0.0-rc.21)(workerd@1.20251210.0)
-      '@cloudflare/workers-types': 4.20251231.0
+      '@cloudflare/workers-types': 4.20260101.0
       '@iarna/toml': 2.2.5
       '@octokit/rest': 21.1.1
       '@smithy/node-config-provider': 4.3.7
       '@smithy/types': 4.11.0
       aws4fetch: 1.0.20
-      drizzle-orm: 0.45.1(@cloudflare/workers-types@4.20251231.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9)
+      drizzle-orm: 0.45.1(@cloudflare/workers-types@4.20260101.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9)
       env-paths: 3.0.0
       esbuild: 0.25.12
       execa: 9.6.1
@@ -11651,7 +11660,7 @@ snapshots:
       proper-lockfile: 4.1.2
       signal-exit: 4.1.0
       unenv: 2.0.0-rc.21
-      wrangler: 4.54.0(@cloudflare/workers-types@4.20251231.0)
+      wrangler: 4.54.0(@cloudflare/workers-types@4.20260101.0)
       ws: 8.18.3
       yaml: 2.8.2
     optionalDependencies:
@@ -11689,17 +11698,17 @@ snapshots:
       - utf-8-validate
       - workerd
 
-  alchemy@0.82.2(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9)(vite@6.4.1(@types/node@22.19.3)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(workerd@1.20251217.0)(wrangler@4.54.0(@cloudflare/workers-types@4.20251231.0)):
+  alchemy@0.82.2(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9)(vite@6.4.1(@types/node@22.19.3)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(workerd@1.20251217.0)(wrangler@4.54.0(@cloudflare/workers-types@4.20260101.0)):
     dependencies:
       '@aws-sdk/credential-providers': 3.958.0
       '@cloudflare/unenv-preset': 2.7.7(unenv@2.0.0-rc.21)(workerd@1.20251217.0)
-      '@cloudflare/workers-types': 4.20251231.0
+      '@cloudflare/workers-types': 4.20260101.0
       '@iarna/toml': 2.2.5
       '@octokit/rest': 21.1.1
       '@smithy/node-config-provider': 4.3.7
       '@smithy/types': 4.11.0
       aws4fetch: 1.0.20
-      drizzle-orm: 0.45.1(@cloudflare/workers-types@4.20251231.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9)
+      drizzle-orm: 0.45.1(@cloudflare/workers-types@4.20260101.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9)
       env-paths: 3.0.0
       esbuild: 0.25.12
       execa: 9.6.1
@@ -11718,7 +11727,7 @@ snapshots:
       proper-lockfile: 4.1.2
       signal-exit: 4.1.0
       unenv: 2.0.0-rc.21
-      wrangler: 4.54.0(@cloudflare/workers-types@4.20251231.0)
+      wrangler: 4.54.0(@cloudflare/workers-types@4.20260101.0)
       ws: 8.18.3
       yaml: 2.8.2
     optionalDependencies:
@@ -11756,17 +11765,17 @@ snapshots:
       - utf-8-validate
       - workerd
 
-  alchemy@0.82.2(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9)(vite@6.4.1(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(workerd@1.20251217.0)(wrangler@4.54.0(@cloudflare/workers-types@4.20251231.0)):
+  alchemy@0.82.2(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9)(vite@6.4.1(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(workerd@1.20251217.0)(wrangler@4.54.0(@cloudflare/workers-types@4.20260101.0)):
     dependencies:
       '@aws-sdk/credential-providers': 3.958.0
       '@cloudflare/unenv-preset': 2.7.7(unenv@2.0.0-rc.21)(workerd@1.20251217.0)
-      '@cloudflare/workers-types': 4.20251231.0
+      '@cloudflare/workers-types': 4.20260101.0
       '@iarna/toml': 2.2.5
       '@octokit/rest': 21.1.1
       '@smithy/node-config-provider': 4.3.7
       '@smithy/types': 4.11.0
       aws4fetch: 1.0.20
-      drizzle-orm: 0.45.1(@cloudflare/workers-types@4.20251231.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9)
+      drizzle-orm: 0.45.1(@cloudflare/workers-types@4.20260101.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9)
       env-paths: 3.0.0
       esbuild: 0.25.12
       execa: 9.6.1
@@ -11785,7 +11794,7 @@ snapshots:
       proper-lockfile: 4.1.2
       signal-exit: 4.1.0
       unenv: 2.0.0-rc.21
-      wrangler: 4.54.0(@cloudflare/workers-types@4.20251231.0)
+      wrangler: 4.54.0(@cloudflare/workers-types@4.20260101.0)
       ws: 8.18.3
       yaml: 2.8.2
     optionalDependencies:
@@ -12031,56 +12040,56 @@ snapshots:
 
   before-after-hook@3.0.2: {}
 
-  better-auth@1.4.9(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20251231.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(solid-js@1.9.10):
+  better-auth@1.4.9(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20260101.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(solid-js@1.9.10):
     dependencies:
-      '@better-auth/core': 1.4.9(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.2))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0)
-      '@better-auth/telemetry': 1.4.9(@better-auth/core@1.4.9(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.2))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0))
+      '@better-auth/core': 1.4.9(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.4))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0)
+      '@better-auth/telemetry': 1.4.9(@better-auth/core@1.4.9(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.4))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0))
       '@better-auth/utils': 0.3.0
       '@better-fetch/fetch': 1.1.21
       '@noble/ciphers': 2.1.1
       '@noble/hashes': 2.0.1
-      better-call: 1.1.7(zod@4.3.2)
+      better-call: 1.1.7(zod@4.3.4)
       defu: 6.1.4
       jose: 6.1.3
       kysely: 0.28.9
       nanostores: 1.1.0
-      zod: 4.3.2
+      zod: 4.3.4
     optionalDependencies:
       drizzle-kit: 0.31.8
-      drizzle-orm: 0.45.1(@cloudflare/workers-types@4.20251231.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9)
+      drizzle-orm: 0.45.1(@cloudflare/workers-types@4.20260101.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9)
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
       solid-js: 1.9.10
 
-  better-auth@1.4.9(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20251231.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.10):
+  better-auth@1.4.9(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20260101.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.10):
     dependencies:
-      '@better-auth/core': 1.4.9(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.2))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0)
-      '@better-auth/telemetry': 1.4.9(@better-auth/core@1.4.9(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.2))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0))
+      '@better-auth/core': 1.4.9(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.4))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0)
+      '@better-auth/telemetry': 1.4.9(@better-auth/core@1.4.9(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.4))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0))
       '@better-auth/utils': 0.3.0
       '@better-fetch/fetch': 1.1.21
       '@noble/ciphers': 2.1.1
       '@noble/hashes': 2.0.1
-      better-call: 1.1.7(zod@4.3.2)
+      better-call: 1.1.7(zod@4.3.4)
       defu: 6.1.4
       jose: 6.1.3
       kysely: 0.28.9
       nanostores: 1.1.0
-      zod: 4.3.2
+      zod: 4.3.4
     optionalDependencies:
       drizzle-kit: 0.31.8
-      drizzle-orm: 0.45.1(@cloudflare/workers-types@4.20251231.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9)
+      drizzle-orm: 0.45.1(@cloudflare/workers-types@4.20260101.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9)
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
       solid-js: 1.9.10
 
-  better-call@1.1.7(zod@4.3.2):
+  better-call@1.1.7(zod@4.3.4):
     dependencies:
       '@better-auth/utils': 0.3.0
       '@better-fetch/fetch': 1.1.21
       rou3: 0.7.12
       set-cookie-parser: 2.7.2
     optionalDependencies:
-      zod: 4.3.2
+      zod: 4.3.4
 
   better-opn@3.0.2:
     dependencies:
@@ -12455,12 +12464,17 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.45.1(@cloudflare/workers-types@4.20251231.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9):
+  drizzle-orm@0.45.1(@cloudflare/workers-types@4.20260101.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9):
     optionalDependencies:
-      '@cloudflare/workers-types': 4.20251231.0
+      '@cloudflare/workers-types': 4.20260101.0
       '@neondatabase/serverless': 1.0.2
       '@types/pg': 8.16.0
       kysely: 0.28.9
+
+  drizzle-zod@0.8.3(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20260101.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9))(zod@4.3.4):
+    dependencies:
+      drizzle-orm: 0.45.1(@cloudflare/workers-types@4.20260101.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(kysely@0.28.9)
+      zod: 4.3.4
 
   dts-resolver@2.1.3: {}
 
@@ -15813,7 +15827,7 @@ snapshots:
       '@cloudflare/workerd-linux-arm64': 1.20251217.0
       '@cloudflare/workerd-windows-64': 1.20251217.0
 
-  wrangler@4.54.0(@cloudflare/workers-types@4.20251231.0):
+  wrangler@4.54.0(@cloudflare/workers-types@4.20260101.0):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.4.1
       '@cloudflare/unenv-preset': 2.7.13(unenv@2.0.0-rc.24)(workerd@1.20251210.0)
@@ -15824,7 +15838,7 @@ snapshots:
       unenv: 2.0.0-rc.24
       workerd: 1.20251210.0
     optionalDependencies:
-      '@cloudflare/workers-types': 4.20251231.0
+      '@cloudflare/workers-types': 4.20260101.0
       fsevents: 2.3.3
     transitivePeerDependencies:
       - bufferutil
@@ -15943,7 +15957,7 @@ snapshots:
 
   zod@3.25.76: {}
 
-  zod@4.3.2: {}
+  zod@4.3.4: {}
 
   zustand@5.0.9(@types/react@19.2.7)(react@19.2.3)(use-sync-external-store@1.6.0(react@19.2.3)):
     optionalDependencies:

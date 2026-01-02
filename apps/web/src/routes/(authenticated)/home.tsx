@@ -26,7 +26,6 @@ function Header() {
 				<SidebarTrigger />
 				<span className="font-semibold text-sm">Home</span>
 			</div>
-			<ModeToggle />
 		</div>
 	);
 }

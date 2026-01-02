@@ -100,18 +100,21 @@ export function NavWorkspace() {
 				</DropdownMenuItem>
 				<DropdownMenuSeparator />
 				<DropdownMenuGroup>
-					<DropdownMenuLabel className="text-muted-foreground text-xs">
+					{/* 	<DropdownMenuLabel className="text-muted-foreground text-xs">
 						Workspace
-					</DropdownMenuLabel>
+					</DropdownMenuLabel> */}
 
-					<DropdownMenuItem gap-2>
+					<DropdownMenuItem
+						gap-2
+						onClick={() => navigate({ to: "/settings/preferences" })}
+					>
 						<IconSettings className="size-4 text-muted-foreground" />
 						Settings
 					</DropdownMenuItem>
-					<DropdownMenuItem gap-2>
+					{/* 					<DropdownMenuItem gap-2>
 						<IconUsers className="size-4 text-muted-foreground" />
 						Invite and manage members
-					</DropdownMenuItem>
+					</DropdownMenuItem> */}
 				</DropdownMenuGroup>
 				<DropdownMenuSeparator />
 				<DropdownMenuGroup>
@@ -157,6 +160,7 @@ export function NavWorkspace() {
 				</DropdownMenuGroup>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem
+					variant="destructive"
 					gap-2
 					onClick={() => {
 						authClient.signOut({
