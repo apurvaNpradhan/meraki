@@ -8,25 +8,33 @@ import {
 	user,
 } from "./auth";
 import { spaces } from "./space";
-import { statuses, statusGroups } from "./status";
 
-export const spaceRelations = relations(spaces, ({ one, many }) => ({
-	creator: one(user, {
+export const spaceRelations = relations(spaces, ({ one }) => ({
+	createdBy: one(user, {
 		fields: [spaces.createdBy],
 		references: [user.id],
+		relationName: "spaceCreatedByUser",
+	}),
+	deletedBy: one(user, {
+		fields: [spaces.deletedBy],
+		references: [user.id],
+		relationName: "spaceDeletedByUser",
 	}),
 	organization: one(organization, {
 		fields: [spaces.organizationId],
 		references: [organization.id],
 	}),
-	statusGroups: many(statusGroups),
-	statuses: many(statuses),
 }));
 
 export const userRelations = relations(user, ({ many }) => ({
 	sessions: many(session),
 	accounts: many(account),
-	spaces: many(spaces),
+	spaces: many(spaces, {
+		relationName: "spaceCreatedByUser",
+	}),
+	deletedSpaces: many(spaces, {
+		relationName: "spaceDeletedByUser",
+	}),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -68,27 +76,5 @@ export const invitationRelations = relations(invitation, ({ one }) => ({
 	inviter: one(user, {
 		fields: [invitation.inviterId],
 		references: [user.id],
-	}),
-}));
-
-export const statusGroupsRelations = relations(
-	statusGroups,
-	({ one, many }) => ({
-		space: one(spaces, {
-			fields: [statusGroups.spaceId],
-			references: [spaces.id],
-		}),
-		statuses: many(statuses),
-	}),
-);
-
-export const statusesRelations = relations(statuses, ({ one }) => ({
-	space: one(spaces, {
-		fields: [statuses.spaceId],
-		references: [spaces.id],
-	}),
-	group: one(statusGroups, {
-		fields: [statuses.groupId],
-		references: [statusGroups.id],
 	}),
 }));

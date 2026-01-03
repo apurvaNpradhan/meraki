@@ -5,6 +5,15 @@ import { env } from "@meraki/env/server";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { customSession, organization } from "better-auth/plugins";
+import { eq } from "drizzle-orm";
+
+const _getInitialOrganization = async (_userId: string) => {
+	const _member = await db.query.member.findFirst({
+		with: {
+			organization: true,
+		},
+	});
+};
 
 export const auth = betterAuth({
 	database: drizzleAdapter(db, {
@@ -37,6 +46,14 @@ export const auth = betterAuth({
 	},
 	secret: env.BETTER_AUTH_SECRET,
 	baseURL: env.BETTER_AUTH_URL,
+	session: {
+		additionalFields: {
+			activeOrganizationId: {
+				type: "string",
+				required: false,
+			},
+		},
+	},
 	user: {
 		additionalFields: {
 			onboardingCompleted: {
@@ -50,6 +67,28 @@ export const auth = betterAuth({
 				required: true,
 				defaultValue: null,
 				input: true,
+			},
+		},
+	},
+	databaseHooks: {
+		session: {
+			create: {
+				before: async (session) => {
+					const member = await db.query.member.findFirst({
+						where: eq(schema.member.userId, session.userId ?? ""),
+						with: {
+							organization: true,
+						},
+					});
+					return {
+						data: {
+							...session,
+							...(member?.organizationId && {
+								activeOrganizationId: member?.organizationId,
+							}),
+						},
+					};
+				},
 			},
 		},
 	},
@@ -71,11 +110,13 @@ export const auth = betterAuth({
 		expo(),
 		customSession(async ({ user, session }) => {
 			return {
-				session,
+				session: {
+					...session,
+					activeOrganizationId: (session as any).activeOrganizationId,
+				},
 				user: {
 					...user,
 					onboardingCompleted: (user as any).onboardingCompleted,
-					defaultOrganizationId: (user as any).defaultOrganizationId,
 				},
 			};
 		}),

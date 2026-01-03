@@ -1,31 +1,18 @@
-import type { SelectSpace } from "@meraki/db/schema/space";
+import type { SelectSpace } from "@meraki/api/types/model.type";
 import type * as React from "react";
-import SpaceForm from "@/features/spaces/components/space-form";
-import {
-	useCreateSpaceWithStatuses,
-	useDeleteSpace,
-	useUpdateSpace,
-} from "@/hooks/use-spaces";
+import { NewSpaceForm } from "@/features/spaces/components/new-space-form";
+import { useDeleteSpace } from "@/features/spaces/hooks/use-space";
 import { useModal } from "@/stores/modal";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
-
 export function ModalProvider() {
 	const modal = useModal();
 	const ModalRegistry: Record<string, React.ComponentType<any>> = {
-		CREATE_SPACE: () => <CreateSpaceModalContent />,
-		UPDATE_SPACE: ({
-			values,
-			publicId,
-		}: {
-			values: SelectSpace;
-			publicId: string;
-		}) => <UpdateSpaceModalContent space={values} publicId={publicId} />,
+		CREATE_SPACE: () => <NewSpaceForm />,
 		DELETE_SPACE: ({ space }: { space: SelectSpace }) => (
-			<DeleteSpaceModalContent space={space} />
+			<DeleteSpaceContent space={space} />
 		),
 	};
-
 	if (modal.stack.length === 0) return null;
 
 	return (
@@ -59,66 +46,35 @@ export function ModalProvider() {
 	);
 }
 
-function CreateSpaceModalContent() {
-	const createMutation = useCreateSpaceWithStatuses();
-	return (
-		<SpaceForm
-			type="create"
-			onSubmit={(values) =>
-				createMutation.mutate({
-					spaceInput: {
-						...values,
-					},
-				})
-			}
-		/>
-	);
-}
-
-function UpdateSpaceModalContent({
-	space,
-	publicId,
-}: {
-	space: SelectSpace;
-	publicId: string;
-}) {
-	const updateMutation = useUpdateSpace();
-
-	return (
-		<SpaceForm
-			type="update"
-			space={space}
-			onSubmit={(values) =>
-				updateMutation.mutate({
-					publicId: publicId,
-					data: {
-						...values,
-					},
-				})
-			}
-		/>
-	);
-}
-
-function DeleteSpaceModalContent({ space }: { space: SelectSpace }) {
+function DeleteSpaceContent({ space }: { space: SelectSpace }) {
 	const deleteMutation = useDeleteSpace();
 	const { close } = useModal();
 
 	return (
-		<div>
-			<span>Are you absolutely sure?</span>
-			<p>You are about to delete {space.name}. This action cannot be undone.</p>
-			<div>
-				<Button onClick={close}>Cancel</Button>
+		<div className="flex flex-col gap-4 p-6">
+			<div className="flex flex-col gap-2">
+				<h3 className="font-semibold text-lg tracking-tight">Delete Space?</h3>
+				<p className="text-muted-foreground text-sm">
+					Are you sure you want to delete{" "}
+					<span className="font-medium text-foreground">{space.name}</span>?
+					This action cannot be undone and will permanently remove all
+					associated data.
+				</p>
+			</div>
+
+			<div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+				<Button variant="outline" onClick={close}>
+					Cancel
+				</Button>
 				<Button
 					variant="destructive"
 					onClick={(e) => {
 						e.stopPropagation();
-						deleteMutation.mutate({ publicId: space.publicId });
+						deleteMutation.mutate({ spacePublicId: space.publicId });
 						close();
 					}}
 				>
-					Delete
+					Delete Space
 				</Button>
 			</div>
 		</div>

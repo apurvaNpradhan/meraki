@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import type { OnboardingSchema } from "./onboarding/schema";
+import type { OnboardingSchema } from "./schema";
 
 type OnboardingState = Partial<OnboardingSchema> & {
 	setData: (data: Partial<OnboardingSchema>) => void;

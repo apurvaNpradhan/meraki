@@ -40,6 +40,7 @@ export interface RouterAppContext {
 export const Route = createRootRouteWithContext<RouterAppContext>()({
 	component: RootComponent,
 	notFoundComponent: RootNotFound,
+	pendingComponent: () => <Loader />,
 	errorComponent: ErrorComponent,
 	head: () => ({
 		meta: [

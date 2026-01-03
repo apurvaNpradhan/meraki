@@ -1,10 +1,5 @@
-import {
-	IconCheck,
-	IconChevronDown,
-	IconLogout,
-	IconPlus,
-	IconSettings,
-} from "@tabler/icons-react";
+import { IconCheck, IconChevronDown, IconPlus } from "@tabler/icons-react";
+
 import { useNavigate } from "@tanstack/react-router";
 import {
 	DropdownMenu,
@@ -17,30 +12,36 @@ import {
 	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { SidebarMenuButton, useSidebar } from "@/components/ui/sidebar";
+import { SidebarMenuButton } from "@/components/ui/sidebar";
+import { Skeleton } from "@/components/ui/skeleton";
 import { authClient } from "@/lib/auth-client";
 import { queryClient } from "@/utils/orpc";
 
-export function NavWorkspace() {
-	const { isMobile } = useSidebar();
+export function NavWorkspace({
+	activeOrganizationId,
+}: {
+	activeOrganizationId?: string;
+}) {
 	const navigate = useNavigate();
-	const { data: session } = authClient.useSession();
-	const { data: workspaces } = authClient.useListOrganizations();
-
-	const activeOrganizationId = session?.session.activeOrganizationId;
+	const { data: workspaces, isPending: isWorkspacesPending } =
+		authClient.useListOrganizations();
 	const currentWorkspace = workspaces?.find(
-		(org) => org.id === activeOrganizationId,
+		(w) => w.id === activeOrganizationId,
 	);
 
 	const handleSwitchWorkspace = async (organizationId: string) => {
 		await authClient.organization.setActive({
 			organizationId,
 		});
-		await authClient.updateUser({
-			defaultOrganizationId: organizationId,
-		});
 		queryClient.invalidateQueries();
+		navigate({
+			to: "/home",
+		});
 	};
+
+	if (isWorkspacesPending) {
+		return <Skeleton className="h-12 w-full" />;
+	}
 
 	return (
 		<DropdownMenu>
@@ -98,29 +99,9 @@ export function NavWorkspace() {
 				</DropdownMenuItem>
 				<DropdownMenuSeparator />
 				<DropdownMenuGroup>
-					{/* 	<DropdownMenuLabel className="text-muted-foreground text-xs">
-						Workspace
-					</DropdownMenuLabel> */}
-
-					<DropdownMenuItem
-						gap-2
-						onClick={() => navigate({ to: "/settings/preferences" })}
-					>
-						<IconSettings className="size-4 text-muted-foreground" />
-						Settings
-					</DropdownMenuItem>
-					{/* 					<DropdownMenuItem gap-2>
-						<IconUsers className="size-4 text-muted-foreground" />
-						Invite and manage members
-					</DropdownMenuItem> */}
-				</DropdownMenuGroup>
-				<DropdownMenuSeparator />
-				<DropdownMenuGroup>
 					<DropdownMenuSub>
 						<DropdownMenuSubTrigger gap-2>
-							<div className="flex size-6 items-center justify-center rounded-md border bg-background">
-								<IconPlus className="size-4" />
-							</div>
+							<IconPlus className="size-4" />
 							Switch workspace
 						</DropdownMenuSubTrigger>
 						<DropdownMenuSubContent className="w-48 rounded-lg">
@@ -138,14 +119,13 @@ export function NavWorkspace() {
 										)}
 									</div>
 									{org.name}
-									{org.id === activeOrganizationId && (
+									{org.id === currentWorkspace?.id && (
 										<IconCheck className="ml-auto size-4" />
 									)}
 								</DropdownMenuItem>
 							))}
 							<DropdownMenuSeparator />
 							<DropdownMenuItem
-								gap-2
 								onClick={() => navigate({ to: "/workspace/new" })}
 							>
 								<div className="flex size-6 items-center justify-center rounded-md border bg-background">
@@ -156,25 +136,6 @@ export function NavWorkspace() {
 						</DropdownMenuSubContent>
 					</DropdownMenuSub>
 				</DropdownMenuGroup>
-				<DropdownMenuSeparator />
-				<DropdownMenuItem
-					variant="destructive"
-					gap-2
-					onClick={() => {
-						authClient.signOut({
-							fetchOptions: {
-								onSuccess: () => {
-									navigate({
-										to: "/",
-									});
-								},
-							},
-						});
-					}}
-				>
-					<IconLogout className="size-4" />
-					Log out
-				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);

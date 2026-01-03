@@ -1,4 +1,4 @@
-import { IconCaretDownFilled, IconLogout } from "@tabler/icons-react";
+import { IconLogout, IconSettings } from "@tabler/icons-react";
 import { useNavigate } from "@tanstack/react-router";
 import type { User } from "better-auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -7,7 +7,6 @@ import {
 	DropdownMenuContent,
 	DropdownMenuGroup,
 	DropdownMenuItem,
-	DropdownMenuLabel,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -19,52 +18,64 @@ export function NavUser({ user }: { user: User }) {
 	const navigate = useNavigate();
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger>
-				<SidebarMenuButton
-					size="lg"
-					className="border data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-					render={<div />}
-				>
-					<Avatar className="h-8 w-8 rounded-lg grayscale">
-						<AvatarImage src={user.image ?? ""} alt={user.name} />
-						<AvatarFallback className="rounded-lg">
-							{user.name
-								.split(" ")
-								.map((name) => name.charAt(0))
-								.join("")}
-						</AvatarFallback>
-					</Avatar>
-					<div className="grid flex-1 text-left text-sm leading-tight">
-						<span className="truncate font-medium">{user.name}</span>
-					</div>
-					<IconCaretDownFilled className="ml-auto size-4" />
-				</SidebarMenuButton>
+			<DropdownMenuTrigger
+				render={
+					<SidebarMenuButton
+						size="lg"
+						className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+					/>
+				}
+			>
+				<Avatar className="h-8 w-8 rounded-lg">
+					<AvatarImage src={user.image ?? ""} alt={user.name} />
+					<AvatarFallback className="rounded-lg">
+						{user.name
+							.split(" ")
+							.map((name) => name.charAt(0))
+							.join("")}
+					</AvatarFallback>
+				</Avatar>
+				<div className="grid flex-1 text-left text-sm leading-tight">
+					<span className="truncate font-semibold">{user.name}</span>
+					<span className="truncate text-xs">{user.email}</span>
+				</div>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent
-				className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-				side={"bottom"}
+				className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+				align="start"
+				side={isMobile ? "bottom" : "right"}
+				sideOffset={4}
 			>
+				<DropdownMenuItem className="gap-2 p-2 font-medium">
+					<div className="flex size-6 items-center justify-center rounded-sm border">
+						<Avatar className="h-6 w-6 rounded-sm">
+							<AvatarImage src={user.image ?? ""} alt={user.name} />
+							<AvatarFallback className="rounded-sm">
+								{user.name
+									.split(" ")
+									.map((name) => name.charAt(0))
+									.join("")}
+							</AvatarFallback>
+						</Avatar>
+					</div>
+					<div className="flex flex-col gap-0.5">
+						<span className="font-semibold text-sm">{user.name}</span>
+						<span className="text-muted-foreground text-xs">{user.email}</span>
+					</div>
+				</DropdownMenuItem>
+				<DropdownMenuSeparator />
 				<DropdownMenuGroup>
-					<DropdownMenuLabel className="p-0 font-normal">
-						<div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-							<Avatar className="h-8 w-8 rounded-full">
-								<AvatarImage src={user.image ?? ""} alt={user.name} />
-								<AvatarFallback className="rounded-full">
-									{user.name.charAt(0)}
-								</AvatarFallback>
-							</Avatar>
-							<div className="grid flex-1 text-left text-sm leading-tight">
-								<span className="truncate font-medium">{user.name}</span>
-								<span className="truncate text-muted-foreground text-xs">
-									{user.email}
-								</span>
-							</div>
-						</div>
-					</DropdownMenuLabel>
+					<DropdownMenuItem
+						onClick={() => navigate({ to: "/settings/preferences" })}
+					>
+						<IconSettings className="size-4 text-muted-foreground" />
+						Settings
+					</DropdownMenuItem>
 				</DropdownMenuGroup>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem
 					variant="destructive"
+					gap-2
 					onClick={() => {
 						authClient.signOut({
 							fetchOptions: {
@@ -77,7 +88,7 @@ export function NavUser({ user }: { user: User }) {
 						});
 					}}
 				>
-					<IconLogout />
+					<IconLogout className="size-4" />
 					Log out
 				</DropdownMenuItem>
 			</DropdownMenuContent>

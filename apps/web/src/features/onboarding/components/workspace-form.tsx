@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { useOnboardingStore } from "@/features/store";
+import { useOnboardingStore } from "@/features/onboarding/store";
 
 import { onboardingSchema } from "../schema";
 

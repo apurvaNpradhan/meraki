@@ -9,3 +9,9 @@ export const authClient = createAuthClient({
 	baseURL: env.VITE_SERVER_URL,
 	plugins: [inferAdditionalFields<typeof auth>(), organizationClient()],
 });
+
+export const sessionQueryOptions = {
+	queryKey: ["session"],
+	queryFn: () => authClient.getSession(),
+	staleTime: 5 * 60 * 1000,
+};

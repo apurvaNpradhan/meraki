@@ -10,7 +10,6 @@ export const user = pgTable("user", {
 	}),
 	image: text("image"),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
-	defaultOrganizationId: text("default_organization_id"),
 	updatedAt: timestamp("updated_at")
 		.defaultNow()
 		.$onUpdate(() => /* @__PURE__ */ new Date())

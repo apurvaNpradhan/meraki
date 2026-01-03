@@ -42,7 +42,7 @@ export default function MainLayout({
 					{header}
 					<div
 						className={cn(
-							"w-full overflow-auto",
+							"relative w-full overflow-auto md:max-w-6xl",
 							isEmptyHeader(header)
 								? "h-full"
 								: height[headersNumber as keyof typeof height],

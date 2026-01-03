@@ -4,11 +4,7 @@ import { auth } from "@meraki/auth";
 import { env } from "@meraki/env/server";
 import { OpenAPIHandler } from "@orpc/openapi/fetch";
 import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";
-import {
-	type InferRouterInputs,
-	type InferRouterOutputs,
-	onError,
-} from "@orpc/server";
+import { onError } from "@orpc/server";
 import { RPCHandler } from "@orpc/server/fetch";
 import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
 import { Hono } from "hono";
@@ -79,8 +75,4 @@ app.get("/", (c) => {
 	return c.text("OK");
 });
 
-type RouterInputs = InferRouterInputs<typeof appRouter>;
-type RouterOutputs = InferRouterOutputs<typeof appRouter>;
-
-export type { RouterInputs, RouterOutputs };
 export default app;

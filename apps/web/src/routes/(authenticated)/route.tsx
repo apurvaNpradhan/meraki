@@ -1,13 +1,15 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { NotFound } from "@/components/not-found";
 import { ModalProvider } from "@/components/providers/modal-provider";
-import { authClient } from "@/lib/auth-client";
+import { sessionQueryOptions } from "@/lib/auth-client";
 
 export const Route = createFileRoute("/(authenticated)")({
 	component: RouteComponent,
 	errorComponent: NotFound,
-	beforeLoad: async ({ location }) => {
-		const session = await authClient.getSession();
+	beforeLoad: async ({ context, location }) => {
+		const session =
+			await context.queryClient.ensureQueryData(sessionQueryOptions);
+
 		if (!session.data) {
 			redirect({
 				to: "/sign-up",
@@ -23,16 +25,6 @@ export const Route = createFileRoute("/(authenticated)")({
 			});
 		}
 
-		if (
-			!session.data?.session.activeOrganizationId &&
-			(session.data?.user as any).defaultOrganizationId
-		) {
-			await authClient.organization.setActive({
-				organizationId: (session.data?.user as any).defaultOrganizationId,
-			});
-			const newSession = await authClient.getSession();
-			return { session: newSession };
-		}
 		return { session };
 	},
 });

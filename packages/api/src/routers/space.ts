@@ -1,251 +1,190 @@
-import * as spaceRepo from "@meraki/db/repository/space";
-import { InsertSpace, UpdateSpace } from "@meraki/db/schema/space";
-import { InsertStatusGroupWithStatuses } from "@meraki/db/schema/status";
+import * as spaceRepo from "@meraki/db/repository/space.repo";
 import { generateSlug } from "@meraki/shared/utils";
-import { ORPCError } from "@orpc/server";
+import { ORPCError } from "@orpc/client";
 import { generateKeyBetween } from "fractional-indexing";
-import { z } from "zod";
+import z from "zod";
 import { protectedProcedure } from "..";
 
 export const spaceRouter = {
-	all: protectedProcedure.handler(async ({ context }) => {
-		try {
-			return await spaceRepo.getSpaces({
-				organizationId: context.session.user.defaultOrganizationId,
-			});
-		} catch (error) {
-			throw new ORPCError("INTERNAL_SERVER_ERROR", {
-				message: "Failed to get spaces",
-				cause: error,
-			});
-		}
-	}),
+	all: protectedProcedure
+		.output(
+			z.custom<Awaited<ReturnType<typeof spaceRepo.getAllByWorkspaceId>>>(),
+		)
+		.handler(async ({ input, context }) => {
+			const spaces = spaceRepo.getAllByWorkspaceId(
+				context.session.session.activeOrganizationId,
+			);
+			return spaces;
+		}),
+	byId: protectedProcedure
+		.input(z.object({ spacePublicId: z.string() }))
+		.output(z.custom<Awaited<ReturnType<typeof spaceRepo.getByPublicId>>>())
+		.handler(async ({ input, context }) => {
+			const space = await spaceRepo.getWorkspaceAndSpaceIdBySpacePublicId(
+				input.spacePublicId,
+			);
+			if (!space)
+				throw new ORPCError("NOT_FOUND", {
+					message: `space with public ID ${input.spacePublicId} not found`,
+				});
+			const result = await spaceRepo.getByPublicId(
+				input.spacePublicId,
+				context.session.session.activeOrganizationId,
+			);
+			return result;
+		}),
 	bySlug: protectedProcedure
-		.input(z.object({ slug: z.string() }))
-		.errors({
-			NOT_FOUND: {
-				message: "Space not found",
-			},
-		})
-		.handler(async ({ context, input, errors }) => {
-			try {
-				const space = await spaceRepo.getSpaceBySlug({
-					slug: input.slug,
-					organizationId: context.session.user.defaultOrganizationId,
+		.input(z.object({ spaceSlug: z.string() }))
+		.output(z.custom<Awaited<ReturnType<typeof spaceRepo.getBySlug>>>())
+		.handler(async ({ input, context }) => {
+			const space = await spaceRepo.getBySlug(
+				input.spaceSlug,
+				context.session.session.activeOrganizationId,
+			);
+			if (!space)
+				throw new ORPCError("NOT_FOUND", {
+					message: `space with slug ${input.spaceSlug} not found`,
 				});
-
-				if (!space) throw errors.NOT_FOUND;
-				const { ...rest } = space;
-				return rest ?? null;
-			} catch (error) {
-				if (error === errors.NOT_FOUND) throw error;
-				throw new ORPCError("INTERNAL_SERVER_ERROR", {
-					message: "Failed to get space",
-					cause: error,
-				});
-			}
+			const result = await spaceRepo.getBySlug(
+				input.spaceSlug,
+				context.session.session.activeOrganizationId,
+			);
+			return result;
 		}),
 	create: protectedProcedure
 		.input(
-			InsertSpace.omit({
-				organizationId: true,
-				slug: true,
-				position: true,
-				createdBy: true,
-			}),
-		)
-		.errors({
-			INTERNAL_SERVER_ERROR: {
-				message: "Failed to create space",
-			},
-			SLUG_TAKEN: {
-				message: "Slug already taken",
-			},
-		})
-		.handler(async ({ context, input, errors }) => {
-			try {
-				let slug = generateSlug(input.name);
-				const organizationId = context.session.user.defaultOrganizationId;
-
-				const existingSpace = await spaceRepo.getSpaceBySlug({
-					slug,
-					organizationId,
-				});
-
-				if (existingSpace) {
-					slug = `${slug}-${Math.random().toString(36).substring(2, 7)}`;
-				}
-
-				const lastPosition = await spaceRepo.getLastSpacePosition({
-					organizationId,
-				});
-				const position = lastPosition
-					? generateKeyBetween(lastPosition, null)
-					: "a0";
-				const newSpace = await spaceRepo.createSpace({
-					...input,
-					slug,
-					organizationId,
-					createdBy: context.session.user.id,
-					position,
-				});
-
-				return {
-					space: newSpace,
-				};
-			} catch (error) {
-				if (error === errors.SLUG_TAKEN) throw error;
-				throw new ORPCError("INTERNAL_SERVER_ERROR", {
-					message: "Failed to create space",
-					cause: error,
-				});
-			}
-		}),
-	createWithStatuses: protectedProcedure
-		.input(
 			z.object({
-				spaceInput: InsertSpace.extend({
-					flow: z.enum(["starter", "project_management", "custom"]).optional(),
-				}).omit({
-					organizationId: true,
-					position: true,
-					slug: true,
-					createdBy: true,
-				}),
-				customStatusInput: z.array(InsertStatusGroupWithStatuses).optional(),
+				name: z.string().min(1).max(100),
+				description: z.string().optional(),
+				colorCode: z.string().min(1),
+				icon: z.string().min(1),
 			}),
 		)
-		.errors({
-			INTERNAL_SERVER_ERROR: {
-				message: "Failed to create space",
-			},
-			SLUG_TAKEN: {
-				message: "Slug already taken",
-			},
-		})
-		.handler(async ({ context, input, errors }) => {
-			try {
-				const { spaceInput, customStatusInput } = input;
-				let slug = generateSlug(spaceInput.name);
-				const { flow, ...spaceData } = spaceInput;
-				const organizationId = context.session.user.defaultOrganizationId;
+		.output(z.custom<Awaited<ReturnType<typeof spaceRepo.create>>>())
+		.handler(async ({ input, context }) => {
+			const userId = context.session?.user?.id;
+			let slug = generateSlug(input.name);
+			const isSlugUnique = await spaceRepo.isSlugUnique({
+				slug,
+				workspaceId: context.session.session.activeOrganizationId,
+			});
 
-				const existingSpace = await spaceRepo.getSpaceBySlug({
-					slug,
-					organizationId,
-				});
-
-				if (existingSpace) {
-					slug = `${slug}-${Math.random().toString(36).substring(2, 7)}`;
-				}
-
-				const lastPosition = await spaceRepo.getLastSpacePosition({
-					organizationId,
-				});
-				const position = lastPosition
-					? generateKeyBetween(lastPosition, null)
-					: "a0";
-				const newSpace = await spaceRepo.createSpaceWithStatuses({
-					data: {
-						...spaceData,
-						slug,
-						organizationId,
-						createdBy: context.session.user.id,
-						position,
-					},
-					flow: flow || "starter",
-					customData: customStatusInput,
-				});
-				return {
-					space: newSpace,
-				};
-			} catch (error) {
-				if (error === errors.SLUG_TAKEN) throw error;
-				throw new ORPCError("INTERNAL_SERVER_ERROR", {
-					message: "Failed to create space with statuses",
-					cause: error,
-				});
+			if (!isSlugUnique) {
+				slug = `${slug}-${Date.now()}`;
 			}
-		}),
+			const lastPosition = await spaceRepo.getLastPositionByPublicId(
+				context.session.session.activeOrganizationId,
+			);
+			const position = generateKeyBetween(lastPosition?.position, null);
 
+			const result = await spaceRepo.create({
+				name: input.name,
+				description: input.description,
+				slug,
+				colorCode: input.colorCode,
+				icon: input.icon,
+				position,
+				organizationId: context.session.session.activeOrganizationId,
+				createdBy: userId,
+			});
+
+			return result;
+		}),
 	update: protectedProcedure
 		.input(
 			z.object({
-				publicId: z.string(),
-				data: UpdateSpace,
+				spacePublicId: z.string(),
+				position: z.string().optional(),
+				name: z.string().optional(),
+				slug: z.string().optional(),
+				colorCode: z.string().optional(),
+				icon: z.string().optional(),
+				description: z.string().optional(),
 			}),
 		)
-		.errors({
-			NOT_FOUND: {
-				message: "Space not found",
-			},
-			SLUG_TAKEN: {
-				message: "Slug already taken",
-			},
-		})
-		.handler(async ({ context, input, errors }) => {
-			try {
-				const { publicId, data } = input;
-				const organizationId = context.session.user.defaultOrganizationId;
+		.output(z.custom<Awaited<ReturnType<typeof spaceRepo.update>>>())
+		.handler(async ({ input }) => {
+			const space = await spaceRepo.getWorkspaceAndSpaceIdBySpacePublicId(
+				input.spacePublicId,
+			);
 
-				const existingSpace = await spaceRepo.getSpaceByPublicId({
-					publicId,
-					organizationId,
+			if (!space) {
+				throw new ORPCError("NOT_FOUND", {
+					message: `space with public ID ${input.spacePublicId} not found`,
 				});
+			}
 
-				if (!existingSpace) throw errors.NOT_FOUND;
-
-				if (data.slug && data.slug !== existingSpace.slug) {
-					const conflict = await spaceRepo.getSpaceBySlug({
-						slug: data.slug,
-						organizationId,
+			if (input.slug) {
+				const isAvailable = await spaceRepo.isSpaceSlugAvailable(
+					input.slug,
+					space.organizationId,
+				);
+				if (!isAvailable) {
+					throw new ORPCError("BAD_REQUEST", {
+						message: `Space slug ${input.slug} is not available`,
 					});
-					if (conflict) throw errors.SLUG_TAKEN;
 				}
-				if (data.name) {
-					data.slug = generateSlug(data.name);
-				}
-				const result = await spaceRepo.updateSpace({
-					id: existingSpace.id,
-					organizationId,
-					data,
-				});
-
-				return result;
-			} catch (error) {
-				if (error === errors.NOT_FOUND || error === errors.SLUG_TAKEN)
-					throw error;
-				throw new ORPCError("INTERNAL_SERVER_ERROR", {
-					message: "Failed to update space",
-				});
 			}
+
+			const result = await spaceRepo.update({
+				name: input.name,
+				position: input.position,
+				slug: input.slug,
+				colorCode: input.colorCode,
+				icon: input.icon,
+				description: input.description,
+				spacePublicId: input.spacePublicId,
+			});
+
+			return result;
 		}),
-
 	delete: protectedProcedure
-		.input(z.object({ publicId: z.string() }))
-		.errors({
-			NOT_FOUND: {
-				message: "Space not found",
-			},
-		})
-		.handler(async ({ context, input, errors }) => {
-			try {
-				const organizationId = context.session.user.defaultOrganizationId;
-				const existingSpace = await spaceRepo.getSpaceByPublicId({
-					publicId: input.publicId,
-					organizationId,
-				});
-				if (!existingSpace) throw errors.NOT_FOUND;
-				return await spaceRepo.softDeleteSpace({
-					id: existingSpace.id,
-					organizationId,
-				});
-			} catch (error) {
-				if (error === errors.NOT_FOUND) throw error;
-				throw new ORPCError("INTERNAL_SERVER_ERROR", {
-					message: "Failed to delete space",
-					cause: error,
+		.input(z.object({ spacePublicId: z.string() }))
+		.output(z.object({ success: z.boolean() }))
+		.handler(async ({ input, context }) => {
+			const userId = context.session?.user?.id;
+			if (!userId) {
+				throw new ORPCError("UNAUTHORIZED");
+			}
+
+			const space = await spaceRepo.getWorkspaceAndSpaceIdBySpacePublicId(
+				input.spacePublicId,
+			);
+
+			if (!space) {
+				throw new ORPCError("NOT_FOUND", {
+					message: `space with public ID ${input.spacePublicId} not found`,
 				});
 			}
+
+			await spaceRepo.softDelete({
+				spaceId: space.id,
+				deletedBy: userId,
+				deletedAt: new Date(),
+			});
+
+			return { success: true };
+		}),
+	checkSlugAvailability: protectedProcedure
+		.input(
+			z.object({
+				spaceSlug: z.string(),
+			}),
+		)
+		.output(z.object({ isAvailable: z.boolean() }))
+		.handler(async ({ input, context }) => {
+			const isAvailable = await spaceRepo.isSpaceSlugAvailable(
+				input.spaceSlug,
+				context.session.session.activeOrganizationId,
+			);
+			return { isAvailable };
+		}),
+	hardDelete: protectedProcedure
+		.output(z.object({ success: z.boolean() }))
+		.handler(async ({ input, context }) => {
+			const _result = await spaceRepo.hardDelete(
+				context.session.session.activeOrganizationId,
+			);
+			return { success: true };
 		}),
 };

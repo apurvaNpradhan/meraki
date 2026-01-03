@@ -11,34 +11,36 @@ import {
 	SortableContext,
 	verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import type { SelectSpace } from "@meraki/db/schema/space";
+import { SelectSpace } from "@meraki/db/schema/space";
 import { generateKeyBetween } from "fractional-indexing";
 import { useEffect, useState } from "react";
+import type z from "zod";
 import {
 	SidebarGroupContent,
 	SidebarMenu,
 	SidebarMenuSkeleton,
 } from "@/components/ui/sidebar";
-import {
-	useDeleteSpace,
-	useSpaces,
-	useUpdateSpace,
-} from "../../../hooks/use-spaces";
+import { useSpaces, useUpdateSpace } from "../hooks/use-space";
 import SortableSidebarSpaceItem from "./sortable-sidebar-space-item";
 
-export function SidebarSpaceList() {
+const SpaceSelectSchema = SelectSpace.pick({
+	publicId: true,
+	name: true,
+	position: true,
+	icon: true,
+	colorCode: true,
+});
+
+type Space = z.infer<typeof SpaceSelectSchema>;
+function SidebarSpaceList() {
 	const { data: spaces, isPending } = useSpaces();
 	const updateSpace = useUpdateSpace();
-	const [items, setItems] = useState<SelectSpace[]>([]);
+	const [items, setItems] = useState<Space[]>([]);
 
 	useEffect(() => {
 		if (!spaces) return;
 		setItems(spaces);
 	}, [spaces]);
-
-	const [_spaceToDelete, _setSpaceToDelete] = useState<SelectSpace | null>(
-		null,
-	);
 
 	const sensors = useSensors(
 		useSensor(PointerSensor, {
@@ -48,13 +50,11 @@ export function SidebarSpaceList() {
 		}),
 	);
 
-	const deleteSpace = useDeleteSpace();
-
 	const handleDragEnd = ({ active, over }: DragEndEvent) => {
 		if (!over || active.id === over.id) return;
 
-		const oldIndex = items.findIndex((i) => i.publicId === active.id);
-		const newIndex = items.findIndex((i) => i.publicId === over.id);
+		const oldIndex = items.findIndex((i: Space) => i.publicId === active.id);
+		const newIndex = items.findIndex((i: Space) => i.publicId === over.id);
 
 		const reordered = arrayMove(items, oldIndex, newIndex);
 		setItems(reordered);
@@ -63,16 +63,14 @@ export function SidebarSpaceList() {
 		const next = reordered[newIndex + 1]?.position;
 
 		updateSpace.mutate({
-			publicId: String(active.id),
-			data: {
-				position: generateKeyBetween(prev, next),
-			},
+			spacePublicId: String(active.id),
+			position: generateKeyBetween(prev, next),
 		});
 	};
 
 	return (
 		<SidebarGroupContent>
-			<SidebarMenu className="flex flex-col gap-1">
+			<SidebarMenu className="gap-1">
 				{isPending &&
 					Array.from({ length: 3 }).map((_, i) => (
 						// biome-ignore lint/suspicious/noArrayIndexKey: Skeleton
@@ -88,11 +86,7 @@ export function SidebarSpaceList() {
 						strategy={verticalListSortingStrategy}
 					>
 						{items.map((space) => (
-							<SortableSidebarSpaceItem
-								key={space.publicId}
-								data={space}
-								handleDelete={(publicId) => deleteSpace.mutate({ publicId })}
-							/>
+							<SortableSidebarSpaceItem key={space.publicId} data={space} />
 						))}
 					</SortableContext>
 				</DndContext>
@@ -100,3 +94,5 @@ export function SidebarSpaceList() {
 		</SidebarGroupContent>
 	);
 }
+
+export default SidebarSpaceList;

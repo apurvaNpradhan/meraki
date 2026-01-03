@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { useOnboardingStore } from "@/features/store";
+import { useOnboardingStore } from "@/features/onboarding/store";
 import { authClient } from "@/lib/auth-client";
 
 export const Route = createFileRoute("/(authenticated)/onboarding/complete")({

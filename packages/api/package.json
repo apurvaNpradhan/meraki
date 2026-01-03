@@ -7,6 +7,10 @@
 		},
 		"./*": {
 			"default": "./src/*.ts"
+		},
+		"./types": {
+			"types": "./dist/types.d.ts",
+			"default": "./src/types/router.types.ts"
 		}
 	},
 	"scripts": {},
