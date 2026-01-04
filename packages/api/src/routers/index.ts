@@ -5,6 +5,7 @@ import type {
 } from "@orpc/server";
 
 import { publicProcedure } from "../index";
+import { projectStatusRouter } from "./project-status";
 import { spaceRouter } from "./space";
 
 export const appRouter = {
@@ -12,6 +13,7 @@ export const appRouter = {
 		return "OK";
 	}),
 	space: spaceRouter,
+	projectStatus: projectStatusRouter,
 };
 export type AppRouter = typeof appRouter;
 export type AppRouterClient = RouterClient<typeof appRouter>;

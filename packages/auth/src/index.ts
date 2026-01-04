@@ -1,5 +1,6 @@
 import { expo } from "@better-auth/expo";
 import { db } from "@meraki/db";
+import * as projectStatusRepo from "@meraki/db/repository/project-status.repo";
 import * as schema from "@meraki/db/schema/auth";
 import { env } from "@meraki/env/server";
 import { betterAuth } from "better-auth";
@@ -106,7 +107,18 @@ export const auth = betterAuth({
 		// },
 	},
 	plugins: [
-		organization(),
+		organization({
+			organizationHooks: {
+				afterCreateOrganization: async ({ organization, user }) => {
+					await Promise.all([
+						await projectStatusRepo.createDefaults({
+							userId: user.id,
+							workspaceId: organization.id,
+						}),
+					]);
+				},
+			},
+		}),
 		expo(),
 		customSession(async ({ user, session }) => {
 			return {

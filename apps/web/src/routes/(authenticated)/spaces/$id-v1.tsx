@@ -11,6 +11,12 @@ import { IconAndColorPicker } from "@/components/icon-and-color-picer";
 import AppLayout from "@/components/layout/app-layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+	Item,
+	ItemContent,
+	ItemDescription,
+	ItemTitle,
+} from "@/components/ui/item";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -18,7 +24,7 @@ import { useSpace, useUpdateSpace } from "@/features/spaces/hooks/use-space";
 import { useDebounce } from "@/hooks/use-debounce";
 import { orpc } from "@/utils/orpc";
 
-export const Route = createFileRoute("/(authenticated)/spaces/$id")({
+export const Route = createFileRoute("/(authenticated)/spaces/$id-v1")({
 	component: RouteComponent,
 	loader: async ({ context, params }) => {
 		return context.queryClient.ensureQueryData(
@@ -167,7 +173,7 @@ function RouteComponent() {
 										variant="ghost"
 										size="icon-sm"
 										className="text-muted-foreground"
-										title={`Search ${activeTab}`}
+										title={"Search ${activeTab}"}
 										onClick={() => setIsSearchOpen(true)}
 									>
 										<IconSearch className="size-4" />
@@ -187,6 +193,16 @@ function RouteComponent() {
 					</div>
 					<div className="mt-6">
 						<TabsContent value="projects">
+							{data?.organization.projectStatuses.map((p) => (
+								<div key={p.publicId}>
+									<Item>
+										<ItemContent>
+											<ItemTitle>{p.name}</ItemTitle>
+											<ItemDescription>{p.description}</ItemDescription>
+										</ItemContent>
+									</Item>
+								</div>
+							))}
 							<div className="rounded-lg border border-dashed p-8 text-center text-muted-foreground">
 								No projects found
 							</div>

@@ -24,6 +24,7 @@
 	},
 	"dependencies": {
 		"@meraki/env": "workspace:*",
+		"@meraki/shared": "workspace:*",
 		"@neondatabase/serverless": "^1.0.2",
 		"dotenv": "catalog:",
 		"drizzle-orm": "^0.45.1",
