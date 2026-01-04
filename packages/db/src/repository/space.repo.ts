@@ -51,6 +51,22 @@ export const getByPublicId = async (
 			icon: true,
 		},
 		with: {
+			projects: {
+				columns: {
+					publicId: true,
+					name: true,
+					description: true,
+					position: true,
+				},
+				orderBy: (p, { asc }) => [asc(p.position)],
+				with: {
+					status: {
+						columns: {
+							publicId: true,
+						},
+					},
+				},
+			},
 			organization: {
 				columns: {
 					id: true,

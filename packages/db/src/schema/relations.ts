@@ -7,10 +7,11 @@ import {
 	session,
 	user,
 } from "./auth";
+import { projects } from "./project";
 import { projectStatuses } from "./project-statuses";
 import { spaces } from "./space";
 
-export const spaceRelations = relations(spaces, ({ one }) => ({
+export const spaceRelations = relations(spaces, ({ one, many }) => ({
 	createdBy: one(user, {
 		fields: [spaces.createdBy],
 		references: [user.id],
@@ -25,6 +26,7 @@ export const spaceRelations = relations(spaces, ({ one }) => ({
 		fields: [spaces.organizationId],
 		references: [organization.id],
 	}),
+	projects: many(projects),
 }));
 
 export const userRelations = relations(user, ({ many }) => ({
@@ -35,6 +37,12 @@ export const userRelations = relations(user, ({ many }) => ({
 	}),
 	deletedSpaces: many(spaces, {
 		relationName: "spaceDeletedByUser",
+	}),
+	projects: many(projects, {
+		relationName: "projectCreatedByUser",
+	}),
+	deletedProjects: many(projects, {
+		relationName: "projectDeletedByUser",
 	}),
 }));
 
@@ -57,6 +65,7 @@ export const organizationRelations = relations(organization, ({ many }) => ({
 	invitations: many(invitation),
 	spaces: many(spaces),
 	projectStatuses: many(projectStatuses),
+	projects: many(projects),
 }));
 
 export const memberRelations = relations(member, ({ one }) => ({
@@ -89,5 +98,30 @@ export const projectStatusRelations = relations(projectStatuses, ({ one }) => ({
 	organization: one(organization, {
 		fields: [projectStatuses.organizationId],
 		references: [organization.id],
+	}),
+}));
+
+export const projectRelations = relations(projects, ({ one }) => ({
+	space: one(spaces, {
+		fields: [projects.spaceId],
+		references: [spaces.id],
+	}),
+	status: one(projectStatuses, {
+		fields: [projects.statusId],
+		references: [projectStatuses.id],
+	}),
+	organization: one(organization, {
+		fields: [projects.organizationId],
+		references: [organization.id],
+	}),
+	createdBy: one(user, {
+		fields: [projects.createdBy],
+		references: [user.id],
+		relationName: "projectCreatedByUser",
+	}),
+	deletedBy: one(user, {
+		fields: [projects.deletedBy],
+		references: [user.id],
+		relationName: "projectDeletedByUser",
 	}),
 }));
