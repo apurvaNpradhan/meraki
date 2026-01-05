@@ -11,31 +11,21 @@ import {
 	SortableContext,
 	verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { SelectSpace } from "@meraki/db/schema/space";
 import { generateKeyBetween } from "fractional-indexing";
 import { useEffect, useState } from "react";
-import type z from "zod";
 import {
 	SidebarGroupContent,
 	SidebarMenu,
 	SidebarMenuSkeleton,
 } from "@/components/ui/sidebar";
+import type { SidebarSpace } from "@/types/space";
 import { useSpaces, useUpdateSpace } from "../hooks/use-space";
 import SortableSidebarSpaceItem from "./sortable-sidebar-space-item";
 
-const SpaceSelectSchema = SelectSpace.pick({
-	publicId: true,
-	name: true,
-	position: true,
-	icon: true,
-	colorCode: true,
-});
-
-type Space = z.infer<typeof SpaceSelectSchema>;
 function SidebarSpaceList() {
 	const { data: spaces, isPending } = useSpaces();
 	const updateSpace = useUpdateSpace();
-	const [items, setItems] = useState<Space[]>([]);
+	const [items, setItems] = useState<SidebarSpace[]>([]);
 
 	useEffect(() => {
 		if (!spaces) return;
@@ -53,8 +43,12 @@ function SidebarSpaceList() {
 	const handleDragEnd = ({ active, over }: DragEndEvent) => {
 		if (!over || active.id === over.id) return;
 
-		const oldIndex = items.findIndex((i: Space) => i.publicId === active.id);
-		const newIndex = items.findIndex((i: Space) => i.publicId === over.id);
+		const oldIndex = items.findIndex(
+			(i: SidebarSpace) => i.publicId === active.id,
+		);
+		const newIndex = items.findIndex(
+			(i: SidebarSpace) => i.publicId === over.id,
+		);
 
 		const reordered = arrayMove(items, oldIndex, newIndex);
 		setItems(reordered);
@@ -70,7 +64,7 @@ function SidebarSpaceList() {
 
 	return (
 		<SidebarGroupContent>
-			<SidebarMenu className="gap-1">
+			<SidebarMenu>
 				{isPending &&
 					Array.from({ length: 3 }).map((_, i) => (
 						// biome-ignore lint/suspicious/noArrayIndexKey: Skeleton

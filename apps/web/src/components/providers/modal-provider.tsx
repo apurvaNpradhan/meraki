@@ -1,4 +1,3 @@
-import type { SelectSpace } from "@meraki/api/types/model.type";
 import type * as React from "react";
 import { NewSpaceForm } from "@/features/spaces/components/new-space-form";
 import { useDeleteSpace } from "@/features/spaces/hooks/use-space";
@@ -9,7 +8,7 @@ export function ModalProvider() {
 	const modal = useModal();
 	const ModalRegistry: Record<string, React.ComponentType<any>> = {
 		CREATE_SPACE: () => <NewSpaceForm />,
-		DELETE_SPACE: ({ space }: { space: SelectSpace }) => (
+		DELETE_SPACE: ({ space }: { space: any }) => (
 			<DeleteSpaceContent space={space} />
 		),
 	};
@@ -46,7 +45,7 @@ export function ModalProvider() {
 	);
 }
 
-function DeleteSpaceContent({ space }: { space: SelectSpace }) {
+function DeleteSpaceContent({ space }: { space: any }) {
 	const deleteMutation = useDeleteSpace();
 	const { close } = useModal();
 

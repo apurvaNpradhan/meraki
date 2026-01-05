@@ -1,11 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-
+import { SpaceInsertInput } from "@meraki/api/types/model";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import TextareaAutosize from "react-textarea-autosize";
-import { toast } from "sonner";
-import z from "zod";
+import type z from "zod";
 import { IconAndColorPicker } from "@/components/icon-and-color-picer";
 import { Button } from "@/components/ui/button";
 import { FieldError } from "@/components/ui/field";
@@ -13,22 +12,13 @@ import { Input } from "@/components/ui/input";
 import { useModal } from "@/stores/modal";
 import { useCreateSpace, useSpaces } from "../hooks/use-space";
 
-const formSchema = z.object({
-	name: z
-		.string()
-		.min(1, { message: "Name is required" })
-		.max(100, { message: "Name is too long" }),
-	description: z.string().max(1000, { message: "Description is too long" }),
-	icon: z.string().max(1000, { message: "Icon is too long" }),
-	colorCode: z.string().max(1000, { message: "Color code is too long" }),
-});
-
+const formSchema = SpaceInsertInput;
 type FormValues = z.infer<typeof formSchema>;
 
 export function NewSpaceForm() {
 	const { refetch } = useSpaces();
 	const { close } = useModal();
-	const navigate = useNavigate();
+	const _navigate = useNavigate();
 	const { handleSubmit, control } = useForm<FormValues>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -42,23 +32,8 @@ export function NewSpaceForm() {
 
 	const onSubmit = (data: FormValues) => {
 		createSpace.mutate(data, {
-			onSuccess: (board) => {
-				if (!board) {
-					toast.error("Failed to create space");
-				} else {
-					navigate({
-						to: "/spaces/$id",
-						params: {
-							id: board.publicId,
-						},
-					});
-				}
-
+			onSuccess: () => {
 				close();
-				refetch();
-			},
-			onError: () => {
-				toast.error("Failed to create space");
 			},
 		});
 	};

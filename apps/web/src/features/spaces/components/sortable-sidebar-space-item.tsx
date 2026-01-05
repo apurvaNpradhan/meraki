@@ -1,10 +1,9 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { SelectSpace } from "@meraki/db/schema/space";
 import * as TablerIcons from "@tabler/icons-react";
-import { IconBox, IconGripVertical } from "@tabler/icons-react";
+import { IconBox } from "@tabler/icons-react";
 import { useNavigate } from "@tanstack/react-router";
-import type z from "zod";
+import { Button } from "@/components/ui/button";
 import {
 	ContextMenu,
 	ContextMenuContent,
@@ -17,22 +16,15 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { SidebarMenuItem } from "@/components/ui/sidebar";
+import { SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
 import { useRouteActive } from "@/hooks/use-active-route";
+import { cn } from "@/lib/utils";
 import { useModal } from "@/stores/modal";
+import type { SidebarSpace } from "@/types/space";
 
 interface SortableSpaceItemProps {
-	data: Space;
+	data: SidebarSpace;
 }
-const SpaceSelectSchema = SelectSpace.pick({
-	publicId: true,
-	name: true,
-	position: true,
-	icon: true,
-	colorCode: true,
-});
-
-type Space = z.infer<typeof SpaceSelectSchema>;
 export default function SortableSidebarSpaceItem({
 	data,
 }: SortableSpaceItemProps) {
@@ -53,62 +45,72 @@ export default function SortableSidebarSpaceItem({
 	const _isActive = useRouteActive();
 	const navigate = useNavigate();
 
+	const { state } = useSidebar();
+	const isCollapsed = state === "collapsed";
+
 	return (
 		<ContextMenu>
-			<SidebarMenuItem ref={setNodeRef} style={style}>
+			<SidebarMenuItem
+				ref={setNodeRef}
+				style={style}
+				{...attributes}
+				{...listeners}
+			>
 				<ContextMenuTrigger className="group/item flex w-full items-center gap-[2px] p-1">
-					<div
-						{...attributes}
-						{...listeners}
-						className="flex shrink-0 cursor-grab items-center justify-center rounded-md text-muted-foreground/50 opacity-0 transition-opacity hover:bg-accent hover:text-accent-foreground active:cursor-grabbing group-hover/item:opacity-100"
-					>
-						<IconGripVertical size={16} />
-					</div>
-					<SidebarMenuItem
-						onClick={() => {
-							navigate({
-								to: "/spaces/$id",
-								params: { id: data.publicId },
-							});
-						}}
-						className="flex flex-1 flex-row items-center justify-between gap-2"
-					>
-						<div className="flex items-center gap-2">
-							{Icon ? (
-								<Icon size={18} style={{ color: data.colorCode }} />
-							) : (
-								<IconBox size={18} />
+					<div className="group/menu-item relative flex flex-1 flex-row items-center justify-between rounded-md p-1 text-left text-sm hover:bg-accent/40">
+						<button
+							type="button"
+							data-slot="sidebar-menu-button"
+							data-sidebar="menu-button"
+							onClick={() => {
+								navigate({
+									to: "/spaces/$id",
+									params: { id: data.publicId },
+								});
+							}}
+							className={cn(
+								"flex flex-1 items-center justify-start gap-2",
+								isCollapsed && "justify-center",
 							)}
-							<span className="line-clamp-1 flex-1 font-medium">
-								{data.name}
-							</span>
-						</div>
-						<DropdownMenu>
-							<DropdownMenuTrigger
-								className="flex items-center justify-center rounded-md p-1 text-muted-foreground/50 opacity-0 transition-opacity hover:bg-accent hover:text-accent-foreground active:cursor-grabbing group-hover/item:opacity-100"
-								onClick={(e) => e.stopPropagation()}
-							>
-								<TablerIcons.IconDots size={14} />
-							</DropdownMenuTrigger>
-							<DropdownMenuContent>
-								<DropdownMenuItem
-									variant="destructive"
-									onClick={(e) => {
-										e.stopPropagation();
-										open({
-											type: "DELETE_SPACE",
-											title: "Delete Space",
-											data: {
-												space: data,
-											},
-										});
-									}}
+						>
+							{Icon ? (
+								<Icon size={16} style={{ color: data.colorCode }} />
+							) : (
+								<IconBox size={16} />
+							)}
+							{!isCollapsed && (
+								<span className="line-clamp-1 font-medium">{data.name}</span>
+							)}
+						</button>
+						{!isCollapsed && (
+							<DropdownMenu>
+								<DropdownMenuTrigger
+									className="opacity-0 group-hover/item:opacity-100"
+									onClick={(e) => e.stopPropagation()}
+									render={<Button variant={"ghost"} size={"icon-sm"} />}
 								>
-									Delete
-								</DropdownMenuItem>
-							</DropdownMenuContent>
-						</DropdownMenu>
-					</SidebarMenuItem>
+									<TablerIcons.IconDots size={14} />
+								</DropdownMenuTrigger>
+								<DropdownMenuContent>
+									<DropdownMenuItem
+										variant="destructive"
+										onClick={(e) => {
+											e.stopPropagation();
+											open({
+												type: "DELETE_SPACE",
+												title: "Delete Space",
+												data: {
+													space: data,
+												},
+											});
+										}}
+									>
+										Delete
+									</DropdownMenuItem>
+								</DropdownMenuContent>
+							</DropdownMenu>
+						)}
+					</div>
 				</ContextMenuTrigger>
 			</SidebarMenuItem>
 

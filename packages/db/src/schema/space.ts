@@ -8,8 +8,6 @@ import {
 	uuid,
 	varchar,
 } from "drizzle-orm/pg-core";
-import { createSelectSchema } from "drizzle-zod";
-import type z from "zod";
 import { organization, user } from "../schema/auth";
 import { timestamps } from "../utils/timestamps";
 
@@ -49,7 +47,3 @@ export const spaces = pgTable(
 		index("space_createdBy_idx").on(table.createdBy),
 	],
 ).enableRLS();
-
-export const SelectSpace = createSelectSchema(spaces).omit({});
-export type SelectSpace = z.infer<typeof SelectSpace>;
-export type InsertSpace = typeof spaces.$inferInsert;

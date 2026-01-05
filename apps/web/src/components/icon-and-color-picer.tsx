@@ -48,6 +48,7 @@ export function IconAndColorPicker({
 	const [open, setOpen] = React.useState(false);
 	const [showHexPicker, setShowHexPicker] = React.useState(false);
 	const [search, setSearch] = React.useState("");
+
 	const filteredIcons = React.useMemo(() => {
 		const uniqueCommonIcons = Array.from(new Set(commonIcons));
 
@@ -67,6 +68,7 @@ export function IconAndColorPicker({
 		? // @ts-ignore
 			(TablerIcons[icon] as React.ElementType)
 		: null;
+
 	return (
 		<Popover open={open} onOpenChange={setOpen}>
 			<PopoverTrigger
@@ -191,6 +193,7 @@ export function IconAndColorPicker({
 					)}
 					<CommandInput
 						className="dark:bg-"
+						name="icon"
 						placeholder="Search icon..."
 						value={search}
 						onValueChange={setSearch}

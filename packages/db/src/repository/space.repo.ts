@@ -1,6 +1,8 @@
 import { and, count, desc, eq, isNull } from "drizzle-orm";
+import type z from "zod";
 import { db } from "..";
 import { spaces } from "../schema/space";
+import type { InsertSpace, UpdateSpace } from "../zod";
 
 export const getCount = async () => {
 	const result = await db
@@ -51,22 +53,6 @@ export const getByPublicId = async (
 			icon: true,
 		},
 		with: {
-			projects: {
-				columns: {
-					publicId: true,
-					name: true,
-					description: true,
-					position: true,
-				},
-				orderBy: (p, { asc }) => [asc(p.position)],
-				with: {
-					status: {
-						columns: {
-							publicId: true,
-						},
-					},
-				},
-			},
 			organization: {
 				columns: {
 					id: true,
@@ -165,28 +151,19 @@ export const getLastPositionByPublicId = (organizationId: string) => {
 	return result ?? null;
 };
 
-export const create = async (spaceInput: {
-	publicId?: string;
-	name: string;
-	description?: string;
-	slug: string;
-	colorCode: string;
-	icon: string;
-	position: string;
-	organizationId: string;
-	createdBy: string;
-}) => {
+export const create = async (args: { input: z.infer<typeof InsertSpace> }) => {
+	const { input } = args;
 	const [result] = await db
 		.insert(spaces)
 		.values({
-			name: spaceInput.name,
-			description: spaceInput.description,
-			slug: spaceInput.slug,
-			colorCode: spaceInput.colorCode,
-			icon: spaceInput.icon,
-			position: spaceInput.position,
-			organizationId: spaceInput.organizationId,
-			createdBy: spaceInput.createdBy,
+			name: input.name,
+			description: input.description,
+			slug: input.slug,
+			colorCode: input.colorCode,
+			icon: input.icon,
+			position: input.position,
+			organizationId: input.organizationId,
+			createdBy: input.createdBy,
 		})
 		.returning({
 			id: spaces.id,
@@ -196,26 +173,22 @@ export const create = async (spaceInput: {
 	return result;
 };
 
-export const update = async (spaceInput: {
-	name: string | undefined;
-	slug: string | undefined;
-	position: string | undefined;
-	colorCode: string | undefined;
-	icon: string | undefined;
-	description: string | undefined;
-	spacePublicId: string;
+export const update = async (args: {
+	spaceId: bigint;
+	input: z.infer<typeof UpdateSpace>;
 }) => {
+	const { spaceId, input } = args;
 	const [result] = await db
 		.update(spaces)
 		.set({
-			name: spaceInput.name,
-			slug: spaceInput.slug,
-			position: spaceInput.position,
-			colorCode: spaceInput.colorCode,
-			icon: spaceInput.icon,
-			description: spaceInput.description,
+			name: input.name,
+			slug: input.slug,
+			position: input.position,
+			colorCode: input.colorCode,
+			icon: input.icon,
+			description: input.description,
 		})
-		.where(eq(spaces.publicId, spaceInput.spacePublicId))
+		.where(eq(spaces.id, spaceId))
 		.returning({
 			publicId: spaces.publicId,
 			name: spaces.name,

@@ -3,7 +3,7 @@ export const DEFAULT_PROJECT_STATUSES = [
 		name: "Backlog",
 		type: "backlog",
 		position: "a",
-		colorCode: "#94a3b8", // slate-400
+		colorCode: "#94a3b8",
 		description: null,
 	},
 	{

@@ -1,19 +1,16 @@
-import {
-	useMutation,
-	useQueryClient,
-	useSuspenseQuery,
-} from "@tanstack/react-query";
+import type { RouterOutputs } from "@meraki/api/routers/index";
+import * as reactQuery from "@tanstack/react-query";
+import { useNavigate, useRouter } from "@tanstack/react-router";
 import { generateKeyBetween } from "fractional-indexing";
 import { toast } from "sonner";
-
 import { orpc } from "@/utils/orpc";
 
 export function useSpaces() {
-	return useSuspenseQuery(orpc.space.all.queryOptions());
+	return reactQuery.useSuspenseQuery(orpc.space.all.queryOptions());
 }
 
 export function useSpace(publicId: string) {
-	return useSuspenseQuery(
+	return reactQuery.useSuspenseQuery(
 		orpc.space.byId.queryOptions({
 			input: {
 				spacePublicId: publicId,
@@ -23,9 +20,9 @@ export function useSpace(publicId: string) {
 }
 
 export function useUpdateSpace() {
-	const queryClient = useQueryClient();
+	const queryClient = reactQuery.useQueryClient();
 
-	return useMutation(
+	return reactQuery.useMutation(
 		orpc.space.update.mutationOptions({
 			onMutate: async (newSpace) => {
 				const queryKey = orpc.space.all.queryKey();
@@ -36,18 +33,17 @@ export function useUpdateSpace() {
 					queryClient.setQueryData(orpc.space.all.queryKey(), (old) => {
 						if (!old) return old;
 
-						const updated = old.map((d) =>
-							d.publicId === newSpace.spacePublicId ? { ...d, ...newSpace } : d,
-						);
-
-						if (newSpace.position) {
-							return updated.sort((a, b) => {
+						const updated = old
+							.map((d) =>
+								d.publicId === newSpace.spacePublicId
+									? { ...d, ...newSpace }
+									: d,
+							)
+							.sort((a, b) => {
 								if (a.position < b.position) return -1;
 								if (a.position > b.position) return 1;
 								return 0;
 							});
-						}
-
 						return updated;
 					});
 				}
@@ -95,9 +91,10 @@ export function useUpdateSpace() {
 }
 
 export function useCreateSpace() {
-	const queryClient = useQueryClient();
+	const navigate = useNavigate();
+	const queryClient = reactQuery.useQueryClient();
 
-	return useMutation(
+	return reactQuery.useMutation(
 		orpc.space.create.mutationOptions({
 			onMutate: async (input) => {
 				await queryClient.cancelQueries({
@@ -109,22 +106,12 @@ export function useCreateSpace() {
 				);
 
 				const optimisticSpace = {
-					id: BigInt(Date.now()),
 					publicId: crypto.randomUUID(),
 					name: input.name,
-					description: input.description ?? null,
-					slug: input.name.toLowerCase().replace(/\s+/g, "-"),
-					position: generateKeyBetween(null, null),
+					position: "not-set",
 					colorCode: input.colorCode,
 					icon: input.icon,
-					createdAt: new Date(),
-					updatedAt: new Date(),
-					createdBy: "optimistic",
-					organizationId: "optimistic",
-					deletedAt: null,
-					creator: { id: "optimistic", email: "optimistic@example.com" },
-					statuses: [],
-				};
+				} as RouterOutputs["space"]["all"][0];
 
 				if (previousSpaces) {
 					const lastSpace = previousSpaces[previousSpaces.length - 1];
@@ -150,19 +137,27 @@ export function useCreateSpace() {
 				}
 				toast.error(err.message || "Failed to create space");
 			},
-			onSuccess: () => {
+			onSuccess: ({ publicId }) => {
 				queryClient.invalidateQueries({
 					queryKey: orpc.space.all.queryKey(),
 				});
 				toast.success("Space created successfully");
+				navigate({
+					to: "/spaces/$id",
+					params: {
+						id: publicId,
+					},
+				});
 			},
 		}),
 	);
 }
 
 export function useDeleteSpace() {
-	const queryClient = useQueryClient();
-	return useMutation(
+	const navigate = useNavigate();
+	const router = useRouter();
+	const queryClient = reactQuery.useQueryClient();
+	return reactQuery.useMutation(
 		orpc.space.delete.mutationOptions({
 			onMutate: async ({ spacePublicId: publicId }) => {
 				await queryClient.cancelQueries({
@@ -190,12 +185,20 @@ export function useDeleteSpace() {
 				}
 				toast.error(err.message || "Failed to delete space");
 			},
-			onSuccess: () => {
+			onSuccess: ({ deletedPublicId }) => {
 				queryClient.invalidateQueries({
 					queryKey: orpc.space.all.queryKey(),
 				});
-
 				toast.success("Space deleted successfully");
+				if (
+					router.state.location.pathname.startsWith(
+						`/spaces/${deletedPublicId}`,
+					)
+				) {
+					navigate({
+						to: "/home",
+					});
+				}
 			},
 		}),
 	);

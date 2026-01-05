@@ -6,6 +6,8 @@
 			"default": "./src/index.ts"
 		},
 		"./utils": "./src/utils/index.ts",
+		"./schema": "./src/schema/index.ts",
+		"./zod": "./src/zod/index.ts",
 		"./*": {
 			"default": "./src/*.ts"
 		}

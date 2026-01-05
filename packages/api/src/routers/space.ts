@@ -4,6 +4,7 @@ import { ORPCError } from "@orpc/client";
 import { generateKeyBetween } from "fractional-indexing";
 import z from "zod";
 import { protectedProcedure } from "..";
+import { SpaceInsertInput, SpaceUpdateInput } from "../types";
 
 export const spaceRouter = {
 	all: protectedProcedure
@@ -52,14 +53,7 @@ export const spaceRouter = {
 			return result;
 		}),
 	create: protectedProcedure
-		.input(
-			z.object({
-				name: z.string().min(1).max(100),
-				description: z.string().optional(),
-				colorCode: z.string().min(1),
-				icon: z.string().min(1),
-			}),
-		)
+		.input(SpaceInsertInput)
 		.output(z.custom<Awaited<ReturnType<typeof spaceRepo.create>>>())
 		.handler(async ({ input, context }) => {
 			const userId = context.session?.user?.id;
@@ -78,30 +72,22 @@ export const spaceRouter = {
 			const position = generateKeyBetween(lastPosition?.position, null);
 
 			const result = await spaceRepo.create({
-				name: input.name,
-				description: input.description,
-				slug,
-				colorCode: input.colorCode,
-				icon: input.icon,
-				position,
-				organizationId: context.session.session.activeOrganizationId,
-				createdBy: userId,
+				input: {
+					description: input.description,
+					slug,
+					colorCode: input.colorCode,
+					icon: input.icon,
+					position,
+					organizationId: context.session.session.activeOrganizationId,
+					createdBy: userId,
+					name: input.name,
+				},
 			});
 
 			return result;
 		}),
 	update: protectedProcedure
-		.input(
-			z.object({
-				spacePublicId: z.string(),
-				position: z.string().optional(),
-				name: z.string().optional(),
-				slug: z.string().optional(),
-				colorCode: z.string().optional(),
-				icon: z.string().optional(),
-				description: z.string().optional(),
-			}),
-		)
+		.input(SpaceUpdateInput)
 		.output(z.custom<Awaited<ReturnType<typeof spaceRepo.update>>>())
 		.handler(async ({ input }) => {
 			const space = await spaceRepo.getWorkspaceAndSpaceIdBySpacePublicId(
@@ -127,20 +113,22 @@ export const spaceRouter = {
 			}
 
 			const result = await spaceRepo.update({
-				name: input.name,
-				position: input.position,
-				slug: input.slug,
-				colorCode: input.colorCode,
-				icon: input.icon,
-				description: input.description,
-				spacePublicId: input.spacePublicId,
+				spaceId: space.id,
+				input: {
+					name: input.name,
+					position: input.position,
+					slug: input.slug,
+					colorCode: input.colorCode,
+					icon: input.icon,
+					description: input.description,
+				},
 			});
 
 			return result;
 		}),
 	delete: protectedProcedure
 		.input(z.object({ spacePublicId: z.string() }))
-		.output(z.object({ success: z.boolean() }))
+		.output(z.object({ success: z.boolean(), deletedPublicId: z.string() }))
 		.handler(async ({ input, context }) => {
 			const userId = context.session?.user?.id;
 			if (!userId) {
@@ -157,13 +145,13 @@ export const spaceRouter = {
 				});
 			}
 
-			await spaceRepo.softDelete({
+			const result = await spaceRepo.softDelete({
 				spaceId: space.id,
 				deletedBy: userId,
 				deletedAt: new Date(),
 			});
 
-			return { success: true };
+			return { success: true, deletedPublicId: result?.publicId };
 		}),
 	checkSlugAvailability: protectedProcedure
 		.input(
