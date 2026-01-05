@@ -2,6 +2,7 @@ import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { NotFound } from "@/components/not-found";
 import { ModalProvider } from "@/components/providers/modal-provider";
 import { sessionQueryOptions } from "@/lib/auth-client";
+import { orpc } from "@/utils/orpc";
 
 export const Route = createFileRoute("/(authenticated)")({
 	component: RouteComponent,
@@ -26,6 +27,13 @@ export const Route = createFileRoute("/(authenticated)")({
 		}
 
 		return { session };
+	},
+	loader: async ({ context }) => {
+		return {
+			projectStatuses: context.queryClient.ensureQueryData(
+				orpc.projectStatus.all.queryOptions(),
+			),
+		};
 	},
 });
 

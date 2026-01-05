@@ -1,4 +1,6 @@
+import type { ProjectInsertInput } from "@meraki/api/types/model";
 import type * as React from "react";
+import { NewProjectForm } from "@/features/projects/hooks/components/new-project-form";
 import { NewSpaceForm } from "@/features/spaces/components/new-space-form";
 import { useDeleteSpace } from "@/features/spaces/hooks/use-space";
 import { useModal } from "@/stores/modal";
@@ -11,6 +13,13 @@ export function ModalProvider() {
 		DELETE_SPACE: ({ space }: { space: any }) => (
 			<DeleteSpaceContent space={space} />
 		),
+		CREATE_PROJECT: ({
+			data,
+			spacePublicId,
+		}: {
+			data?: ProjectInsertInput;
+			spacePublicId: string;
+		}) => <NewProjectForm data={data} spacePublicId={spacePublicId} />,
 	};
 	if (modal.stack.length === 0) return null;
 

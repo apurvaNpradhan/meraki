@@ -2,6 +2,7 @@
 	"extends": "@meraki/config/tsconfig.base.json",
 	"compilerOptions": {
 		"declaration": true,
+		"jsx": "react-jsx",
 		"declarationMap": true,
 		"sourceMap": true,
 		"outDir": "dist",

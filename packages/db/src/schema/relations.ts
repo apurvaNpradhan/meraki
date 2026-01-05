@@ -7,6 +7,7 @@ import {
 	session,
 	user,
 } from "./auth";
+import { projects } from "./project";
 import { projectStatuses } from "./project-statuses";
 import { spaces } from "./space";
 
@@ -25,6 +26,7 @@ export const spaceRelations = relations(spaces, ({ one, many }) => ({
 		fields: [spaces.organizationId],
 		references: [organization.id],
 	}),
+	projects: many(projects),
 }));
 
 export const userRelations = relations(user, ({ many }) => ({
@@ -89,5 +91,28 @@ export const projectStatusRelations = relations(projectStatuses, ({ one }) => ({
 	organization: one(organization, {
 		fields: [projectStatuses.organizationId],
 		references: [organization.id],
+	}),
+}));
+
+export const projectRelations = relations(projects, ({ one, many }) => ({
+	organization: one(organization, {
+		fields: [projects.organizationId],
+		references: [organization.id],
+	}),
+	space: one(spaces, {
+		fields: [projects.spaceId],
+		references: [spaces.id],
+	}),
+	deletedBy: one(user, {
+		fields: [projects.deletedBy],
+		references: [user.id],
+	}),
+	createdBy: one(user, {
+		fields: [projects.createdBy],
+		references: [user.id],
+	}),
+	status: one(projectStatuses, {
+		fields: [projects.statusId],
+		references: [projectStatuses.id],
 	}),
 }));

@@ -159,3 +159,13 @@ export const hardDelete = async (workspaceId: string) => {
 		.where(eq(projectStatuses.organizationId, workspaceId));
 	return result;
 };
+
+export const getProjectIdByPublicId = async (publicId: string) => {
+	const result = await db.query.projectStatuses.findFirst({
+		columns: {
+			id: true,
+		},
+		where: eq(projectStatuses.publicId, publicId),
+	});
+	return result ?? null;
+};

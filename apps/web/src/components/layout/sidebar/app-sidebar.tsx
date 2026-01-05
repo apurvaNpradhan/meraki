@@ -4,6 +4,7 @@ import {
 	IconInbox,
 	IconPlus,
 	IconSearch,
+	IconStack2,
 } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
@@ -70,6 +71,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						<SidebarMenuButton size={"sm"} isActive={isActive("/inbox")}>
 							<IconInbox />
 							Inbox
+						</SidebarMenuButton>
+					</SidebarGroupContent>
+				</SidebarGroup>
+				<SidebarGroup className="p-0">
+					<SidebarGroupLabel>Views</SidebarGroupLabel>
+					<SidebarGroupContent className="flex flex-col gap-1">
+						<SidebarMenuButton
+							size={"sm"}
+							isActive={isActive("/projects")}
+							onClick={() => navigate({ to: "/projects" })}
+						>
+							<IconStack2 />
+							Projects
 						</SidebarMenuButton>
 					</SidebarGroupContent>
 				</SidebarGroup>

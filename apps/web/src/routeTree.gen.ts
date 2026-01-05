@@ -20,10 +20,12 @@ import { Route as authenticatedHomeRouteImport } from './routes/(authenticated)/
 import { Route as authenticatedSettingsRouteRouteImport } from './routes/(authenticated)/settings/route'
 import { Route as authenticatedOnboardingRouteRouteImport } from './routes/(authenticated)/onboarding/route'
 import { Route as authenticatedSettingsIndexRouteImport } from './routes/(authenticated)/settings/index'
+import { Route as authenticatedProjectsIndexRouteImport } from './routes/(authenticated)/projects/index'
 import { Route as publicSignResetPasswordRouteImport } from './routes/(public)/sign/reset-password'
 import { Route as authenticatedWorkspaceNewRouteImport } from './routes/(authenticated)/workspace/new'
 import { Route as authenticatedSpacesIdRouteImport } from './routes/(authenticated)/spaces/$id'
 import { Route as authenticatedSettingsProjectStatusesRouteImport } from './routes/(authenticated)/settings/project-statuses'
+import { Route as authenticatedProjectsIdRouteImport } from './routes/(authenticated)/projects/$id'
 import { Route as authenticatedOnboardingWorkspaceRouteImport } from './routes/(authenticated)/onboarding/workspace'
 import { Route as authenticatedOnboardingCompleteRouteImport } from './routes/(authenticated)/onboarding/complete'
 import { Route as authenticatedSettingsPreferencesIndexRouteImport } from './routes/(authenticated)/settings/preferences/index'
@@ -84,6 +86,12 @@ const authenticatedSettingsIndexRoute =
     path: '/',
     getParentRoute: () => authenticatedSettingsRouteRoute,
   } as any)
+const authenticatedProjectsIndexRoute =
+  authenticatedProjectsIndexRouteImport.update({
+    id: '/projects/',
+    path: '/projects/',
+    getParentRoute: () => authenticatedRouteRoute,
+  } as any)
 const publicSignResetPasswordRoute = publicSignResetPasswordRouteImport.update({
   id: '/sign/reset-password',
   path: '/sign/reset-password',
@@ -106,6 +114,11 @@ const authenticatedSettingsProjectStatusesRoute =
     path: '/project-statuses',
     getParentRoute: () => authenticatedSettingsRouteRoute,
   } as any)
+const authenticatedProjectsIdRoute = authenticatedProjectsIdRouteImport.update({
+  id: '/projects/$id',
+  path: '/projects/$id',
+  getParentRoute: () => authenticatedRouteRoute,
+} as any)
 const authenticatedOnboardingWorkspaceRoute =
   authenticatedOnboardingWorkspaceRouteImport.update({
     id: '/workspace',
@@ -136,10 +149,12 @@ export interface FileRoutesByFullPath {
   '/': typeof publicIndexRoute
   '/onboarding/complete': typeof authenticatedOnboardingCompleteRoute
   '/onboarding/workspace': typeof authenticatedOnboardingWorkspaceRoute
+  '/projects/$id': typeof authenticatedProjectsIdRoute
   '/settings/project-statuses': typeof authenticatedSettingsProjectStatusesRoute
   '/spaces/$id': typeof authenticatedSpacesIdRoute
   '/workspace/new': typeof authenticatedWorkspaceNewRoute
   '/sign/reset-password': typeof publicSignResetPasswordRoute
+  '/projects': typeof authenticatedProjectsIndexRoute
   '/settings/': typeof authenticatedSettingsIndexRoute
   '/settings/preferences': typeof authenticatedSettingsPreferencesIndexRoute
 }
@@ -153,10 +168,12 @@ export interface FileRoutesByTo {
   '/': typeof publicIndexRoute
   '/onboarding/complete': typeof authenticatedOnboardingCompleteRoute
   '/onboarding/workspace': typeof authenticatedOnboardingWorkspaceRoute
+  '/projects/$id': typeof authenticatedProjectsIdRoute
   '/settings/project-statuses': typeof authenticatedSettingsProjectStatusesRoute
   '/spaces/$id': typeof authenticatedSpacesIdRoute
   '/workspace/new': typeof authenticatedWorkspaceNewRoute
   '/sign/reset-password': typeof publicSignResetPasswordRoute
+  '/projects': typeof authenticatedProjectsIndexRoute
   '/settings': typeof authenticatedSettingsIndexRoute
   '/settings/preferences': typeof authenticatedSettingsPreferencesIndexRoute
 }
@@ -174,10 +191,12 @@ export interface FileRoutesById {
   '/(public)/': typeof publicIndexRoute
   '/(authenticated)/onboarding/complete': typeof authenticatedOnboardingCompleteRoute
   '/(authenticated)/onboarding/workspace': typeof authenticatedOnboardingWorkspaceRoute
+  '/(authenticated)/projects/$id': typeof authenticatedProjectsIdRoute
   '/(authenticated)/settings/project-statuses': typeof authenticatedSettingsProjectStatusesRoute
   '/(authenticated)/spaces/$id': typeof authenticatedSpacesIdRoute
   '/(authenticated)/workspace/new': typeof authenticatedWorkspaceNewRoute
   '/(public)/sign/reset-password': typeof publicSignResetPasswordRoute
+  '/(authenticated)/projects/': typeof authenticatedProjectsIndexRoute
   '/(authenticated)/settings/': typeof authenticatedSettingsIndexRoute
   '/(authenticated)/settings/preferences/': typeof authenticatedSettingsPreferencesIndexRoute
 }
@@ -194,10 +213,12 @@ export interface FileRouteTypes {
     | '/'
     | '/onboarding/complete'
     | '/onboarding/workspace'
+    | '/projects/$id'
     | '/settings/project-statuses'
     | '/spaces/$id'
     | '/workspace/new'
     | '/sign/reset-password'
+    | '/projects'
     | '/settings/'
     | '/settings/preferences'
   fileRoutesByTo: FileRoutesByTo
@@ -211,10 +232,12 @@ export interface FileRouteTypes {
     | '/'
     | '/onboarding/complete'
     | '/onboarding/workspace'
+    | '/projects/$id'
     | '/settings/project-statuses'
     | '/spaces/$id'
     | '/workspace/new'
     | '/sign/reset-password'
+    | '/projects'
     | '/settings'
     | '/settings/preferences'
   id:
@@ -231,10 +254,12 @@ export interface FileRouteTypes {
     | '/(public)/'
     | '/(authenticated)/onboarding/complete'
     | '/(authenticated)/onboarding/workspace'
+    | '/(authenticated)/projects/$id'
     | '/(authenticated)/settings/project-statuses'
     | '/(authenticated)/spaces/$id'
     | '/(authenticated)/workspace/new'
     | '/(public)/sign/reset-password'
+    | '/(authenticated)/projects/'
     | '/(authenticated)/settings/'
     | '/(authenticated)/settings/preferences/'
   fileRoutesById: FileRoutesById
@@ -323,6 +348,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authenticatedSettingsIndexRouteImport
       parentRoute: typeof authenticatedSettingsRouteRoute
     }
+    '/(authenticated)/projects/': {
+      id: '/(authenticated)/projects/'
+      path: '/projects'
+      fullPath: '/projects'
+      preLoaderRoute: typeof authenticatedProjectsIndexRouteImport
+      parentRoute: typeof authenticatedRouteRoute
+    }
     '/(public)/sign/reset-password': {
       id: '/(public)/sign/reset-password'
       path: '/sign/reset-password'
@@ -350,6 +382,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/settings/project-statuses'
       preLoaderRoute: typeof authenticatedSettingsProjectStatusesRouteImport
       parentRoute: typeof authenticatedSettingsRouteRoute
+    }
+    '/(authenticated)/projects/$id': {
+      id: '/(authenticated)/projects/$id'
+      path: '/projects/$id'
+      fullPath: '/projects/$id'
+      preLoaderRoute: typeof authenticatedProjectsIdRouteImport
+      parentRoute: typeof authenticatedRouteRoute
     }
     '/(authenticated)/onboarding/workspace': {
       id: '/(authenticated)/onboarding/workspace'
@@ -416,8 +455,10 @@ interface authenticatedRouteRouteChildren {
   authenticatedOnboardingRouteRoute: typeof authenticatedOnboardingRouteRouteWithChildren
   authenticatedSettingsRouteRoute: typeof authenticatedSettingsRouteRouteWithChildren
   authenticatedHomeRoute: typeof authenticatedHomeRoute
+  authenticatedProjectsIdRoute: typeof authenticatedProjectsIdRoute
   authenticatedSpacesIdRoute: typeof authenticatedSpacesIdRoute
   authenticatedWorkspaceNewRoute: typeof authenticatedWorkspaceNewRoute
+  authenticatedProjectsIndexRoute: typeof authenticatedProjectsIndexRoute
 }
 
 const authenticatedRouteRouteChildren: authenticatedRouteRouteChildren = {
@@ -425,8 +466,10 @@ const authenticatedRouteRouteChildren: authenticatedRouteRouteChildren = {
     authenticatedOnboardingRouteRouteWithChildren,
   authenticatedSettingsRouteRoute: authenticatedSettingsRouteRouteWithChildren,
   authenticatedHomeRoute: authenticatedHomeRoute,
+  authenticatedProjectsIdRoute: authenticatedProjectsIdRoute,
   authenticatedSpacesIdRoute: authenticatedSpacesIdRoute,
   authenticatedWorkspaceNewRoute: authenticatedWorkspaceNewRoute,
+  authenticatedProjectsIndexRoute: authenticatedProjectsIndexRoute,
 }
 
 const authenticatedRouteRouteWithChildren =

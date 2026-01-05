@@ -63,12 +63,6 @@ export const auth = betterAuth({
 				defaultValue: null,
 				input: true,
 			},
-			defaultOrganizationId: {
-				type: "string",
-				required: true,
-				defaultValue: null,
-				input: true,
-			},
 		},
 	},
 	databaseHooks: {

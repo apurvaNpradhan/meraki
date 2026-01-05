@@ -11,13 +11,18 @@ import {
 import { timestamps } from "../utils/timestamps";
 import { organization, user } from "./auth";
 
-export const projectStatusTypeEnum = pgEnum("project_status_type", [
+export const projectStatusesTypes = [
 	"backlog",
 	"planned",
 	"in_progress",
 	"completed",
 	"canceled",
-]);
+] as const;
+export type ProjectStatusType = (typeof projectStatusesTypes)[number];
+export const projectStatusTypeEnum = pgEnum(
+	"project_status_type",
+	projectStatusesTypes,
+);
 
 export const projectStatuses = pgTable(
 	"project_statuses",
