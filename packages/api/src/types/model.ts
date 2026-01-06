@@ -1,6 +1,12 @@
 //Spaces
 
-import { InsertSpace, SelectSpace, UpdateSpace } from "@meraki/db/zod";
+import {
+	InsertSpace,
+	InsertStatus,
+	SelectSpace,
+	UpdateSpace,
+	UpdateStatus,
+} from "@meraki/db/zod";
 import {
 	InsertProject,
 	SelectProject,
@@ -29,6 +35,24 @@ export type SpaceUpdateInput = z.infer<typeof SpaceUpdateInput>;
 export const Space = SelectSpace;
 export type Space = z.infer<typeof Space>;
 
+//Statuses
+export const StatusInsertInput = InsertStatus.omit({
+	createdBy: true,
+	position: true,
+	projectId: true,
+}).extend({
+	projectPublicId: z.string(),
+});
+
+export type StatusInsertInput = z.infer<typeof StatusInsertInput>;
+
+export const StatusUpdateInput = UpdateStatus.omit({
+	createdBy: true,
+	projectId: true,
+}).extend({
+	publicId: z.string(),
+});
+
 // Projects
 
 export const ProjectInsertInput = InsertProject.omit({
@@ -37,7 +61,17 @@ export const ProjectInsertInput = InsertProject.omit({
 	position: true,
 	spaceId: true,
 	statusId: true,
-}).extend({ projectStatusPublicId: z.string(), spacePublicId: z.string() });
+}).extend({
+	projectStatusPublicId: z.string(),
+	spacePublicId: z.string(),
+	statuses: z.array(
+		StatusInsertInput.omit({
+			projectPublicId: true,
+		}).extend({
+			position: z.string(),
+		}),
+	),
+});
 
 export type ProjectInsertInput = z.infer<typeof ProjectInsertInput>;
 

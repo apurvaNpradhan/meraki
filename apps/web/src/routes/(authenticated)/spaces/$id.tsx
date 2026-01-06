@@ -70,7 +70,7 @@ function RouteComponent() {
 			groups.uncategorized = [];
 
 			for (const project of data.projects) {
-				const key = project.status?.publicId ?? "uncategorized";
+				const key = project.projectStatus?.publicId ?? "uncategorized";
 				if (!groups[key]) {
 					groups[key] = [];
 				}
@@ -237,7 +237,7 @@ function RouteComponent() {
 		updateProject.mutate({
 			projectPublicId: movedItem.publicId,
 			position,
-			...(statusId !== movedItem.status?.publicId && {
+			...(statusId !== movedItem.projectStatus.publicId && {
 				projectStatusPublicId: statusId ?? undefined,
 			}),
 		});

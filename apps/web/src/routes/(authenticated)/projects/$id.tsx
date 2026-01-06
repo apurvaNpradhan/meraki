@@ -24,6 +24,11 @@ function RouteComponent() {
 			<div className="flex flex-col gap-4">
 				<div className="flex items-center gap-2">
 					<span className="font-bold text-2xl">{data?.name}</span>
+					<div>
+						{data?.statuses?.map((s) => (
+							<span key={s.publicId}>{s.name}</span>
+						))}
+					</div>
 				</div>
 			</div>
 		</MainLayout>

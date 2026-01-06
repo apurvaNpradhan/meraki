@@ -1,3 +1,4 @@
+import { Field } from "@base-ui/react/field";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ProjectInsertInput } from "@meraki/api/types/model";
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -5,7 +6,7 @@ import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import TextareaAutosize from "react-textarea-autosize";
-import type { z } from "zod";
+import { z } from "zod";
 import { IconAndColorPicker } from "@/components/icon-and-color-picer";
 import { PrioritySelector } from "@/components/priority-selector";
 import { StatusSelector } from "@/components/status-selector";
@@ -23,8 +24,11 @@ import { useModal } from "@/stores/modal";
 import type { ProjectBySpaceItem } from "@/types/project";
 import { orpc } from "@/utils/orpc";
 import { useCreateProject } from "../use-project";
+import { type Template, TemplateProjects } from "./templates";
 
-const formSchema = ProjectInsertInput;
+const formSchema = ProjectInsertInput.omit({ statuses: true }).extend({
+	template: z.custom<Template | null>(),
+});
 type FormValues = z.infer<typeof formSchema>;
 
 export function NewProjectForm({
@@ -43,10 +47,13 @@ export function NewProjectForm({
 	);
 	const [isTemplate, setIsTemplate] = useState(false);
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const { statuses: _statuses, ...restData } = data ?? {};
+
 	const defaultStatus =
 		statuses.find((s) => s.type === "backlog") ?? statuses[0];
 
-	const { handleSubmit, control } = useForm<FormValues>({
+	const { handleSubmit, control, watch, setValue } = useForm<FormValues>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			name: "",
@@ -60,16 +67,33 @@ export function NewProjectForm({
 			spacePublicId,
 			startDate: undefined,
 			targetDate: undefined,
-			...data,
+			template: null,
+			...restData,
 		},
 	});
 
+	const currentTemplate = watch("template");
 	const onSubmit = (values: FormValues) => {
-		createProject.mutate(values, {
-			onSuccess: () => {
-				close();
+		createProject.mutate(
+			{
+				name: values.name,
+				summary: values.summary,
+				description: values.description,
+				icon: values.icon,
+				colorCode: values.colorCode,
+				priority: values.priority,
+				projectStatusPublicId: values.projectStatusPublicId,
+				startDate: values.startDate,
+				targetDate: values.targetDate,
+				spacePublicId,
+				statuses: values.template?.statuses ?? [],
 			},
-		});
+			{
+				onSuccess: () => {
+					close();
+				},
+			},
+		);
 	};
 
 	useEffect(() => {
@@ -183,7 +207,13 @@ export function NewProjectForm({
 					/>
 				</div>
 			</div>
-			{isTemplate && <div className="flex flex-col py-2">Templates TODO</div>}
+			{isTemplate && (
+				<TemplateProjects
+					currentTemplate={currentTemplate}
+					setCurrentTemplate={(t) => setValue("template", t)}
+					showTemplates={isTemplate}
+				/>
+			)}
 			<div className="flex justify-end gap-2">
 				<div className="flex flex-row items-center gap-1">
 					Use template

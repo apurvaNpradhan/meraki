@@ -111,8 +111,8 @@ export function useUpdateProject({
 												...newProject,
 											};
 											if (newProject.projectStatusPublicId) {
-												updatedP.status = {
-													...(p.status ?? {}),
+												updatedP.projectStatus = {
+													...(p.projectStatus ?? {}),
 													publicId: newProject.projectStatusPublicId,
 												};
 											}
@@ -207,7 +207,7 @@ export function useCreateProject({ spacePublicId }: { spacePublicId: string }) {
 					startDate: input.startDate ?? null,
 					updatedAt: new Date(),
 					targetDate: input.targetDate ?? null,
-					status: { publicId: input.projectStatusPublicId },
+					projectStatus: { publicId: input.projectStatusPublicId },
 					space: previousSpace
 						? {
 								name: previousSpace.name,

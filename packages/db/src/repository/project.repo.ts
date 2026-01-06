@@ -75,6 +75,15 @@ export const getByPublicId = async (
 					id: true,
 				},
 			},
+			statuses: {
+				columns: {
+					name: true,
+					publicId: true,
+					colorCode: true,
+					type: true,
+					position: true,
+				},
+			},
 		},
 		where: and(
 			eq(projects.publicId, projectPublicId),
@@ -200,6 +209,18 @@ export const getWorkspaceAndProjectIdByPublicId = async (
 	});
 	return project;
 };
+export const getProjectIdByPublicId = async (projectPublicId: string) => {
+	const project = await db.query.projects.findFirst({
+		columns: {
+			id: true,
+		},
+		where: and(
+			eq(projects.publicId, projectPublicId),
+			isNull(projects.deletedAt),
+		),
+	});
+	return project;
+};
 
 export const hardDelete = async (workspaceId: string) => {
 	const result = await db
@@ -237,6 +258,7 @@ export const list = async (args: {
 			position: true,
 			colorCode: true,
 			icon: true,
+			updatedAt: true,
 		},
 		with: {
 			space: {
@@ -247,7 +269,7 @@ export const list = async (args: {
 					colorCode: true,
 				},
 			},
-			status: {
+			projectStatus: {
 				columns: {
 					publicId: true,
 				},

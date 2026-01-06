@@ -69,7 +69,7 @@ export function StatusSelector({
 	const id = useId();
 	const [open, setOpen] = useState<boolean>(false);
 	const [currentStatusId, setCurrentStatusId] = useState<string | undefined>(
-		selectedStatusId ?? project?.status?.publicId,
+		selectedStatusId ?? project?.projectStatus?.publicId,
 	);
 	const updateProject = useUpdateProject({
 		spacePublicId: spacePublicId,
@@ -79,7 +79,7 @@ export function StatusSelector({
 		if (selectedStatusId) {
 			setCurrentStatusId(selectedStatusId);
 		} else if (project) {
-			setCurrentStatusId(project.status?.publicId);
+			setCurrentStatusId(project.projectStatus?.publicId);
 		}
 	}, [project, selectedStatusId]);
 

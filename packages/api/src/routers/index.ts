@@ -8,6 +8,7 @@ import { publicProcedure } from "../index";
 import { projectRouter } from "./project";
 import { projectStatusRouter } from "./project-status";
 import { spaceRouter } from "./space";
+import { statusRouter } from "./status";
 
 export const appRouter = {
 	healthCheck: publicProcedure.handler(() => {
@@ -16,6 +17,7 @@ export const appRouter = {
 	space: spaceRouter,
 	projectStatus: projectStatusRouter,
 	project: projectRouter,
+	status: statusRouter,
 };
 export type AppRouter = typeof appRouter;
 export type AppRouterClient = RouterClient<typeof appRouter>;

@@ -1,11 +1,16 @@
 import * as projectRepo from "@meraki/db/repository/project.repo";
 import * as projectStatusRepo from "@meraki/db/repository/project-status.repo";
 import * as spaceRepo from "@meraki/db/repository/space.repo";
+import * as statusRepo from "@meraki/db/repository/status.repo";
 import { ORPCError } from "@orpc/client";
 import { generateKeyBetween } from "fractional-indexing";
 import z from "zod";
 import { protectedProcedure } from "..";
-import { ProjectInsertInput, ProjectUpdateInput } from "../types";
+import {
+	ProjectInsertInput,
+	ProjectUpdateInput,
+	StatusInsertInput,
+} from "../types";
 
 export const projectRouter = {
 	all: protectedProcedure
@@ -107,6 +112,17 @@ export const projectRouter = {
 					spaceId: space.id,
 				},
 			});
+
+			if (input.statuses.length > 0 && result) {
+				const statusInputs = input.statuses.map((status, index) => {
+					return {
+						...status,
+						projectId: result?.id,
+						createdBy: userId,
+					};
+				});
+				await statusRepo.bulkCreate(statusInputs);
+			}
 
 			return result;
 		}),
