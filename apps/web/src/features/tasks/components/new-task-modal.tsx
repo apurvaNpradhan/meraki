@@ -128,7 +128,7 @@ export function NewTaskModal() {
 						render={({ field }) => (
 							<TaskDatePicker
 								date={field.value ? new Date(field.value) : undefined}
-								className="w-fit"
+								className="w-fit border border-accent bg-accent/50"
 								onSelect={(date) => field.onChange(date)}
 							/>
 						)}

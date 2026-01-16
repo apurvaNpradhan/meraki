@@ -1,6 +1,7 @@
 import { ORPCError, type RouterClient } from "@orpc/server";
 import { z } from "zod";
 import { protectedProcedure, publicProcedure } from "../index";
+import { spaceRouter } from "./space";
 import { TaskRouter } from "./task";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
@@ -12,6 +13,7 @@ const ALLOWED_MIME_TYPES = [
 ];
 export const appRouter = {
 	task: TaskRouter,
+	space: spaceRouter,
 	healthCheck: publicProcedure.handler(() => {
 		return "OK";
 	}),
@@ -76,3 +78,6 @@ export const appRouter = {
 };
 export type AppRouter = typeof appRouter;
 export type AppRouterClient = RouterClient<typeof appRouter>;
+
+export type RouterInputs = InferRouterInputs<AppRouter>;
+export type RouterOutputs = InferRouterOutputs<AppRouter>;

@@ -107,7 +107,7 @@ export function TaskDatePicker({
 						variant="ghost"
 						size="sm"
 						className={cn(
-							"flex w-full items-center justify-start border border-accent bg-accent/50 px-2 font-normal",
+							"flex w-full items-center justify-start px-2 font-normal",
 							!date && "text-muted-foreground",
 							className,
 							`hover:text-${color} aria-expanded:text-${color}`,

@@ -34,13 +34,13 @@ export const projectStatuses = pgTable(
 			.notNull()
 			.unique()
 			.default(sql`uuid_generate_v7()`),
-		createdBy: text("created_by")
+		createdBy: uuid("created_by")
 			.notNull()
 			.references(() => user.id, { onDelete: "cascade" }),
-		organizationId: text("organization_id")
+		organizationId: uuid("organization_id")
 			.notNull()
 			.references(() => organization.id, { onDelete: "cascade" }),
-		deletedBy: text("deleted_by").references(() => user.id, {
+		deletedBy: uuid("deleted_by").references(() => user.id, {
 			onDelete: "set null",
 		}),
 		name: varchar("name", { length: 255 }).notNull(),

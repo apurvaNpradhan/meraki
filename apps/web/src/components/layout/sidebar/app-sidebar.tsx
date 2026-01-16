@@ -13,7 +13,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouteActive } from "@/hooks/use-active-route";
 import { sessionQueryOptions } from "@/lib/auth-client";
-
+import { NavSpaces } from "./nav-spaces";
 import { NavWorkspace } from "./nav-workspace";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -67,6 +67,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						</SidebarMenuButton>
 					</SidebarGroupContent>
 				</SidebarGroup>
+				<NavSpaces />
 			</SidebarContent>
 		</Sidebar>
 	);
