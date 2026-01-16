@@ -7,6 +7,7 @@ import {
 	session,
 	user,
 } from "./auth";
+import { projectStatuses } from "./project-status";
 import { tasks } from "./task";
 
 export const userRelations = relations(user, ({ many }) => ({
@@ -20,6 +21,12 @@ export const userRelations = relations(user, ({ many }) => ({
 	}),
 	assignedTasks: many(tasks, {
 		relationName: "task_assignee",
+	}),
+	projectStatuses: many(projectStatuses, {
+		relationName: "projectStatusCreatedByUser",
+	}),
+	deletedProjectStatuses: many(projectStatuses, {
+		relationName: "projectStatusDeletedByUser",
 	}),
 }));
 
@@ -45,6 +52,7 @@ export const organizationRelations = relations(organization, ({ many }) => ({
 	members: many(member),
 	invitations: many(invitation),
 	tasks: many(tasks),
+	projectStatuses: many(projectStatuses),
 }));
 
 export const memberRelations = relations(member, ({ one }) => ({
@@ -93,5 +101,20 @@ export const taskRelations = relations(tasks, ({ many, one }) => ({
 	organization: one(organization, {
 		fields: [tasks.organizationId],
 		references: [organization.id],
+	}),
+}));
+
+export const projectStatusRelations = relations(projectStatuses, ({ one }) => ({
+	createdByUser: one(user, {
+		fields: [projectStatuses.createdBy],
+		references: [user.id],
+	}),
+	organization: one(organization, {
+		fields: [projectStatuses.organizationId],
+		references: [organization.id],
+	}),
+	deletedByUser: one(user, {
+		fields: [projectStatuses.deletedBy],
+		references: [user.id],
 	}),
 }));

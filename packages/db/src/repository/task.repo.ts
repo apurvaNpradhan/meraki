@@ -57,7 +57,6 @@ export const create = async (args: {
 		.values({
 			title: input.title,
 			description: input.description,
-			status: input.status,
 			priority: input.priority,
 			position: input.position,
 			parentTaskId: input.parentTaskId,

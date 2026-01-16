@@ -1,14 +1,17 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InsertTaskInput } from "@meraki/api/types";
-import { IconLoader2 } from "@tabler/icons-react";
+import { IconChevronRight, IconLoader2 } from "@tabler/icons-react";
 import { useMutation } from "@tanstack/react-query";
+import { useLoaderData } from "@tanstack/react-router";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import TextareaAutosize from "react-textarea-autosize";
 import { toast } from "sonner";
 import type { z } from "zod";
 import { PrioritySelector } from "@/components/priority-selector";
 import { StatusSelector } from "@/components/status-selector";
 import { AutosizeTextarea } from "@/components/ui/autosize-textarea";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/date-picker";
 import { FieldError } from "@/components/ui/field";
@@ -47,7 +50,6 @@ export function NewTaskModal() {
 	const defaultValues: TaskFormValues = {
 		title: "",
 		description: "",
-		status: "todo",
 		priority: 0,
 	};
 	const form = useForm<TaskFormValues>({
@@ -55,7 +57,6 @@ export function NewTaskModal() {
 		defaultValues: {
 			title: "",
 			description: "",
-			status: "todo",
 			priority: 0,
 		},
 	});
@@ -65,33 +66,40 @@ export function NewTaskModal() {
 			input: values,
 		});
 	};
-
+	const { workspace } = useLoaderData({ from: "/(authenicated)/$slug" });
 	return (
-		<div className="flex w-full flex-col gap-6 p-1">
+		<div className="flex w-full flex-col space-y-4 p-1">
 			<ResponsiveModalHeader>
-				<ResponsiveModalTitle className="sr-only">
-					Create New Task
+				<ResponsiveModalTitle
+					className={"flex flex-row items-center gap-1 text-sm"}
+				>
+					<Button variant={"outline"} disabled size={"sm"}>
+						{workspace.slug}
+					</Button>
+					<IconChevronRight className="h-3 w-3" />
+					New Task
 				</ResponsiveModalTitle>
 			</ResponsiveModalHeader>
 
 			<form
 				onSubmit={form.handleSubmit(onSubmit)}
-				className="flex flex-col space-y-4"
+				className="flex flex-col space-y-2"
 			>
-				<div className="space-y-1">
+				<div className="space-y-4">
 					<Controller
 						control={form.control}
 						name="title"
 						render={({ field, fieldState }) => (
 							<div className="space-y-1">
-								<Input
+								<TextareaAutosize
 									{...field}
-									placeholder="Task name"
-									className="h-auto border-none p-0 font-bold font-heading text-3xl shadow-none placeholder:text-muted-foreground/30 focus-visible:ring-0 md:text-4xl dark:bg-transparent"
+									placeholder="Task title"
+									className="w-full resize-none font-semibold text-2xl outline-none placeholder:text-muted-foreground"
 									autoFocus
 									onKeyDown={(e) => {
 										if (e.key === "Enter") {
 											e.preventDefault();
+											form.handleSubmit(onSubmit)();
 										}
 									}}
 								/>
@@ -103,17 +111,17 @@ export function NewTaskModal() {
 						control={form.control}
 						name="description"
 						render={({ field }) => (
-							<AutosizeTextarea
-								placeholder="Description..."
+							<TextareaAutosize
+								placeholder="Add description..."
 								{...field}
 								value={field.value ?? ""}
-								className="min-h-[20px] resize-none border-none bg-transparent px-0 text-lg text-muted-foreground shadow-none focus-visible:ring-0"
+								className="w-full resize-none text-base text-muted-foreground outline-none placeholder:text-muted-foreground/80"
 							/>
 						)}
 					/>
 				</div>
 
-				<div className="flex flex-row items-center gap-2 px-1">
+				<div className="mt-4 flex flex-row items-center gap-2 px-1">
 					<Controller
 						control={form.control}
 						name="deadline"
@@ -130,26 +138,16 @@ export function NewTaskModal() {
 						name="priority"
 						render={({ field }) => (
 							<PrioritySelector
-								className="w-fit"
+								showLabel={true}
+								className="w-fit border-accent bg-accent/50"
 								value={field.value ?? 0}
 								onPriorityChange={field.onChange}
 							/>
 						)}
 					/>
-					<Controller
-						control={form.control}
-						name="status"
-						render={({ field }) => (
-							<StatusSelector
-								className="w-fit"
-								value={field.value}
-								onStatusChange={field.onChange}
-							/>
-						)}
-					/>
 				</div>
 
-				<ResponsiveModalFooter className="mt-6 flex items-center justify-end gap-3 border-t pt-4">
+				<ResponsiveModalFooter className="flex flex-row items-center justify-end gap-3 border-t pt-4">
 					<div className="flex items-center space-x-2">
 						<Switch
 							id="create-more"
@@ -158,14 +156,7 @@ export function NewTaskModal() {
 						/>
 						<Label htmlFor="create-more"> Create more</Label>
 					</div>
-					<Button
-						type="button"
-						variant="ghost"
-						onClick={close}
-						disabled={createTask.isPending}
-					>
-						Cancel
-					</Button>
+
 					<Button
 						type="submit"
 						disabled={createTask.isPending}
@@ -177,7 +168,7 @@ export function NewTaskModal() {
 								Adding...
 							</>
 						) : (
-							"Add task"
+							"Create task"
 						)}
 					</Button>
 				</ResponsiveModalFooter>

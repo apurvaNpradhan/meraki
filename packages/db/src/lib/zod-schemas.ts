@@ -18,7 +18,6 @@ export const TaskSchema = createSelectSchema(tasks).omit({
 export const InsertTaskSchema = createInsertSchema(tasks, {
 	title: z.string().min(1).max(500),
 	description: z.string().optional(),
-	status: z.enum(taskStatuses).default("todo"),
 	priority: z.number().default(0),
 	position: z.string().min(1).max(32),
 	parentTaskId: z.bigint().optional(),
@@ -26,6 +25,7 @@ export const InsertTaskSchema = createInsertSchema(tasks, {
 }).omit({
 	publicId: true,
 	createdAt: true,
+	status: true,
 	updatedAt: true,
 	deletedAt: true,
 	deletedBy: true,

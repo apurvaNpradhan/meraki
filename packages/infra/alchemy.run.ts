@@ -6,11 +6,12 @@ config({ path: "./.env" });
 config({ path: "../../apps/web/.env" });
 config({ path: "../../apps/server/.env" });
 
-const app = await alchemy("base");
-const bucket = await R2Bucket("base-bucket", {
-	name: "base-bucket",
+const app = await alchemy("meraki");
+const bucket = await R2Bucket("meraki-bucket", {
+	name: "meraki-bucket",
 });
 export const web = await Vite("web", {
+	name: "meraki",
 	cwd: "../../apps/web",
 	assets: "dist",
 	bindings: {
@@ -19,6 +20,7 @@ export const web = await Vite("web", {
 });
 
 export const server = await Worker("server", {
+	name: "meraki-server",
 	cwd: "../../apps/server",
 	entrypoint: "src/index.ts",
 	compatibility: "node",

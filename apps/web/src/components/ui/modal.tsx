@@ -25,7 +25,7 @@ const Modal: React.FC<Props> = ({
 	const modalSizeMap = {
 		sm: "lg:w-full lg:max-w-[400px]",
 		md: "lg:w-full lg:max-w-[550px]",
-		lg: "lg:w-full lg:max-w-[896px]",
+		lg: "lg:w-full lg:max-w-[796px]",
 		fullscreen:
 			"lg:w-full lg:max-w-[calc(100vw-80px)] lg:max-h-[calc(100vh-80px)]",
 	};

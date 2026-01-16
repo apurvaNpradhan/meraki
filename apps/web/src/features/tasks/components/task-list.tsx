@@ -1,10 +1,7 @@
 import type { SelectTaskType, UpdateTaskType } from "@meraki/api/types";
 import {
-	IconCalendar,
 	IconDotsVertical,
 	IconFilter,
-	IconFlag,
-	IconLayoutList,
 	IconPencil,
 	IconSortAscending,
 	IconTrash,
@@ -14,7 +11,6 @@ import { format, isPast, isThisWeek, isToday, isTomorrow } from "date-fns";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { PrioritySelector, priorities } from "@/components/priority-selector";
-import { StatusSelector } from "@/components/status-selector";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -23,7 +19,12 @@ import {
 	DropdownMenuGroup,
 	DropdownMenuItem,
 	DropdownMenuLabel,
+	DropdownMenuRadioGroup,
+	DropdownMenuRadioItem,
 	DropdownMenuSeparator,
+	DropdownMenuSub,
+	DropdownMenuSubContent,
+	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -40,14 +41,13 @@ import {
 	PopoverTrigger,
 } from "@/components/ui/popover";
 import { TaskDatePicker } from "@/features/tasks/components/task-date-picker";
-import { useSound } from "@/hooks/use-sound";
 import { cn } from "@/lib/utils";
 import taskCompletedSound from "@/public/assets/task-completed.mp3";
 import { useModal } from "@/stores/modal.store";
 import { orpc, queryClient } from "@/utils/orpc";
 
-export type GroupBy = "none" | "status" | "priority" | "deadline";
-export type SortBy = "default" | "name" | "createdAt" | "priority" | "status";
+export type GroupBy = "none" | "priority" | "deadline";
+export type SortBy = "default" | "name" | "createdAt" | "priority";
 
 export const priorityLabels: Record<number, string> = {
 	0: "No Priority",
@@ -57,25 +57,33 @@ export const priorityLabels: Record<number, string> = {
 	4: "Urgent Priority",
 };
 
-export function GroupingSelector({
-	value,
-	onChange,
+export function ViewSettingsSelector({
+	groupBy,
+	onGroupByChange,
+	sortBy,
+	onSortByChange,
 }: {
-	value: GroupBy;
-	onChange: (v: GroupBy) => void;
+	groupBy: GroupBy;
+	onGroupByChange: (v: GroupBy) => void;
+	sortBy: SortBy;
+	onSortByChange: (v: SortBy) => void;
 }) {
-	const options = [
-		{ id: "none", label: "No Grouping", icon: IconLayoutList },
-		{ id: "status", label: "Status", icon: IconLayoutList },
-		{ id: "priority", label: "Priority", icon: IconFlag },
-		{ id: "deadline", label: "Deadline", icon: IconCalendar },
+	const groupingOptions = [
+		{ id: "none", label: "No Grouping" },
+		{ id: "priority", label: "Priority" },
+		{ id: "deadline", label: "Deadline" },
 	];
 
-	const currentOption = options.find((o) => o.id === value);
+	const sortingOptions = [
+		{ id: "default", label: "Default" },
+		{ id: "name", label: "Name" },
+		{ id: "createdAt", label: "Created At" },
+		{ id: "priority", label: "Priority" },
+	];
 
 	return (
-		<Popover>
-			<PopoverTrigger
+		<DropdownMenu>
+			<DropdownMenuTrigger
 				render={
 					<Button
 						variant="ghost"
@@ -83,89 +91,50 @@ export function GroupingSelector({
 						className="gap-2 text-muted-foreground hover:text-foreground"
 					>
 						<IconFilter className="h-4 w-4" />
-						<span className="hidden sm:inline">
-							Group by: {currentOption?.label}
-						</span>
+						<span>View</span>
 					</Button>
 				}
 			/>
-			<PopoverContent align="end" className="w-48 p-1">
-				<div className="flex flex-col">
-					{options.map((item) => (
-						<button
-							key={item.id}
-							type="button"
-							className={cn(
-								"flex items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors",
-								value === item.id
-									? "bg-accent font-medium text-accent-foreground"
-									: "hover:bg-muted/50",
-							)}
-							onClick={() => onChange(item.id as GroupBy)}
+			<DropdownMenuContent align="end" className="w-48">
+				<DropdownMenuSub>
+					<DropdownMenuSubTrigger>
+						<IconFilter className="mr-2 h-4 w-4" />
+						Group by
+					</DropdownMenuSubTrigger>
+					<DropdownMenuSubContent>
+						<DropdownMenuRadioGroup
+							value={groupBy}
+							onValueChange={(v) => onGroupByChange(v as GroupBy)}
 						>
-							<item.icon className="h-4 w-4" />
-							{item.label}
-						</button>
-					))}
-				</div>
-			</PopoverContent>
-		</Popover>
-	);
-}
+							{groupingOptions.map((item) => (
+								<DropdownMenuRadioItem key={item.id} value={item.id}>
+									{item.label}
+								</DropdownMenuRadioItem>
+							))}
+						</DropdownMenuRadioGroup>
+					</DropdownMenuSubContent>
+				</DropdownMenuSub>
 
-export function SortingSelector({
-	value,
-	onChange,
-}: {
-	value: SortBy;
-	onChange: (v: SortBy) => void;
-}) {
-	const options = [
-		{ id: "default", label: "Default" },
-		{ id: "name", label: "Name" },
-		{ id: "createdAt", label: "Created At" },
-		{ id: "priority", label: "Priority" },
-		{ id: "status", label: "Status" },
-	];
-
-	const currentOption = options.find((o) => o.id === value);
-
-	return (
-		<Popover>
-			<PopoverTrigger
-				render={
-					<Button
-						variant="ghost"
-						size="sm"
-						className="gap-2 text-muted-foreground hover:text-foreground"
-					>
-						<IconSortAscending className="h-4 w-4" />
-						<span className="hidden sm:inline">
-							Sort by: {currentOption?.label}
-						</span>
-					</Button>
-				}
-			/>
-			<PopoverContent align="end" className="w-48 p-1">
-				<div className="flex flex-col">
-					{options.map((item) => (
-						<button
-							key={item.id}
-							type="button"
-							className={cn(
-								"flex items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors",
-								value === item.id
-									? "bg-accent font-medium text-accent-foreground"
-									: "hover:bg-muted/50",
-							)}
-							onClick={() => onChange(item.id as SortBy)}
+				<DropdownMenuSub>
+					<DropdownMenuSubTrigger>
+						<IconSortAscending className="mr-2 h-4 w-4" />
+						Sort by
+					</DropdownMenuSubTrigger>
+					<DropdownMenuSubContent>
+						<DropdownMenuRadioGroup
+							value={sortBy}
+							onValueChange={(v) => onSortByChange(v as SortBy)}
 						>
-							{item.label}
-						</button>
-					))}
-				</div>
-			</PopoverContent>
-		</Popover>
+							{sortingOptions.map((item) => (
+								<DropdownMenuRadioItem key={item.id} value={item.id}>
+									{item.label}
+								</DropdownMenuRadioItem>
+							))}
+						</DropdownMenuRadioGroup>
+					</DropdownMenuSubContent>
+				</DropdownMenuSub>
+			</DropdownMenuContent>
+		</DropdownMenu>
 	);
 }
 
@@ -219,11 +188,8 @@ export function TaskList({
 		}),
 	);
 
-	const { play: playCompleteSound } = useSound(taskCompletedSound);
-
 	const handleUpdate = (task: SelectTaskType, input: UpdateTaskType) => {
 		if (input.status === "done" && task.status !== "done") {
-			playCompleteSound();
 			setCompletingTaskIds((prev) => new Set(prev).add(task.publicId));
 
 			updateTask.mutate({
@@ -232,6 +198,24 @@ export function TaskList({
 				input: {
 					...input,
 					isArchived: true,
+				},
+			});
+
+			toast.success("Task moved to archived", {
+				action: {
+					label: "Undo",
+					onClick: () => {
+						updateTask.mutate({
+							taskId: task.publicId,
+							workspaceId,
+							input: {
+								taskPublicId: task.publicId,
+								status: task.status,
+								isArchived: false,
+								completedAt: null,
+							},
+						});
+					},
 				},
 			});
 
@@ -303,7 +287,6 @@ export function TaskList({
 						new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
 					);
 				if (sortBy === "priority") return (b.priority ?? 0) - (a.priority ?? 0);
-				if (sortBy === "status") return a.status.localeCompare(b.status);
 				return 0;
 			});
 
@@ -327,14 +310,7 @@ export function TaskList({
 			let label = "Other";
 			let order = 999;
 
-			if (groupBy === "status") {
-				key = task.status;
-				label =
-					task.status.charAt(0).toUpperCase() +
-					task.status.slice(1).replace("_", " ");
-				const statusOrder = { todo: 1, in_progress: 2, done: 3, canceled: 4 };
-				order = statusOrder[task.status as keyof typeof statusOrder] || 5;
-			} else if (groupBy === "priority") {
+			if (groupBy === "priority") {
 				const p = task.priority ?? 0;
 				key = p.toString();
 				label = priorityLabels[p] || "No Priority";
@@ -449,12 +425,11 @@ export function TaskListItem({
 	return (
 		<Item
 			tabIndex={0}
-			className="group cursor-pointer gap-0 p-1 transition-colors duration-200 ease-out hover:bg-accent/30"
+			className="group cursor-pointer flex-nowrap gap-0 p-1 transition-colors duration-200 ease-out hover:bg-accent/30"
 			onKeyDown={(e) => {
 				if (e.key === "Enter" || e.key === " ") {
 					open({
 						type: "TASK_DETAIL",
-						modalSize: "lg",
 						data: { taskId: task.publicId },
 					});
 				}
@@ -488,7 +463,7 @@ export function TaskListItem({
 			</ItemMedia>
 			<ItemContent
 				className={cn(
-					"transition-[margin] duration-200 ease-out",
+					"min-w-0 transition-[margin] duration-200 ease-out",
 					"group-hover:ml-2",
 					isDone && "ml-2",
 				)}
@@ -502,7 +477,7 @@ export function TaskListItem({
 			>
 				<ItemTitle
 					className={cn(
-						"text-[15px] leading-tight transition-colors",
+						"block truncate text-[15px] leading-tight transition-colors",
 						isDone && "text-muted-foreground line-through",
 					)}
 				>
@@ -537,23 +512,7 @@ export function TaskListItem({
 						</DropdownMenuItem>
 						<DropdownMenuGroup>
 							<DropdownMenuLabel>Properties</DropdownMenuLabel>
-							<DropdownMenuItem
-								onSelect={(e) => e.preventDefault()}
-								onClick={(e) => {
-									e.stopPropagation();
-									e.preventDefault();
-								}}
-								className="p-0!"
-							>
-								<StatusSelector
-									value={task.status}
-									showLabel={true}
-									className="flex w-full items-center justify-start"
-									onStatusChange={(status) =>
-										onUpdate({ taskPublicId: task.publicId, status })
-									}
-								/>
-							</DropdownMenuItem>
+
 							<DropdownMenuItem
 								onSelect={(e) => e.preventDefault()}
 								onClick={(e) => {

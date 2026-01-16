@@ -66,7 +66,7 @@ export function GenericSelector<T>({
 						id={id}
 						variant="ghost"
 						size="sm"
-						className={cn("flex h-8 w-full gap-2 px-2", className)}
+						className={cn("flex w-full gap-2 px-2", className)}
 						role="combobox"
 						onClick={(e) => e.stopPropagation()}
 						aria-expanded={open}

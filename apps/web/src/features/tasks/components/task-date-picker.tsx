@@ -2,12 +2,13 @@ import {
 	IconArmchair,
 	IconCalendar,
 	IconCalendarEvent,
+	IconCalendarStats,
 	IconCircleOff,
 	IconSun,
 } from "@tabler/icons-react";
 import {
 	addDays,
-	format,
+	isTomorrow,
 	nextMonday,
 	startOfToday,
 	startOfTomorrow,
@@ -26,6 +27,41 @@ interface TaskDatePickerProps {
 	onSelect: (date?: Date | null) => void;
 	className?: string;
 }
+
+import { differenceInCalendarDays, format, isToday } from "date-fns";
+
+const getDueLabel = (date?: Date | null) => {
+	const colors = {
+		thisWeek: "text-orange-500",
+		later: "text-muted-foreground",
+	};
+	if (!date)
+		return {
+			color: colors.later,
+			date: "Due date",
+		};
+
+	if (isToday(date)) {
+		return {
+			color: colors.thisWeek,
+			date: "Due today",
+		};
+	}
+
+	const daysLeft = differenceInCalendarDays(date, new Date());
+
+	if (daysLeft > 0 && daysLeft <= 7) {
+		return {
+			color: colors.thisWeek,
+			date: daysLeft === 1 ? "1 day " : `${daysLeft} days `,
+		};
+	}
+
+	return {
+		color: colors.later,
+		date: format(date, "d MMM"),
+	};
+};
 
 export function TaskDatePicker({
 	date,
@@ -62,7 +98,7 @@ export function TaskDatePicker({
 			color: "text-muted-foreground",
 		},
 	];
-
+	const { color, date: dueDate } = getDueLabel(date);
 	return (
 		<Popover>
 			<PopoverTrigger
@@ -71,14 +107,16 @@ export function TaskDatePicker({
 						variant="ghost"
 						size="sm"
 						className={cn(
-							"flex h-8 w-full items-center justify-start gap-2 px-2 font-normal",
+							"flex w-full items-center justify-start border border-accent bg-accent/50 px-2 font-normal",
 							!date && "text-muted-foreground",
 							className,
+							`hover:text-${color} aria-expanded:text-${color}`,
+							color,
 						)}
 						onClick={(e) => e.stopPropagation()}
 					>
-						<IconCalendar className="size-4" />
-						<span>{date ? format(date, "d MMM") : "Schedule"}</span>
+						<IconCalendarStats />
+						{dueDate}
 					</Button>
 				}
 			/>

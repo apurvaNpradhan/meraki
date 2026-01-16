@@ -6,10 +6,9 @@ import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
 	type GroupBy,
-	GroupingSelector,
 	type SortBy,
-	SortingSelector,
 	TaskList,
+	ViewSettingsSelector,
 } from "@/features/tasks/components/task-list";
 import { useModal } from "@/stores/modal.store";
 
@@ -35,8 +34,12 @@ function RouteComponent() {
 						Inbox
 					</h1>
 					<div className="flex items-center gap-2">
-						<SortingSelector value={sortBy} onChange={setSortBy} />
-						<GroupingSelector value={groupBy} onChange={setGroupBy} />
+						<ViewSettingsSelector
+							groupBy={groupBy}
+							onGroupByChange={setGroupBy}
+							sortBy={sortBy}
+							onSortByChange={setSortBy}
+						/>
 						<Button
 							size="sm"
 							onClick={() => {

@@ -10,9 +10,15 @@ const requireAuth = o.middleware(async ({ context, next }) => {
 	if (!context.session?.user) {
 		throw new ORPCError("UNAUTHORIZED");
 	}
+	if (!context.session?.session.activeOrganization?.id) {
+		throw new ORPCError("UNAUTHORIZED", {
+			message: "Active organization not found",
+		});
+	}
 	return next({
 		context: {
 			session: context.session,
+			workspace: context.session.session.activeOrganization,
 		},
 	});
 });
