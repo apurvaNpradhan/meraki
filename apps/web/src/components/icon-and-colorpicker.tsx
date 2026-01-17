@@ -76,7 +76,7 @@ export function IconAndColorPicker({
 					trigger ? (trigger as React.ReactElement) : <button type="button" />
 				}
 				className={cn(
-					"flex w-fit items-center rounded-md p-1 transition-colors hover:bg-(--hover-background-color)",
+					"flex w-fit items-center rounded-md p-1 outline-none transition-colors hover:bg-(--hover-background-color)",
 					className,
 				)}
 				style={
@@ -241,3 +241,22 @@ export function IconAndColorPicker({
 		</Popover>
 	);
 }
+
+export const RenderIcon = ({
+	icon,
+	color,
+	size,
+}: {
+	icon: string;
+	color: string;
+	size?: number;
+}) => {
+	const Icon = TablerIcons[
+		icon as keyof typeof TablerIcons
+	] as React.ElementType;
+	return (
+		<div className="flex items-center gap-2">
+			<Icon size={size} style={{ color: color }} />
+		</div>
+	);
+};

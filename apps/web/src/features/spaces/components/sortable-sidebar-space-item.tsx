@@ -36,6 +36,7 @@ export default function SortableSidebarSpaceItem({
 	const style = {
 		transform: CSS.Transform.toString(transform),
 		transition,
+		touchAction: "none",
 	};
 	const { open } = useModal();
 	const Icon = data.icon
@@ -67,6 +68,9 @@ export default function SortableSidebarSpaceItem({
 								navigate({
 									to: "/$slug/spaces/$id",
 									params: { slug: workspace.slug, id: data.publicId },
+									search: {
+										view: "overview",
+									},
 								});
 							}}
 							className={cn(

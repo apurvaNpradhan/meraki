@@ -35,7 +35,7 @@ export function NavSpaces() {
 						className="mr-2 flex h-6 w-6 items-center justify-center text-muted-foreground hover:text-primary"
 						onClick={(e) => {
 							e.stopPropagation();
-							open({ type: "CREATE_SPACE" });
+							open({ type: "CREATE_SPACE", modalSize: "md" });
 						}}
 					>
 						<IconPlus size={14} />

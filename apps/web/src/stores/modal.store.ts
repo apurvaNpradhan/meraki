@@ -12,6 +12,7 @@ export const MODAL_TYPES = [
 	"TASK_DETAIL",
 	"CREATE_SPACE",
 	"DELETE_SPACE",
+	"CREATE_PROJECT",
 ] as const;
 
 export type ModalType = (typeof MODAL_TYPES)[number];

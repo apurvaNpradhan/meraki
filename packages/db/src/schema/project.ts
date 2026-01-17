@@ -2,16 +2,20 @@ import { sql } from "drizzle-orm";
 import {
 	bigint,
 	index,
+	integer,
 	pgTable,
 	text,
+	timestamp,
 	uuid,
 	varchar,
 } from "drizzle-orm/pg-core";
 import { organization, user } from "../schema/auth";
 import { timestamps } from "../utils/timestamps";
+import { projectStatuses } from "./project-status";
+import { spaces } from "./space";
 
-export const spaces = pgTable(
-	"space",
+export const projects = pgTable(
+	"project",
 	{
 		id: bigint("id", { mode: "bigint" })
 			.primaryKey()
@@ -22,6 +26,24 @@ export const spaces = pgTable(
 			.default(sql`uuid_generate_v7()`),
 		name: varchar("name", { length: 255 }).notNull(),
 		description: text("description"),
+		summary: varchar("summary", { length: 255 }),
+		priority: integer("priority").default(0).notNull(),
+		statusId: bigint("status_id", { mode: "bigint" })
+			.notNull()
+			.references(() => projectStatuses.id),
+		spaceId: bigint("space_id", { mode: "bigint" })
+			.notNull()
+			.references(() => spaces.id),
+		startDate: timestamp("start_date", {
+			mode: "date",
+			precision: 3,
+			withTimezone: true,
+		}),
+		targetDate: timestamp("target_date", {
+			mode: "date",
+			precision: 3,
+			withTimezone: true,
+		}),
 		position: varchar("position", { length: 32 }).notNull(),
 		colorCode: varchar("color_code", { length: 255 }).notNull(),
 		icon: varchar("icon", { length: 255 }).notNull(),
@@ -38,7 +60,8 @@ export const spaces = pgTable(
 		...timestamps,
 	},
 	(table) => [
-		index("space_organizationId_idx").on(table.organizationId),
-		index("space_createdBy_idx").on(table.createdBy),
+		index("project_organizationId_idx").on(table.organizationId),
+		index("project_createdBy_idx").on(table.createdBy),
+		index("project_spaceId_idx").on(table.spaceId),
 	],
 ).enableRLS();

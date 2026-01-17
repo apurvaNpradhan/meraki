@@ -21,7 +21,12 @@ export const Route = createFileRoute("/(authenicated)")({
 			});
 		}
 
-		return { session };
+		return {
+			session,
+			projectStatuses: context.queryClient.ensureQueryData(
+				context.orpc.projectStatus.all.queryOptions(),
+			),
+		};
 	},
 });
 

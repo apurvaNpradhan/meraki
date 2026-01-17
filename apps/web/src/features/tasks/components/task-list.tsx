@@ -35,14 +35,8 @@ import {
 	ItemMedia,
 	ItemTitle,
 } from "@/components/ui/item";
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@/components/ui/popover";
 import { TaskDatePicker } from "@/features/tasks/components/task-date-picker";
 import { cn } from "@/lib/utils";
-import taskCompletedSound from "@/public/assets/task-completed.mp3";
 import { useModal } from "@/stores/modal.store";
 import { orpc, queryClient } from "@/utils/orpc";
 

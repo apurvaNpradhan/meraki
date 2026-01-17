@@ -1,6 +1,8 @@
 import { ORPCError, type RouterClient } from "@orpc/server";
 import { z } from "zod";
 import { protectedProcedure, publicProcedure } from "../index";
+import { projectRouter } from "./project";
+import { projectStatusRouter } from "./project-status";
 import { spaceRouter } from "./space";
 import { TaskRouter } from "./task";
 
@@ -14,6 +16,8 @@ const ALLOWED_MIME_TYPES = [
 export const appRouter = {
 	task: TaskRouter,
 	space: spaceRouter,
+	project: projectRouter,
+	projectStatus: projectStatusRouter,
 	healthCheck: publicProcedure.handler(() => {
 		return "OK";
 	}),

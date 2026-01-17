@@ -1,5 +1,4 @@
-import { IconHome, IconInbox, IconLayoutKanban } from "@tabler/icons-react";
-import { useQuery } from "@tanstack/react-query";
+import { IconHome, IconInbox } from "@tabler/icons-react";
 import { useLoaderData, useNavigate } from "@tanstack/react-router";
 import type React from "react";
 import {
@@ -10,9 +9,7 @@ import {
 	SidebarHeader,
 	SidebarMenuButton,
 } from "@/components/ui/sidebar";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useRouteActive } from "@/hooks/use-active-route";
-import { sessionQueryOptions } from "@/lib/auth-client";
 import { NavSpaces } from "./nav-spaces";
 import { NavWorkspace } from "./nav-workspace";
 

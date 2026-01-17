@@ -26,6 +26,7 @@ import { Route as authenicatedOnboardingWorkspaceRouteImport } from './routes/(a
 import { Route as authenicatedOnboardingCompleteRouteImport } from './routes/(authenicated)/onboarding/complete'
 import { Route as authenicatedSlugHomeRouteImport } from './routes/(authenicated)/$slug/home'
 import { Route as authenicatedSlugInboxIndexRouteImport } from './routes/(authenicated)/$slug/inbox/index'
+import { Route as authenicatedSlugSpacesIdOldRouteImport } from './routes/(authenicated)/$slug/spaces/$id-old'
 import { Route as authenicatedSlugSpacesIdRouteImport } from './routes/(authenicated)/$slug/spaces/$id'
 import { Route as authenicatedSlugSettingsWorkspacePeopleRouteImport } from './routes/(authenicated)/$slug/settings/workspace/people'
 import { Route as authenicatedSlugSettingsWorkspaceGeneralRouteImport } from './routes/(authenicated)/$slug/settings/workspace/general'
@@ -120,6 +121,12 @@ const authenicatedSlugInboxIndexRoute =
     path: '/inbox/',
     getParentRoute: () => authenicatedSlugRouteRoute,
   } as any)
+const authenicatedSlugSpacesIdOldRoute =
+  authenicatedSlugSpacesIdOldRouteImport.update({
+    id: '/spaces/$id-old',
+    path: '/spaces/$id-old',
+    getParentRoute: () => authenicatedSlugRouteRoute,
+  } as any)
 const authenicatedSlugSpacesIdRoute =
   authenicatedSlugSpacesIdRouteImport.update({
     id: '/spaces/$id',
@@ -167,6 +174,7 @@ export interface FileRoutesByFullPath {
   '/onboarding/workspace': typeof authenicatedOnboardingWorkspaceRoute
   '/onboarding/': typeof authenicatedOnboardingIndexRoute
   '/$slug/spaces/$id': typeof authenicatedSlugSpacesIdRoute
+  '/$slug/spaces/$id-old': typeof authenicatedSlugSpacesIdOldRoute
   '/$slug/inbox': typeof authenicatedSlugInboxIndexRoute
   '/$slug/settings/workspace/general': typeof authenicatedSlugSettingsWorkspaceGeneralRoute
   '/$slug/settings/workspace/people': typeof authenicatedSlugSettingsWorkspacePeopleRoute
@@ -188,6 +196,7 @@ export interface FileRoutesByTo {
   '/onboarding/workspace': typeof authenicatedOnboardingWorkspaceRoute
   '/onboarding': typeof authenicatedOnboardingIndexRoute
   '/$slug/spaces/$id': typeof authenicatedSlugSpacesIdRoute
+  '/$slug/spaces/$id-old': typeof authenicatedSlugSpacesIdOldRoute
   '/$slug/inbox': typeof authenicatedSlugInboxIndexRoute
   '/$slug/settings/workspace/general': typeof authenicatedSlugSettingsWorkspaceGeneralRoute
   '/$slug/settings/workspace/people': typeof authenicatedSlugSettingsWorkspacePeopleRoute
@@ -213,6 +222,7 @@ export interface FileRoutesById {
   '/(authenicated)/onboarding/workspace': typeof authenicatedOnboardingWorkspaceRoute
   '/(authenicated)/onboarding/': typeof authenicatedOnboardingIndexRoute
   '/(authenicated)/$slug/spaces/$id': typeof authenicatedSlugSpacesIdRoute
+  '/(authenicated)/$slug/spaces/$id-old': typeof authenicatedSlugSpacesIdOldRoute
   '/(authenicated)/$slug/inbox/': typeof authenicatedSlugInboxIndexRoute
   '/(authenicated)/$slug/settings/workspace/general': typeof authenicatedSlugSettingsWorkspaceGeneralRoute
   '/(authenicated)/$slug/settings/workspace/people': typeof authenicatedSlugSettingsWorkspacePeopleRoute
@@ -237,6 +247,7 @@ export interface FileRouteTypes {
     | '/onboarding/workspace'
     | '/onboarding/'
     | '/$slug/spaces/$id'
+    | '/$slug/spaces/$id-old'
     | '/$slug/inbox'
     | '/$slug/settings/workspace/general'
     | '/$slug/settings/workspace/people'
@@ -258,6 +269,7 @@ export interface FileRouteTypes {
     | '/onboarding/workspace'
     | '/onboarding'
     | '/$slug/spaces/$id'
+    | '/$slug/spaces/$id-old'
     | '/$slug/inbox'
     | '/$slug/settings/workspace/general'
     | '/$slug/settings/workspace/people'
@@ -282,6 +294,7 @@ export interface FileRouteTypes {
     | '/(authenicated)/onboarding/workspace'
     | '/(authenicated)/onboarding/'
     | '/(authenicated)/$slug/spaces/$id'
+    | '/(authenicated)/$slug/spaces/$id-old'
     | '/(authenicated)/$slug/inbox/'
     | '/(authenicated)/$slug/settings/workspace/general'
     | '/(authenicated)/$slug/settings/workspace/people'
@@ -419,6 +432,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authenicatedSlugInboxIndexRouteImport
       parentRoute: typeof authenicatedSlugRouteRoute
     }
+    '/(authenicated)/$slug/spaces/$id-old': {
+      id: '/(authenicated)/$slug/spaces/$id-old'
+      path: '/spaces/$id-old'
+      fullPath: '/$slug/spaces/$id-old'
+      preLoaderRoute: typeof authenicatedSlugSpacesIdOldRouteImport
+      parentRoute: typeof authenicatedSlugRouteRoute
+    }
     '/(authenicated)/$slug/spaces/$id': {
       id: '/(authenicated)/$slug/spaces/$id'
       path: '/spaces/$id'
@@ -460,6 +480,7 @@ declare module '@tanstack/react-router' {
 interface authenicatedSlugRouteRouteChildren {
   authenicatedSlugHomeRoute: typeof authenicatedSlugHomeRoute
   authenicatedSlugSpacesIdRoute: typeof authenicatedSlugSpacesIdRoute
+  authenicatedSlugSpacesIdOldRoute: typeof authenicatedSlugSpacesIdOldRoute
   authenicatedSlugInboxIndexRoute: typeof authenicatedSlugInboxIndexRoute
   authenicatedSlugSettingsWorkspaceGeneralRoute: typeof authenicatedSlugSettingsWorkspaceGeneralRoute
   authenicatedSlugSettingsWorkspacePeopleRoute: typeof authenicatedSlugSettingsWorkspacePeopleRoute
@@ -470,6 +491,7 @@ interface authenicatedSlugRouteRouteChildren {
 const authenicatedSlugRouteRouteChildren: authenicatedSlugRouteRouteChildren = {
   authenicatedSlugHomeRoute: authenicatedSlugHomeRoute,
   authenicatedSlugSpacesIdRoute: authenicatedSlugSpacesIdRoute,
+  authenicatedSlugSpacesIdOldRoute: authenicatedSlugSpacesIdOldRoute,
   authenicatedSlugInboxIndexRoute: authenicatedSlugInboxIndexRoute,
   authenicatedSlugSettingsWorkspaceGeneralRoute:
     authenicatedSlugSettingsWorkspaceGeneralRoute,

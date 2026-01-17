@@ -1,5 +1,6 @@
-import type * as React from "react";
+import * as React from "react";
 import { ForgotPasswordModal } from "@/features/auth/components/forgot-password-modal";
+import { NewProjectForm } from "@/features/projects/components/new-project-form";
 import { ChangeEmailModal } from "@/features/settings/components/change-email-modal";
 import { DeleteAccountModal } from "@/features/settings/components/delete-account-modal";
 import { UpdatePasswordModal } from "@/features/settings/components/update-password-modal";
@@ -14,6 +15,7 @@ import Modal from "./ui/modal";
 
 export function ModalProvider() {
 	const modal = useModal();
+	// biome-ignore lint/suspicious/noExplicitAny: modal registry components have varied props
 	const ModalRegistry: Record<ModalType, React.ComponentType<any>> = {
 		UPDATE_PASSWORD: UpdatePasswordModal,
 		DELETE_ACCOUNT: DeleteAccountModal,
@@ -25,6 +27,7 @@ export function ModalProvider() {
 		TASK_DETAIL: TaskDetailModal,
 		CREATE_SPACE: NewSpaceForm,
 		DELETE_SPACE: DeleteSpaceModal,
+		CREATE_PROJECT: NewProjectForm,
 	};
 	if (modal.stack.length === 0) return null;
 
@@ -44,7 +47,15 @@ export function ModalProvider() {
 						modalSize={instance.modalSize}
 						closeOnClickOutside={instance.closeOnClickOutside}
 					>
-						<Component {...(instance.data || {})} />
+						<React.Suspense
+							fallback={
+								<div className="p-10 text-center text-muted-foreground">
+									Loading...
+								</div>
+							}
+						>
+							<Component {...(instance.data || {})} />
+						</React.Suspense>
 					</Modal>
 				);
 			})}

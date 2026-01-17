@@ -33,7 +33,7 @@ const responsiveModalVariants = (
 	side: "top" | "bottom" | "left" | "right" = "bottom",
 ) => {
 	const baseClasses = cn(
-		"fixed z-50 gap-4 overflow-y-auto bg-background p-6 shadow-lg",
+		"fixed z-50 gap-4 overflow-y-auto bg-background p-3 shadow-lg",
 		// Unified animation timing
 		"transition ease-in-out",
 		"data-closed:animate-out data-open:animate-in",

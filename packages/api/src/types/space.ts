@@ -1,5 +1,6 @@
 import {
 	InsertSpaceSchema,
+	type SelectSpaceSchema,
 	UpdateSpaceSchema,
 } from "@meraki/db/lib/zod-schemas";
 import type z from "zod";
@@ -16,3 +17,4 @@ export const UpdateSpaceInput = UpdateSpaceSchema.omit({
 
 export type InsertSpaceType = z.infer<typeof InsertSpaceInput>;
 export type UpdateSpaceType = z.infer<typeof UpdateSpaceInput>;
+export type SpaceType = z.infer<typeof SelectSpaceSchema>;

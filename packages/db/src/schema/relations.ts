@@ -7,6 +7,7 @@ import {
 	session,
 	user,
 } from "./auth";
+import { projects } from "./project";
 import { projectStatuses } from "./project-status";
 import { spaces } from "./space";
 import { tasks } from "./task";
@@ -28,6 +29,12 @@ export const userRelations = relations(user, ({ many }) => ({
 	}),
 	deletedSpaces: many(spaces, {
 		relationName: "spaceDeletedByUser",
+	}),
+	projects: many(projects, {
+		relationName: "projectCreatedByUser",
+	}),
+	deletedProjects: many(projects, {
+		relationName: "projectDeletedByUser",
 	}),
 	projectStatuses: many(projectStatuses, {
 		relationName: "projectStatusCreatedByUser",
@@ -141,5 +148,29 @@ export const spaceRelations = relations(spaces, ({ one, many }) => ({
 	organization: one(organization, {
 		fields: [spaces.organizationId],
 		references: [organization.id],
+	}),
+	projects: many(projects),
+}));
+
+export const projectRelations = relations(projects, ({ one, many }) => ({
+	organization: one(organization, {
+		fields: [projects.organizationId],
+		references: [organization.id],
+	}),
+	space: one(spaces, {
+		fields: [projects.spaceId],
+		references: [spaces.id],
+	}),
+	deletedBy: one(user, {
+		fields: [projects.deletedBy],
+		references: [user.id],
+	}),
+	createdBy: one(user, {
+		fields: [projects.createdBy],
+		references: [user.id],
+	}),
+	projectStatus: one(projectStatuses, {
+		fields: [projects.statusId],
+		references: [projectStatuses.id],
 	}),
 }));

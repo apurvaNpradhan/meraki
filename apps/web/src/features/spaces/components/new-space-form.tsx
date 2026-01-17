@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InsertSpaceInput } from "@meraki/api/types/space";
+import { IconLoader2 } from "@tabler/icons-react";
 import { useLoaderData, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -8,7 +9,11 @@ import type z from "zod";
 import { IconAndColorPicker } from "@/components/icon-and-colorpicker";
 import { Button } from "@/components/ui/button";
 import { FieldError } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+import {
+	ResponsiveModalFooter,
+	ResponsiveModalHeader,
+	ResponsiveModalTitle,
+} from "@/components/ui/responsive-modal";
 import { useModal } from "@/stores/modal.store";
 import { useCreateSpace, useSpaces } from "../hooks/use-space";
 
@@ -18,9 +23,10 @@ type FormValues = z.infer<typeof formSchema>;
 export function NewSpaceForm() {
 	const { refetch } = useSpaces();
 	const { close } = useModal();
-	const _navigate = useNavigate();
+	const navigate = useNavigate();
 	const { workspace } = useLoaderData({ from: "/(authenicated)/$slug" });
 	const { handleSubmit, control } = useForm<FormValues>({
+		mode: "onChange",
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			name: "",
@@ -36,9 +42,12 @@ export function NewSpaceForm() {
 			onSuccess: (result) => {
 				close();
 				if (result) {
-					_navigate({
+					navigate({
 						to: "/$slug/spaces/$id",
 						params: { slug: workspace.slug, id: result.publicId },
+						search: {
+							view: "overview",
+						},
 					});
 				}
 			},
@@ -52,72 +61,88 @@ export function NewSpaceForm() {
 	}, []);
 
 	return (
-		<form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3 p-4">
-			<div className="flex items-center gap-4">
+		<div className="flex flex-col gap-3">
+			<ResponsiveModalHeader>
+				<ResponsiveModalTitle className={"sr-only"}>
+					New Space
+				</ResponsiveModalTitle>
+			</ResponsiveModalHeader>
+			<form
+				onSubmit={handleSubmit(onSubmit)}
+				className="relative flex flex-col gap-3 overflow-auto"
+			>
+				<div className="flex items-center gap-4">
+					<Controller
+						control={control}
+						name="icon"
+						render={({ field: iconField }) => (
+							<Controller
+								control={control}
+								name="colorCode"
+								render={({ field: colorField }) => (
+									<IconAndColorPicker
+										icon={iconField.value ?? undefined}
+										onIconChange={iconField.onChange}
+										color={colorField.value ?? undefined}
+										onColorChange={colorField.onChange}
+										variant="soft"
+										className="outline"
+									/>
+								)}
+							/>
+						)}
+					/>
+					<Controller
+						control={control}
+						name="name"
+						render={({ field, fieldState }) => (
+							<div className="space-y-1">
+								<TextareaAutosize
+									{...field}
+									placeholder="Space name"
+									className="w-full resize-none font-semibold text-xl outline-none placeholder:text-muted-foreground"
+									autoFocus
+									onKeyDown={(e) => {
+										if (e.key === "Enter") {
+											e.preventDefault();
+											handleSubmit(onSubmit)();
+										}
+									}}
+								/>
+								{fieldState.error && <FieldError errors={[fieldState.error]} />}
+							</div>
+						)}
+					/>
+				</div>
 				<Controller
 					control={control}
-					name="icon"
-					render={({ field: iconField }) => (
-						<Controller
-							control={control}
-							name="colorCode"
-							render={({ field: colorField }) => (
-								<IconAndColorPicker
-									icon={iconField.value ?? undefined}
-									onIconChange={iconField.onChange}
-									color={colorField.value ?? undefined}
-									onColorChange={colorField.onChange}
-									variant="soft"
-									className="outline"
-								/>
-							)}
+					name="description"
+					render={({ field }) => (
+						<TextareaAutosize
+							placeholder="Add a short description..."
+							{...field}
+							value={field.value ?? ""}
+							className="w-full resize-none text-base text-muted-foreground outline-none placeholder:text-muted-foreground/80"
 						/>
 					)}
 				/>
-				<Controller
-					control={control}
-					name="name"
-					render={({ field, fieldState }) => (
-						<div className="flex flex-1 flex-col">
-							<Input
-								{...field}
-								id="name"
-								placeholder="Space name"
-								className="border-none bg-transparent px-0 py-2 font-semibold shadow-none placeholder:opacity-30 focus-visible:ring-0 md:text-xl dark:bg-transparent"
-								autoFocus
-								onKeyDown={(e) => {
-									if (e.key === "Enter") {
-										e.preventDefault();
-										handleSubmit(onSubmit)();
-									}
-								}}
-							/>
-							{fieldState.error && <FieldError errors={[fieldState.error]} />}
-						</div>
-					)}
-				/>
-			</div>
-			<Controller
-				control={control}
-				name="description"
-				render={({ field }) => (
-					<TextareaAutosize
-						placeholder="Add a short description..."
-						{...field}
-						value={field.value ?? ""}
-						minRows={2}
-						className="resize-none border-none bg-transparent p-0 outline-none focus-visible:ring-0 md:text-md dark:bg-transparent"
-					/>
-				)}
-			/>
-			<div className="flex flex-row justify-end gap-3 pt-6">
-				<Button type="button" variant="ghost" onClick={close}>
-					Cancel
-				</Button>
-				<Button type="submit" disabled={createSpace.isPending}>
-					{createSpace.isPending ? "Creating..." : "Create"}
-				</Button>
-			</div>
-		</form>
+				<ResponsiveModalFooter className="flex flex-row justify-end gap-3 pt-6">
+					<Button
+						type="submit"
+						disabled={createSpace.isPending}
+						className="min-w-[100px]"
+					>
+						{createSpace.isPending ? (
+							<>
+								<IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
+								Adding...
+							</>
+						) : (
+							"Create space"
+						)}
+					</Button>
+				</ResponsiveModalFooter>
+			</form>
+		</div>
 	);
 }

@@ -9,13 +9,8 @@ import TextareaAutosize from "react-textarea-autosize";
 import { toast } from "sonner";
 import type { z } from "zod";
 import { PrioritySelector } from "@/components/priority-selector";
-import { StatusSelector } from "@/components/status-selector";
-import { AutosizeTextarea } from "@/components/ui/autosize-textarea";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { DatePicker } from "@/components/ui/date-picker";
 import { FieldError } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
 	ResponsiveModalFooter,

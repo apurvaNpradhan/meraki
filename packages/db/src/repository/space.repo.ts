@@ -50,6 +50,64 @@ export const getById = async (spaceId: bigint, workspaceId: string) => {
 			description: true,
 			colorCode: true,
 			icon: true,
+			position: true,
+		},
+		with: {
+			projects: {
+				columns: {
+					publicId: true,
+					name: true,
+					description: true,
+					position: true,
+					colorCode: true,
+					icon: true,
+					priority: true,
+					startDate: true,
+					targetDate: true,
+					updatedAt: true,
+				},
+
+				with: {
+					projectStatus: {
+						columns: {
+							publicId: true,
+						},
+					},
+				},
+
+				orderBy: (p, { asc }) => [asc(p.position)],
+			},
+			organization: {
+				columns: {
+					id: true,
+				},
+				with: {
+					projectStatuses: {
+						columns: {
+							publicId: true,
+							name: true,
+							description: true,
+							position: true,
+							colorCode: true,
+						},
+						orderBy: (p, { asc }) => [asc(p.position)],
+					},
+					members: {
+						columns: {
+							id: true,
+						},
+						with: {
+							user: {
+								columns: {
+									name: true,
+									email: true,
+									image: true,
+								},
+							},
+						},
+					},
+				},
+			},
 		},
 		where: and(
 			eq(spaces.id, spaceId),

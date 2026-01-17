@@ -1,18 +1,10 @@
 import {
 	IconArmchair,
-	IconCalendar,
-	IconCalendarEvent,
 	IconCalendarStats,
 	IconCircleOff,
 	IconSun,
 } from "@tabler/icons-react";
-import {
-	addDays,
-	isTomorrow,
-	nextMonday,
-	startOfToday,
-	startOfTomorrow,
-} from "date-fns";
+import { addDays, nextMonday, startOfToday, startOfTomorrow } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -72,7 +64,7 @@ export function TaskDatePicker({
 	const tomorrow = startOfTomorrow();
 
 	const thisWeekend = addDays(today, (6 - today.getDay() + 7) % 7 || 7);
-	const nextWeek = nextMonday(today);
+	const _nextWeek = nextMonday(today);
 
 	const quickOptions = [
 		{
