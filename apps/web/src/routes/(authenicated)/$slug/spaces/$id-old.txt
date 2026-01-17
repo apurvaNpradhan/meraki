@@ -1,0 +1,615 @@
+import {
+	closestCorners,
+	DndContext,
+	type DragEndEvent,
+	type DragOverEvent,
+	type DragStartEvent,
+	KeyboardSensor,
+	PointerSensor,
+	useSensor,
+	useSensors,
+} from "@dnd-kit/core";
+import {
+	arrayMove,
+	SortableContext,
+	sortableKeyboardCoordinates,
+	useSortable,
+	verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { IconFilter, IconPlus, IconSortAscending } from "@tabler/icons-react";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { generateKeyBetween } from "fractional-indexing";
+import { useEffect, useState } from "react";
+import { IconAndColorPicker } from "@/components/icon-and-colorpicker";
+import MainLayout from "@/components/layout/app-layout";
+import { PrioritySelector } from "@/components/priority-selector";
+import { Button } from "@/components/ui/button";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuRadioGroup,
+	DropdownMenuRadioItem,
+	DropdownMenuSub,
+	DropdownMenuSubContent,
+	DropdownMenuSubTrigger,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import {
+	getStatusIcon,
+	StatusSelector,
+} from "@/features/projects/components/status-selector";
+import { useUpdateProject } from "@/features/projects/hooks/use-project";
+import { useSpace, useUpdateSpace } from "@/features/spaces/hooks/use-space";
+import { useModal } from "@/stores/modal.store";
+import type { ProjectBySpaceItem, ProjectStatus } from "@/types/project";
+import { orpc } from "@/utils/orpc";
+
+export const Route = createFileRoute("/(authenicated)/$slug/spaces/$id-old")({
+	component: RouteComponent,
+	loader: async ({ context, params }) => {
+		return context.queryClient.ensureQueryData(
+			orpc.space.byId.queryOptions({
+				input: {
+					spaceId: params.id,
+				},
+			}),
+		);
+	},
+});
+
+type GroupBy = "status" | "priority" | "none";
+type SortBy = "position" | "name" | "priority";
+
+function RouteComponent() {
+	const { id } = Route.useParams();
+	const { data } = useSpace(id);
+	const updateSpace = useUpdateSpace();
+	const updateProject = useUpdateProject({ spacePublicId: id });
+	const projectStatuses = useSuspenseQuery(
+		orpc.projectStatus.all.queryOptions(),
+	);
+
+	const [groupBy, setGroupBy] = useState<GroupBy>("status");
+	const [sortBy, setSortBy] = useState<SortBy>("position");
+
+	const [items, setItems] = useState<Record<string, ProjectBySpaceItem[]>>({});
+	const [_activeId, setActiveId] = useState<string | null>(null);
+
+	useEffect(() => {
+		if (data?.projects && projectStatuses.data) {
+			const groups: Record<string, ProjectBySpaceItem[]> = {};
+
+			if (groupBy === "status") {
+				for (const status of projectStatuses.data) {
+					groups[status.publicId] = [];
+				}
+				groups.uncategorized = [];
+				for (const project of data.projects) {
+					const key = project.projectStatus?.publicId ?? "uncategorized";
+					if (!groups[key]) groups[key] = [];
+					groups[key].push(project);
+				}
+			} else if (groupBy === "priority") {
+				for (let i = 0; i <= 4; i++) {
+					groups[i.toString()] = [];
+				}
+				for (const project of data.projects) {
+					const key = (project.priority ?? 0).toString();
+					groups[key].push(project);
+				}
+			} else {
+				groups.all = data.projects;
+			}
+
+			// Apply sorting within groups
+			for (const key in groups) {
+				groups[key].sort((a, b) => {
+					if (sortBy === "name") return a.name.localeCompare(b.name);
+					if (sortBy === "priority") return b.priority - a.priority;
+					return a.position.localeCompare(b.position);
+				});
+			}
+
+			setItems(groups);
+		}
+	}, [data?.projects, projectStatuses.data, groupBy, sortBy]);
+
+	const sensors = useSensors(
+		useSensor(PointerSensor, {
+			activationConstraint: {
+				distance: 8,
+			},
+		}),
+		useSensor(KeyboardSensor, {
+			coordinateGetter: sortableKeyboardCoordinates,
+		}),
+	);
+
+	const findContainer = (id: string) => {
+		if (id in items) return id;
+		return Object.keys(items).find((key) =>
+			items[key].find((project) => project.publicId === id),
+		);
+	};
+
+	const handleDragStart = (event: DragStartEvent) => {
+		setActiveId(String(event.active.id));
+	};
+
+	const handleDragOver = (event: DragOverEvent) => {
+		const { active, over } = event;
+		const overId = over?.id;
+
+		if (!overId || active.id === overId) return;
+
+		const activeContainer = findContainer(String(active.id));
+		const overContainer = findContainer(String(overId));
+
+		if (!activeContainer || !overContainer || activeContainer === overContainer)
+			return;
+
+		setItems((prev) => {
+			const activeItems = prev[activeContainer];
+			const overItems = prev[overContainer];
+
+			const activeIndex = activeItems.findIndex(
+				(i) => i.publicId === active.id,
+			);
+			const overIndex = overItems.findIndex((i) => i.publicId === overId);
+
+			let newIndex: number;
+			if (overId in prev) {
+				newIndex = overItems.length;
+			} else {
+				newIndex = overIndex >= 0 ? overIndex : overItems.length;
+			}
+
+			return {
+				...prev,
+				[activeContainer]: activeItems.filter(
+					(item) => item.publicId !== active.id,
+				),
+				[overContainer]: [
+					...overItems.slice(0, newIndex),
+					activeItems[activeIndex],
+					...overItems.slice(newIndex),
+				],
+			};
+		});
+	};
+
+	const handleDragEnd = (event: DragEndEvent) => {
+		const { active, over } = event;
+		const activeContainer = findContainer(String(active.id));
+		const overContainer = over ? findContainer(String(over.id)) : null;
+
+		if (
+			!activeContainer ||
+			!overContainer ||
+			!over ||
+			(activeContainer === overContainer && active.id === over.id)
+		) {
+			setActiveId(null);
+			return;
+		}
+
+		const activeIndex = items[activeContainer].findIndex(
+			(i) => i.publicId === active.id,
+		);
+		const overIndex = items[overContainer].findIndex(
+			(i) => i.publicId === over.id,
+		);
+
+		const newItems = { ...items };
+
+		if (activeContainer === overContainer) {
+			newItems[activeContainer] = arrayMove(
+				items[activeContainer],
+				activeIndex,
+				overIndex,
+			);
+		} else {
+			newItems[activeContainer] = items[activeContainer].filter(
+				(i) => i.publicId !== active.id,
+			);
+			newItems[overContainer] = [
+				...items[overContainer].slice(0, overIndex),
+				items[activeContainer][activeIndex],
+				...items[overContainer].slice(overIndex),
+			];
+		}
+
+		setItems(newItems);
+		setActiveId(null);
+
+		const destList = newItems[overContainer];
+		const finalIndex = destList.findIndex((i) => i.publicId === active.id);
+		const movedItem = destList[finalIndex];
+
+		const prevItem = destList[finalIndex - 1];
+		const nextItem = destList[finalIndex + 1];
+
+		const position = generateKeyBetween(
+			prevItem?.position ?? null,
+			nextItem?.position ?? null,
+		);
+
+		const updatePayload: any = {
+			projectPublicId: movedItem.publicId,
+			position,
+		};
+
+		if (groupBy === "status") {
+			const statusId = overContainer === "uncategorized" ? null : overContainer;
+			if (statusId !== movedItem.projectStatus?.publicId) {
+				updatePayload.projectStatusPublicId = statusId ?? undefined;
+			}
+		} else if (groupBy === "priority") {
+			const priority = Number.parseInt(overContainer, 10);
+			if (priority !== movedItem.priority) {
+				updatePayload.priority = priority;
+			}
+		}
+
+		updateProject.mutate(updatePayload);
+	};
+
+	const modal = useModal();
+
+	if (!data) return null;
+
+	const sortedGroups = Object.keys(items).sort((a, b) => {
+		if (groupBy === "status") {
+			const statusA = projectStatuses.data.find((s) => s.publicId === a);
+			const statusB = projectStatuses.data.find((s) => s.publicId === b);
+			return (statusA?.position ?? "").localeCompare(statusB?.position ?? "");
+		}
+		if (groupBy === "priority") {
+			return Number.parseInt(b, 10) - Number.parseInt(a, 10);
+		}
+		return 0;
+	});
+
+	return (
+		<MainLayout header={<Header name={data.name} />}>
+			<div className="mx-auto w-full max-w-5xl space-y-8 px-4 py-8">
+				<div className="flex items-center justify-between">
+					<div className="flex flex-row items-center gap-4">
+						<IconAndColorPicker
+							icon={data.icon}
+							color={data.colorCode}
+							variant="soft"
+							onIconChange={(icon) =>
+								updateSpace.mutate({ spacePublicId: id, input: { icon } })
+							}
+							onColorChange={(color) =>
+								updateSpace.mutate({
+									spacePublicId: id,
+									input: { colorCode: color },
+								})
+							}
+							iconSize={48}
+						/>
+						<h1 className="font-bold text-4xl text-foreground tracking-tight">
+							{data.name}
+						</h1>
+					</div>
+
+					<div className="flex items-center gap-2">
+						<ViewSettingsSelector
+							groupBy={groupBy}
+							onGroupByChange={setGroupBy}
+							sortBy={sortBy}
+							onSortByChange={setSortBy}
+						/>
+						<Button
+							size="sm"
+							onClick={() => {
+								modal.open({
+									type: "CREATE_PROJECT",
+									data: { spacePublicId: id },
+									modalSize: "lg",
+								});
+							}}
+							className="gap-2"
+						>
+							<IconPlus className="h-4 w-4" />
+							<span>New Project</span>
+						</Button>
+					</div>
+				</div>
+
+				<DndContext
+					sensors={sensors}
+					collisionDetection={closestCorners}
+					onDragStart={handleDragStart}
+					onDragOver={handleDragOver}
+					onDragEnd={handleDragEnd}
+				>
+					<div className="flex flex-col gap-8">
+						{sortedGroups.map((groupKey) => {
+							const projects = items[groupKey] ?? [];
+							let label = groupKey;
+							let icon = null;
+
+							if (groupBy === "status") {
+								const status = projectStatuses.data.find(
+									(s) => s.publicId === groupKey,
+								);
+								label = status?.name ?? "Uncategorized";
+								icon = status
+									? getStatusIcon(status.type, status.colorCode)
+									: null;
+							} else if (groupBy === "priority") {
+								const priorityIdx = Number.parseInt(groupKey, 10);
+								const priorityLabels = [
+									"No Priority",
+									"Low",
+									"Medium",
+									"High",
+									"Urgent",
+								];
+								label = priorityLabels[priorityIdx];
+							} else {
+								label = "All Projects";
+							}
+							if (projects.length === 0) {
+								return null;
+							}
+							return (
+								<div key={groupKey} className="space-y-3">
+									<div className="flex items-center gap-2 border-b pb-2">
+										{icon}
+										<h3 className="font-semibold text-foreground/70 text-sm">
+											{label}
+										</h3>
+										<span className="text-muted-foreground text-xs">
+											{projects.length}
+										</span>
+									</div>
+									<SortableContext
+										id={groupKey}
+										items={projects.map((p) => p.publicId)}
+										strategy={verticalListSortingStrategy}
+									>
+										<div className="flex flex-col gap-1">
+											{projects.map((p) => (
+												<SortableProjectRow
+													key={p.publicId}
+													project={p}
+													spacePublicId={id}
+													statuses={projectStatuses.data}
+												/>
+											))}
+											{projects.length === 0 && (
+												<div className="py-4 text-center text-muted-foreground text-xs italic">
+													No projects in this group
+												</div>
+											)}
+										</div>
+									</SortableContext>
+								</div>
+							);
+						})}
+					</div>
+				</DndContext>
+			</div>
+		</MainLayout>
+	);
+}
+
+function ViewSettingsSelector({
+	groupBy,
+	onGroupByChange,
+	sortBy,
+	onSortByChange,
+}: {
+	groupBy: GroupBy;
+	onGroupByChange: (v: GroupBy) => void;
+	sortBy: SortBy;
+	onSortByChange: (v: SortBy) => void;
+}) {
+	return (
+		<DropdownMenu>
+			<DropdownMenuTrigger
+				render={
+					<Button
+						variant="ghost"
+						size="sm"
+						className="gap-2 text-muted-foreground hover:text-foreground"
+					>
+						<IconFilter className="h-4 w-4" />
+						<span>View</span>
+					</Button>
+				}
+			/>
+			<DropdownMenuContent align="end" className="w-48">
+				<DropdownMenuSub>
+					<DropdownMenuSubTrigger>
+						<IconFilter className="mr-2 h-4 w-4" />
+						Group by
+					</DropdownMenuSubTrigger>
+					<DropdownMenuSubContent>
+						<DropdownMenuRadioGroup
+							value={groupBy}
+							onValueChange={(v) => onGroupByChange(v as GroupBy)}
+						>
+							<DropdownMenuRadioItem value="none">None</DropdownMenuRadioItem>
+							<DropdownMenuRadioItem value="status">
+								Status
+							</DropdownMenuRadioItem>
+							<DropdownMenuRadioItem value="priority">
+								Priority
+							</DropdownMenuRadioItem>
+						</DropdownMenuRadioGroup>
+					</DropdownMenuSubContent>
+				</DropdownMenuSub>
+
+				<DropdownMenuSub>
+					<DropdownMenuSubTrigger>
+						<IconSortAscending className="mr-2 h-4 w-4" />
+						Sort by
+					</DropdownMenuSubTrigger>
+					<DropdownMenuSubContent>
+						<DropdownMenuRadioGroup
+							value={sortBy}
+							onValueChange={(v) => onSortByChange(v as SortBy)}
+						>
+							<DropdownMenuRadioItem value="position">
+								Default
+							</DropdownMenuRadioItem>
+							<DropdownMenuRadioItem value="name">Name</DropdownMenuRadioItem>
+							<DropdownMenuRadioItem value="priority">
+								Priority
+							</DropdownMenuRadioItem>
+						</DropdownMenuRadioGroup>
+					</DropdownMenuSubContent>
+				</DropdownMenuSub>
+			</DropdownMenuContent>
+		</DropdownMenu>
+	);
+}
+
+function SortableProjectRow({
+	project,
+	spacePublicId,
+	statuses,
+}: {
+	project: ProjectBySpaceItem;
+	spacePublicId: string;
+	statuses: ProjectStatus[];
+}) {
+	const {
+		attributes,
+		listeners,
+		setNodeRef,
+		transform,
+		transition,
+		isDragging,
+	} = useSortable({ id: project.publicId, data: { type: "Project", project } });
+
+	const style = {
+		transform: CSS.Translate.toString(transform),
+		transition,
+		opacity: isDragging ? 0.5 : 1,
+		zIndex: isDragging ? 10 : "auto",
+	};
+
+	return (
+		<div
+			ref={setNodeRef}
+			style={style}
+			{...attributes}
+			{...listeners}
+			className="group outline-none"
+		>
+			<ProjectRow
+				project={project}
+				spacePublicId={spacePublicId}
+				statuses={statuses}
+			/>
+		</div>
+	);
+}
+
+function ProjectRow({
+	spacePublicId,
+	project,
+	statuses,
+}: {
+	spacePublicId: string;
+	project: ProjectBySpaceItem;
+	statuses: ProjectStatus[];
+}) {
+	const updateProject = useUpdateProject({ spacePublicId });
+
+	return (
+		<Link
+			to="/projects/$id"
+			params={{ id: project.publicId }}
+			className="flex items-center gap-3 rounded-lg border bg-card p-3 transition-all hover:border-foreground/20 hover:shadow-sm"
+		>
+			<div className="flex flex-1 items-center gap-3 overflow-hidden">
+				<div
+					className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md"
+					style={{ backgroundColor: `${project.colorCode}20` }}
+					onClick={(e) => {
+						e.stopPropagation();
+						e.preventDefault();
+					}}
+				>
+					<IconAndColorPicker
+						icon={project.icon}
+						color={project.colorCode}
+						variant="soft"
+						onIconChange={(icon) =>
+							updateProject.mutate({ projectPublicId: project.publicId, icon })
+						}
+						onColorChange={(color) =>
+							updateProject.mutate({
+								projectPublicId: project.publicId,
+								colorCode: color,
+							})
+						}
+						iconSize={20}
+					/>
+				</div>
+				<div className="flex min-w-0 flex-col">
+					<span className="truncate font-semibold text-sm">{project.name}</span>
+					{project.summary && (
+						<span className="truncate text-muted-foreground text-xs">
+							{project.summary}
+						</span>
+					)}
+				</div>
+			</div>
+
+			<div className="flex items-center gap-4">
+				<div
+					onClick={(e) => {
+						e.preventDefault();
+						e.stopPropagation();
+					}}
+				>
+					<StatusSelector
+						project={project}
+						spacePublicId={spacePublicId}
+						statuses={statuses}
+						showLabel
+					/>
+				</div>
+				<div
+					onClick={(e) => {
+						e.preventDefault();
+						e.stopPropagation();
+					}}
+				>
+					<PrioritySelector
+						value={project.priority}
+						onPriorityChange={(priority) =>
+							updateProject.mutate({
+								priority,
+								projectPublicId: project.publicId,
+							})
+						}
+						showLabel
+					/>
+				</div>
+			</div>
+		</Link>
+	);
+}
+
+function Header({ name }: { name: string }) {
+	return (
+		<div className="flex w-full flex-row items-center justify-between border-b px-4 py-2">
+			<div className="flex items-center gap-2">
+				<SidebarTrigger />
+				<span className="font-semibold text-sm">{name}</span>
+			</div>
+		</div>
+	);
+}

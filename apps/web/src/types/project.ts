@@ -1,3 +1,5 @@
+import type { RouterOutputs } from "@meraki/api/routers/index";
+
 export interface ProjectStatus {
 	publicId: string;
 	name: string;
@@ -6,16 +8,8 @@ export interface ProjectStatus {
 	position: string;
 }
 
-export interface ProjectBySpaceItem {
-	publicId: string;
-	name: string;
-	summary?: string | null;
-	description?: string | null;
-	icon: string;
-	colorCode: string;
-	priority: number;
-	position: string;
-	projectStatus: ProjectStatus;
-	startDate?: string | null;
-	targetDate?: string | null;
-}
+export type ProjectBySpaceItem = NonNullable<
+	RouterOutputs["space"]["byId"]
+>["projects"][number];
+
+export type ProjectById = RouterOutputs["project"]["byId"];

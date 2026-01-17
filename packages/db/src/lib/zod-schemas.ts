@@ -19,7 +19,6 @@ export const TaskSchema = createSelectSchema(tasks).omit({
 
 export const InsertTaskSchema = createInsertSchema(tasks, {
 	title: z.string().min(1).max(500),
-	description: z.string().optional(),
 	priority: z.number().default(0),
 	position: z.string().min(1).max(32),
 	parentTaskId: z.bigint().optional(),

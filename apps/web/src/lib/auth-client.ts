@@ -1,5 +1,5 @@
-import { env } from "@base/env/web";
 import type { auth } from "@meraki/auth";
+import { env } from "@meraki/env/web";
 import {
 	customSessionClient,
 	inferAdditionalFields,

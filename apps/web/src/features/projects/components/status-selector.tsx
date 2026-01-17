@@ -110,29 +110,31 @@ export function StatusSelector({
 
 	return (
 		<Popover open={open} onOpenChange={setOpen}>
-			<PopoverTrigger>
-				<Button
-					id={id}
-					variant="ghost"
-					size="sm"
-					role="combobox"
-					aria-expanded={open}
-					className={cn(!currentStatus && "text-muted-foreground", className)}
-					disabled={readOnly}
-				>
-					{currentStatus ? (
-						<div className="flex items-center gap-2">
-							{getStatusIcon(currentStatus.type, currentStatus.colorCode)}
-							{showLabel && (
-								<span className="truncate font-semibold">
-									{currentStatus.name}
-								</span>
-							)}
-						</div>
-					) : (
-						<span className="text-xs">Select Status</span>
-					)}
-				</Button>
+			<PopoverTrigger
+				render={
+					<Button
+						id={id}
+						variant="ghost"
+						size="sm"
+						role="combobox"
+						aria-expanded={open}
+						className={cn(!currentStatus && "text-muted-foreground", className)}
+						disabled={readOnly}
+					/>
+				}
+			>
+				{currentStatus ? (
+					<div className="flex items-center gap-2">
+						{getStatusIcon(currentStatus.type, currentStatus.colorCode)}
+						{showLabel && (
+							<span className="truncate font-semibold">
+								{currentStatus.name}
+							</span>
+						)}
+					</div>
+				) : (
+					<span className="text-xs">Select Status</span>
+				)}
 			</PopoverTrigger>
 			<PopoverContent className="w-[200px] p-0" align="start">
 				<Command>

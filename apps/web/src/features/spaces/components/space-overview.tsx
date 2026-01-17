@@ -1,23 +1,20 @@
 import { useEffect, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import { useDebouncedCallback } from "use-debounce";
+import ContentEditor from "@/components/editor/content-editor";
 import { IconAndColorPicker } from "@/components/icon-and-colorpicker";
-import { Button } from "@/components/ui/button";
 import { useSpace, useUpdateSpace } from "@/features/spaces/hooks/use-space";
-import { useModal } from "@/stores/modal.store";
 
 export function SpaceOverview({ id }: { id: string }) {
 	const { data, isPending } = useSpace(id);
 	const updateSpace = useUpdateSpace();
-	const { open } = useModal();
+
 	const [name, setName] = useState("");
-	const [description, setDescription] = useState("");
 	const [_color, setColor] = useState("");
 
 	useEffect(() => {
 		if (!data) return;
 		setName(data.name ?? "");
-		setDescription(data.description ?? "");
 		setColor(data.colorCode ?? "");
 	}, [data]);
 
@@ -28,12 +25,6 @@ export function SpaceOverview({ id }: { id: string }) {
 		});
 	}, 600);
 
-	const debouncedUpdateDescription = useDebouncedCallback((value: string) => {
-		updateSpace.mutate({
-			spacePublicId: id,
-			input: { description: value },
-		});
-	}, 800);
 	const debouncedUpdateColor = useDebouncedCallback((value: string) => {
 		updateSpace.mutate({
 			spacePublicId: id,
@@ -74,35 +65,17 @@ export function SpaceOverview({ id }: { id: string }) {
 					className="w-full resize-none bg-transparent px-0 font-semibold text-3xl text-foreground outline-none placeholder:text-muted-foreground"
 				/>
 			</div>
-			<div className="flex flex-row items-center gap-3">
-				<span className="font-semibold text-muted-foreground text-xs">
-					Actions
-				</span>
-				<Button
-					variant={"ghost"}
-					size={"xs"}
-					onClick={() =>
-						open({
-							type: "CREATE_PROJECT",
-							data: {
-								spacePublicId: id,
-							},
-							modalSize: "lg",
-						})
-					}
-				>
-					New Project
-				</Button>
-			</div>
 
-			<TextareaAutosize
-				value={description}
-				onChange={(e) => {
-					setDescription(e.target.value);
-					debouncedUpdateDescription(e.target.value);
+			<ContentEditor
+				initialContent={data?.description ?? {}}
+				placeholder="Description..."
+				className="mt-5 text-muted-foreground"
+				onUpdate={(content) => {
+					updateSpace.mutate({
+						spacePublicId: id,
+						input: { description: content },
+					});
 				}}
-				placeholder="Description"
-				className="min-h-10 w-full resize-none bg-transparent px-0 text-base text-muted-foreground outline-none placeholder:text-muted-foreground/80"
 			/>
 		</div>
 	);

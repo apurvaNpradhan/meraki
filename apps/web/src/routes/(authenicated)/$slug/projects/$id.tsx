@@ -12,21 +12,21 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { SpaceOverview } from "@/features/spaces/components/space-overview";
-import { SpaceProjects } from "@/features/spaces/components/space-projects";
-import { useSpace } from "@/features/spaces/hooks/use-space";
+import { ProjectOverview } from "@/features/projects/components/project-overview";
+import { useProject } from "@/features/projects/hooks/use-project";
 import { cn } from "@/lib/utils";
 
-type views = "overview" | "projects" | "tasks";
-type SpaceSearch = {
+type views = "overview" | "tasks";
+type ProjectSearch = {
 	view: views;
 };
-export const Route = createFileRoute("/(authenicated)/$slug/spaces/$id")({
+
+export const Route = createFileRoute("/(authenicated)/$slug/projects/$id")({
 	component: RouteComponent,
 	validateSearch: (search) => {
-		const { view } = search;
+		const { view } = search as ProjectSearch;
 		if (!view) return { view: "overview" };
-		if (view !== "overview" && view !== "projects" && view !== "tasks") {
+		if (view !== "overview" && view !== "tasks") {
 			return { view: "overview" };
 		}
 		return { view };
@@ -35,36 +35,37 @@ export const Route = createFileRoute("/(authenicated)/$slug/spaces/$id")({
 
 function RouteComponent() {
 	const { id } = Route.useParams();
-	const { data: space, isPending } = useSpace(id);
-	const { view } = Route.useSearch() as SpaceSearch;
+	const { data: project, isPending } = useProject(id);
+	const { view } = Route.useSearch() as ProjectSearch;
 	const [activeView, setActiveView] = useState<views>(view);
 
 	if (isPending) return <div>Loading...</div>;
-	if (!space) return <div>Space not found</div>;
+	if (!project) return <div>Project not found</div>;
+
 	const views = [
 		{
 			name: "Overview",
 			value: "overview",
-			content: <SpaceOverview id={id} />,
-		},
-		{
-			name: "Projects",
-			value: "projects",
-			content: <SpaceProjects id={id} />,
+			content: <ProjectOverview id={id} />,
 		},
 		{
 			name: "Tasks",
 			value: "tasks",
-			content: <div>Tasks</div>,
+			content: (
+				<div className="p-10 text-muted-foreground">
+					Tasks view coming soon...
+				</div>
+			),
 		},
 	];
 
 	interface HeaderProps {
-		space: NonNullable<typeof space>;
+		project: NonNullable<typeof project>;
 		activeView: views;
 		setActiveView: (tab: views) => void;
 	}
-	function Header({ space, activeView, setActiveView }: HeaderProps) {
+
+	function Header({ project, activeView, setActiveView }: HeaderProps) {
 		const currentTab = views.find((v) => v.value === activeView);
 		const navigate = useNavigate({ from: Route.fullPath });
 
@@ -77,11 +78,11 @@ function RouteComponent() {
 						<div className="flex cursor-pointer items-center gap-1">
 							<div className="flex items-center gap-2 px-1">
 								<RenderIcon
-									icon={space.icon}
-									color={space.colorCode}
+									icon={project.icon}
+									color={project.colorCode}
 									size={18}
 								/>
-								<span className="font-semibold text-sm">{space.name}</span>
+								<span className="font-semibold text-sm">{project.name}</span>
 							</div>
 						</div>
 
@@ -91,7 +92,8 @@ function RouteComponent() {
 							onValueChange={(val) => {
 								setActiveView(val as views);
 								navigate({
-									search: (_prev) => ({
+									search: (prev) => ({
+										...prev,
 										view: val as views,
 									}),
 								});
@@ -113,9 +115,13 @@ function RouteComponent() {
 
 					<div className="flex flex-1 items-center justify-between md:hidden">
 						<div className="flex items-center gap-2 px-1">
-							<RenderIcon icon={space.icon} color={space.colorCode} size={20} />
+							<RenderIcon
+								icon={project.icon}
+								color={project.colorCode}
+								size={20}
+							/>
 							<span className="max-w-[120px] truncate font-bold text-sm">
-								{space.name}
+								{project.name}
 							</span>
 						</div>
 
@@ -136,7 +142,15 @@ function RouteComponent() {
 								{views.map((tab) => (
 									<DropdownMenuItem
 										key={tab.value}
-										onSelect={() => setActiveView(tab.value as views)}
+										onSelect={() => {
+											setActiveView(tab.value as views);
+											navigate({
+												search: (prev) => ({
+													...prev,
+													view: tab.value as views,
+												}),
+											});
+										}}
 										className={cn(
 											"flex items-center justify-between",
 											activeView === tab.value &&
@@ -159,7 +173,7 @@ function RouteComponent() {
 						}
 					/>
 					<DropdownMenuContent align="end" className="w-[160px]">
-						<DropdownMenuItem>New Project</DropdownMenuItem>
+						<DropdownMenuItem>Project Settings</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>
 			</div>
@@ -170,7 +184,7 @@ function RouteComponent() {
 		<MainLayout
 			header={
 				<Header
-					space={space}
+					project={project}
 					activeView={activeView}
 					setActiveView={setActiveView}
 				/>

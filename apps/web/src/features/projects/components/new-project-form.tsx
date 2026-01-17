@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import TextareaAutosize from "react-textarea-autosize";
 import type { z } from "zod";
+import ContentEditor from "@/components/editor/content-editor";
 import { IconAndColorPicker } from "@/components/icon-and-colorpicker";
 import { PrioritySelector } from "@/components/priority-selector";
 import { Button } from "@/components/ui/button";
@@ -49,7 +50,7 @@ export function NewProjectForm({
 		defaultValues: {
 			name: data?.name ?? "",
 			summary: data?.summary ?? "",
-			description: data?.description ?? "",
+			description: data?.description ?? {},
 			icon: data?.icon ?? "IconClipboardList",
 			colorCode: data?.colorCode ?? "#3B82F6",
 			priority: data?.priority ?? 0,
@@ -117,7 +118,7 @@ export function NewProjectForm({
 										{...field}
 										id="name"
 										placeholder="Project name"
-										className="resize-none border-none bg-transparent p-0 font-semibold text-2xl outline-none placeholder:text-muted-foreground/50 focus-visible:ring-0"
+										className="w-full resize-none border-none bg-transparent p-0 font-semibold text-2xl outline-none placeholder:text-muted-foreground/50 focus-visible:ring-0"
 										autoFocus
 										onKeyDown={(e) => {
 											if (e.key === "Enter") {
@@ -140,7 +141,7 @@ export function NewProjectForm({
 									placeholder="Add a short summary..."
 									{...field}
 									value={field.value ?? ""}
-									className="resize-none border-none bg-transparent p-0 text-base text-muted-foreground outline-none placeholder:text-muted-foreground/80 focus-visible:ring-0"
+									className="w-full resize-none border-none bg-transparent p-0 text-base text-muted-foreground outline-none placeholder:text-muted-foreground/80 focus-visible:ring-0"
 								/>
 							)}
 						/>
@@ -208,12 +209,12 @@ export function NewProjectForm({
 					control={control}
 					name="description"
 					render={({ field }) => (
-						<TextareaAutosize
-							id="description"
+						<ContentEditor
+							initialContent={field.value ?? {}}
 							placeholder="Write a project description, or collect ideas..."
+							className="mt-4 min-h-50"
 							{...field}
-							value={field.value ?? ""}
-							className="mt-4 min-h-50 w-full resize-none bg-transparent px-0 text-base text-muted-foreground outline-none placeholder:text-muted-foreground/80"
+							onUpdate={(content) => field.onChange(content)}
 						/>
 					)}
 				/>

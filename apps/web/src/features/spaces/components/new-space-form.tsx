@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import TextareaAutosize from "react-textarea-autosize";
 import type z from "zod";
+import ContentEditor from "@/components/editor/content-editor";
 import { IconAndColorPicker } from "@/components/icon-and-colorpicker";
 import { Button } from "@/components/ui/button";
 import { FieldError } from "@/components/ui/field";
@@ -30,7 +31,7 @@ export function NewSpaceForm() {
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			name: "",
-			description: "",
+			description: {},
 			icon: "IconFolder",
 			colorCode: "#98BB6C",
 		},
@@ -118,11 +119,11 @@ export function NewSpaceForm() {
 					control={control}
 					name="description"
 					render={({ field }) => (
-						<TextareaAutosize
+						<ContentEditor
+							initialContent={field.value}
+							onUpdate={field.onChange}
 							placeholder="Add a short description..."
-							{...field}
-							value={field.value ?? ""}
-							className="w-full resize-none text-base text-muted-foreground outline-none placeholder:text-muted-foreground/80"
+							className="min-h-20"
 						/>
 					)}
 				/>

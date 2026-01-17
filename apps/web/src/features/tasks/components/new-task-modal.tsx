@@ -8,6 +8,7 @@ import { Controller, useForm } from "react-hook-form";
 import TextareaAutosize from "react-textarea-autosize";
 import { toast } from "sonner";
 import type { z } from "zod";
+import ContentEditor from "@/components/editor/content-editor";
 import { PrioritySelector } from "@/components/priority-selector";
 import { Button } from "@/components/ui/button";
 import { FieldError } from "@/components/ui/field";
@@ -44,14 +45,14 @@ export function NewTaskModal() {
 	);
 	const defaultValues: TaskFormValues = {
 		title: "",
-		description: "",
+		description: {},
 		priority: 0,
 	};
 	const form = useForm<TaskFormValues>({
 		resolver: zodResolver(InsertTaskInput),
 		defaultValues: {
 			title: "",
-			description: "",
+			description: {},
 			priority: 0,
 		},
 	});
@@ -106,11 +107,10 @@ export function NewTaskModal() {
 						control={form.control}
 						name="description"
 						render={({ field }) => (
-							<TextareaAutosize
+							<ContentEditor
 								placeholder="Add description..."
-								{...field}
-								value={field.value ?? ""}
-								className="w-full resize-none text-base text-muted-foreground outline-none placeholder:text-muted-foreground/80"
+								initialContent={field.value ?? {}}
+								onUpdate={field.onChange}
 							/>
 						)}
 					/>
