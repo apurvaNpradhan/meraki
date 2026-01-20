@@ -1,8 +1,19 @@
-import { IconDotsVertical, IconTrash } from "@tabler/icons-react";
+import { IconCheck, IconDotsVertical, IconTrash } from "@tabler/icons-react";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { useLoaderData, useNavigate } from "@tanstack/react-router";
 import { IconAndColorPicker } from "@/components/icon-and-colorpicker";
-import { PrioritySelector } from "@/components/priority-selector";
+import { PrioritySelector, priorities } from "@/components/priority-selector";
 import { Button } from "@/components/ui/button";
+import {
+	ContextMenu,
+	ContextMenuContent,
+	ContextMenuItem,
+	ContextMenuSeparator,
+	ContextMenuSub,
+	ContextMenuSubContent,
+	ContextMenuSubTrigger,
+	ContextMenuTrigger,
+} from "@/components/ui/context-menu";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -20,8 +31,9 @@ import {
 import { cn } from "@/lib/utils";
 import { useModal } from "@/stores/modal.store";
 import type { ProjectBySpaceItem } from "@/types/project";
+import { orpc } from "@/utils/orpc";
 import { useUpdateProject } from "../hooks/use-project";
-import { StatusSelector } from "./status-selector";
+import { getStatusIcon, StatusSelector } from "./status-selector";
 
 interface ProjectItemProps {
 	project: ProjectBySpaceItem;
@@ -38,116 +50,220 @@ export function ProjectItem({
 	const { open } = useModal();
 	const navigate = useNavigate();
 	const { workspace } = useLoaderData({ from: "/(authenicated)/$slug" });
+	const projectStatuses = useSuspenseQuery(
+		orpc.projectStatus.all.queryOptions(),
+	);
+	const priority =
+		priorities.find((p) => p.value === project.priority) ?? priorities[0];
 
 	return (
-		<Item
-			className={cn(
-				"group/project-item rounded-none p-2 transition-all hover:bg-accent/40",
-				className,
-			)}
-			variant="default"
-		>
-			<ItemMedia>
-				<IconAndColorPicker
-					icon={project.icon}
-					color={project.colorCode}
-					iconSize={18}
-					onIconChange={(icon) =>
-						updateProject.mutate({
-							projectPublicId: project.publicId,
-							icon,
-						})
-					}
-					onColorChange={(colorCode) =>
-						updateProject.mutate({
-							projectPublicId: project.publicId,
-							colorCode,
-						})
-					}
-				/>
-			</ItemMedia>
+		<ContextMenu>
+			<ContextMenuTrigger
+				render={
+					<Item
+						className={cn(
+							"group/project-item rounded-none p-2 transition-all hover:bg-accent/40",
+							className,
+						)}
+						variant="default"
+						tabIndex={0}
+						onKeyDown={(e) => {
+							if (e.key === "Enter" || e.key === " ") {
+								navigate({
+									to: "/$slug/projects/$id",
+									params: { slug: workspace.slug, id: project.publicId },
+								});
+							}
+						}}
+					>
+						<ItemMedia>
+							<IconAndColorPicker
+								icon={project.icon}
+								color={project.colorCode}
+								iconSize={18}
+								onIconChange={(icon) =>
+									updateProject.mutate({
+										projectPublicId: project.publicId,
+										icon,
+									})
+								}
+								onColorChange={(colorCode) =>
+									updateProject.mutate({
+										projectPublicId: project.publicId,
+										colorCode,
+									})
+								}
+							/>
+						</ItemMedia>
 
-			<ItemContent
-				className="cursor-pointer"
-				role="button"
-				tabIndex={0}
-				onClick={() =>
-					navigate({
-						to: "/$slug/projects/$id",
-						params: { slug: workspace.slug, id: project.publicId },
-					})
+						<ItemContent
+							className="cursor-pointer"
+							role="button"
+							onClick={() =>
+								navigate({
+									to: "/$slug/projects/$id",
+									params: { slug: workspace.slug, id: project.publicId },
+								})
+							}
+						>
+							<ItemTitle>{project.name}</ItemTitle>
+						</ItemContent>
+
+						<ItemActions>
+							<div className="flex items-center gap-1">
+								<StatusSelector
+									project={project}
+									spacePublicId={spacePublicId}
+									className="w-fit"
+									projectPublicId={project.publicId}
+									showLabel={false}
+								/>
+
+								<PrioritySelector
+									value={project.priority}
+									className="w-fit"
+									onPriorityChange={(priority) =>
+										updateProject.mutate({
+											projectPublicId: project.publicId,
+											priority,
+										})
+									}
+									showLabel={false}
+								/>
+
+								<DropdownMenu>
+									<DropdownMenuTrigger
+										render={
+											<Button
+												variant="ghost"
+												size="icon"
+												className="h-8 w-8 hover:bg-accent"
+											>
+												<IconDotsVertical className="h-4 w-4" />
+											</Button>
+										}
+									/>
+									<DropdownMenuContent align="end" className="w-48">
+										<DropdownMenuSeparator />
+
+										<DropdownMenuItem
+											className="text-destructive focus:bg-destructive focus:text-destructive-foreground"
+											onClick={() =>
+												open({
+													type: "DELETE_PROJECT",
+													data: {
+														project: {
+															...project,
+															spacePublicId,
+														},
+													},
+												})
+											}
+										>
+											<IconTrash className="mr-2 h-4 w-4" />
+											Delete Project
+										</DropdownMenuItem>
+									</DropdownMenuContent>
+								</DropdownMenu>
+							</div>
+						</ItemActions>
+					</Item>
 				}
-				onKeyDown={(e) => {
-					if (e.key === "Enter" || e.key === " ") {
+			/>
+			<ContextMenuContent className="w-64">
+				<ContextMenuItem
+					onClick={() =>
 						navigate({
 							to: "/$slug/projects/$id",
 							params: { slug: workspace.slug, id: project.publicId },
-						});
+						})
 					}
-				}}
-			>
-				<ItemTitle>{project.name}</ItemTitle>
-			</ItemContent>
+				>
+					<IconDotsVertical className="mr-2 h-4 w-4" />
+					View Project
+				</ContextMenuItem>
 
-			<ItemActions>
-				<div className="flex items-center">
-					<StatusSelector
-						project={project}
-						spacePublicId={spacePublicId}
-						className="w-fit"
-						projectPublicId={project.publicId}
-						showLabel={false}
-					/>
+				<ContextMenuSeparator />
 
-					<PrioritySelector
-						value={project.priority}
-						className="w-fit"
-						onPriorityChange={(priority) =>
-							updateProject.mutate({
-								projectPublicId: project.publicId,
-								priority,
-							})
-						}
-						showLabel={false}
-					/>
-
-					<DropdownMenu>
-						<DropdownMenuTrigger
-							render={
-								<Button
-									variant="ghost"
-									size="icon"
-									className="h-8 w-8 hover:bg-accent"
-								>
-									<IconDotsVertical className="h-4 w-4" />
-								</Button>
-							}
+				<ContextMenuSub>
+					<ContextMenuSubTrigger>
+						<priority.icon
+							className="mr-2 h-4 w-4"
+							style={{ color: priority.color }}
 						/>
-						<DropdownMenuContent align="end" className="w-48">
-							<DropdownMenuSeparator />
-
-							<DropdownMenuItem
-								className="text-destructive focus:bg-destructive focus:text-destructive-foreground"
+						Priority
+					</ContextMenuSubTrigger>
+					<ContextMenuSubContent>
+						{priorities.map((p) => (
+							<ContextMenuItem
+								key={p.id}
 								onClick={() =>
-									open({
-										type: "DELETE_PROJECT",
-										data: {
-											project: {
-												...project,
-												spacePublicId,
-											},
-										},
+									updateProject.mutate({
+										projectPublicId: project.publicId,
+										priority: p.value,
 									})
 								}
 							>
-								<IconTrash className="mr-2 h-4 w-4" />
-								Delete Project
-							</DropdownMenuItem>
-						</DropdownMenuContent>
-					</DropdownMenu>
-				</div>
-			</ItemActions>
-		</Item>
+								<p.icon className="mr-2 h-4 w-4" style={{ color: p.color }} />
+								{p.name}
+								{project.priority === p.value && (
+									<IconCheck className="ml-auto h-4 w-4" />
+								)}
+							</ContextMenuItem>
+						))}
+					</ContextMenuSubContent>
+				</ContextMenuSub>
+
+				<ContextMenuSub>
+					<ContextMenuSubTrigger>
+						{project.projectStatus &&
+							getStatusIcon(
+								project.projectStatus.type,
+								project.projectStatus.colorCode,
+							)}
+						Status
+					</ContextMenuSubTrigger>
+					<ContextMenuSubContent>
+						{projectStatuses.data?.map((s) => (
+							<ContextMenuItem
+								key={s.publicId}
+								onClick={() =>
+									updateProject.mutate({
+										projectPublicId: project.publicId,
+										projectStatusPublicId: s.publicId,
+									})
+								}
+							>
+								{getStatusIcon(s.type, s.colorCode)}
+								{s.name}
+								{project.projectStatus?.publicId === s.publicId && (
+									<IconCheck className="ml-auto h-4 w-4" />
+								)}
+							</ContextMenuItem>
+						))}
+					</ContextMenuSubContent>
+				</ContextMenuSub>
+
+				<ContextMenuSeparator />
+				<ContextMenuItem
+					className="text-destructive focus:bg-destructive focus:text-destructive-foreground"
+					onClick={() =>
+						open({
+							type: "DELETE_PROJECT",
+							data: {
+								project: {
+									...project,
+									spacePublicId,
+								},
+							},
+						})
+					}
+				>
+					<IconTrash className="mr-2 h-4 w-4" />
+					Delete Project
+				</ContextMenuItem>
+			</ContextMenuContent>
+		</ContextMenu>
 	);
 }
 

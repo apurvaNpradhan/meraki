@@ -7,6 +7,7 @@ import {
 import { z } from "zod";
 import { protectedProcedure, publicProcedure } from "../index";
 import { projectRouter } from "./project";
+import { projectLabelRouter } from "./project-label";
 import { projectStatusRouter } from "./project-status";
 import { spaceRouter } from "./space";
 import { statusRouter } from "./status";
@@ -24,6 +25,7 @@ export const appRouter = {
 	space: spaceRouter,
 	project: projectRouter,
 	projectStatus: projectStatusRouter,
+	projectLabel: projectLabelRouter,
 	status: statusRouter,
 	healthCheck: publicProcedure.handler(() => {
 		return "OK";

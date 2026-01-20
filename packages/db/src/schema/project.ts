@@ -66,3 +66,41 @@ export const projects = pgTable(
 		index("project_spaceId_idx").on(table.spaceId),
 	],
 ).enableRLS();
+
+export const projectLabels = pgTable("project_label", {
+	id: bigint("id", { mode: "bigint" }).primaryKey().generatedAlwaysAsIdentity(),
+	publicId: uuid("public_id")
+		.notNull()
+		.unique()
+		.default(sql`uuid_generate_v7()`),
+	spaceId: bigint("space_id", { mode: "bigint" })
+		.notNull()
+		.references(() => spaces.id),
+
+	name: varchar("name", { length: 255 }).notNull(),
+	colorCode: varchar("color_code", { length: 255 }).notNull(),
+	createdBy: uuid("created_by")
+		.notNull()
+		.references(() => user.id),
+	deletedBy: uuid("deleted_by").references(() => user.id, {
+		onDelete: "set null",
+	}),
+
+	...timestamps,
+});
+
+export const projectLabelMappings = pgTable(
+	"project_label_mappings",
+	{
+		projectId: bigint("project_id", { mode: "bigint" })
+			.notNull()
+			.references(() => projects.id, { onDelete: "cascade" }),
+		labelId: bigint("label_id", { mode: "bigint" })
+			.notNull()
+			.references(() => projectLabels.id, { onDelete: "cascade" }),
+	},
+	(t) => [
+		index("project_label_mappings_projectId_idx").on(t.projectId),
+		index("project_label_mappings_labelId_idx").on(t.labelId),
+	],
+);

@@ -1,4 +1,3 @@
-import type { RouterOutputs } from "@meraki/api/routers/index";
 import * as reactQuery from "@tanstack/react-query";
 import { toast } from "sonner";
 import { orpc } from "@/utils/orpc";
@@ -81,9 +80,23 @@ export function useUpdateTask({
 					? queryClient.getQueryData(projectTasksQueryKey)
 					: null;
 
-				queryClient.setQueryData(
-					allTasksQueryKey,
-					(old: RouterOutputs["task"]["all"]) => {
+				queryClient.setQueryData(allTasksQueryKey, (old) => {
+					if (!old) return old;
+					return old.map((t) =>
+						t.publicId === variables.taskId
+							? {
+									...t,
+									...variables.input,
+									status: variables.input.statusPublicId
+										? { publicId: variables.input.statusPublicId, name: "" }
+										: t.status,
+								}
+							: t,
+					);
+				});
+
+				if (projectTasksQueryKey) {
+					queryClient.setQueryData(projectTasksQueryKey, (old) => {
 						if (!old) return old;
 						return old.map((t) =>
 							t.publicId === variables.taskId
@@ -96,27 +109,7 @@ export function useUpdateTask({
 									}
 								: t,
 						);
-					},
-				);
-
-				if (projectTasksQueryKey) {
-					queryClient.setQueryData(
-						projectTasksQueryKey,
-						(old: RouterOutputs["task"]["allByProjectId"]) => {
-							if (!old) return old;
-							return old.map((t) =>
-								t.publicId === variables.taskId
-									? {
-											...t,
-											...variables.input,
-											status: variables.input.statusPublicId
-												? { publicId: variables.input.statusPublicId, name: "" }
-												: t.status,
-										}
-									: t,
-							);
-						},
-					);
+					});
 				}
 
 				return { previousAllTasks, previousProjectTasks };
@@ -186,22 +179,16 @@ export function useDeleteTask({
 					? queryClient.getQueryData(projectTasksQueryKey)
 					: null;
 
-				queryClient.setQueryData(
-					allTasksQueryKey,
-					(old: RouterOutputs["task"]["all"]) => {
-						if (!old) return old;
-						return old.filter((t) => t.publicId !== variables.taskId);
-					},
-				);
+				queryClient.setQueryData(allTasksQueryKey, (old) => {
+					if (!old) return old;
+					return old.filter((t) => t.publicId !== variables.taskId);
+				});
 
 				if (projectTasksQueryKey) {
-					queryClient.setQueryData(
-						projectTasksQueryKey,
-						(old: RouterOutputs["task"]["allByProjectId"]) => {
-							if (!old) return old;
-							return old.filter((t) => t.publicId !== variables.taskId);
-						},
-					);
+					queryClient.setQueryData(projectTasksQueryKey, (old) => {
+						if (!old) return old;
+						return old.filter((t) => t.publicId !== variables.taskId);
+					});
 				}
 
 				return { previousAllTasks, previousProjectTasks };

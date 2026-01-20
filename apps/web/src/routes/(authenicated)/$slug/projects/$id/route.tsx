@@ -1,5 +1,5 @@
 import type { RouterOutputs } from "@meraki/api/routers/index";
-import { IconDotsVertical, IconTrash } from "@tabler/icons-react";
+import { IconDotsVertical, IconPlus, IconTrash } from "@tabler/icons-react";
 import {
 	createFileRoute,
 	Outlet,
@@ -8,7 +8,7 @@ import {
 	useNavigate,
 } from "@tanstack/react-router";
 import { RenderIcon } from "@/components/icon-and-colorpicker";
-import MainLayout from "@/components/layout/app-layout";
+import MainLayout, { AuotHidingSidebar } from "@/components/layout/app-layout";
 import { PrioritySelector } from "@/components/priority-selector";
 import { Button } from "@/components/ui/button";
 import {
@@ -120,6 +120,7 @@ function RouteComponent() {
 			<div className="flex w-full flex-col gap-2">
 				<div className="flex w-full flex-row items-center justify-between px-4 pt-2">
 					<div className="flex flex-1 items-center gap-2">
+						<AuotHidingSidebar />
 						<div className="flex flex-1 items-center justify-between">
 							<div className="flex cursor-pointer items-center gap-2">
 								<div className="flex items-center gap-2">
@@ -168,6 +169,23 @@ function RouteComponent() {
 											side="inline-end"
 											className="w-[200px]"
 										>
+											<Button
+												size="icon-sm"
+												onClick={() => {
+													open({
+														type: "CREATE_TASK",
+														modalSize: "lg",
+														data: {
+															projectPublicId: data.publicId,
+															statuses: data.statuses,
+														},
+													});
+												}}
+												className="gap-2"
+											>
+												<IconPlus />
+											</Button>
+
 											<div className="flex flex-col gap-2 p-2">
 												<div className="flex items-center justify-between px-2 py-1">
 													<span className="font-medium text-muted-foreground text-xs">

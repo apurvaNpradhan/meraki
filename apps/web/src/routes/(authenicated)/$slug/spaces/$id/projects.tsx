@@ -25,10 +25,10 @@ export const Route = createFileRoute(
 		<div className="flex flex-col">
 			{[1, 2, 3].map((i) => (
 				<div key={i} className="flex flex-col">
-					<div className="flex w-full items-center justify-between border-b p-2">
-						<div className="flex items-center gap-2">
-							<Skeleton className="h-6 w-6 rounded" />
-							<Skeleton className="h-4 w-32" />
+					<div className="flex w-full items-center justify-between border-b p-3">
+						<div className="flex items-center gap-3">
+							<Skeleton className="h-9 w-9 rounded" />
+							<Skeleton className="h-6 w-48" />
 						</div>
 					</div>
 					<div className="flex flex-col">

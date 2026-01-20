@@ -1,12 +1,17 @@
 import type { SelectTaskType, UpdateTaskType } from "@meraki/api/types";
 import type { Status } from "@meraki/api/types/status";
 import {
+	IconCalendarStats,
+	IconCheck,
 	IconChevronDown,
 	IconChevronUp,
+	IconCircleCheckFilled,
 	IconFilter,
-	IconPlus,
+	IconPencil,
 	IconSortAscending,
+	IconTrash,
 } from "@tabler/icons-react";
+
 import { useQuery } from "@tanstack/react-query";
 import { useLoaderData } from "@tanstack/react-router";
 import {
@@ -22,11 +27,22 @@ import { PrioritySelector, priorities } from "@/components/priority-selector";
 import {
 	Accordion,
 	AccordionContent,
+	AccordionHeader,
 	AccordionItem,
 	AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+	ContextMenu,
+	ContextMenuContent,
+	ContextMenuItem,
+	ContextMenuSeparator,
+	ContextMenuSub,
+	ContextMenuSubContent,
+	ContextMenuSubTrigger,
+	ContextMenuTrigger,
+} from "@/components/ui/context-menu";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -41,14 +57,15 @@ import {
 	Item,
 	ItemActions,
 	ItemContent,
-	ItemDescription,
 	ItemMedia,
 	ItemTitle,
 } from "@/components/ui/item";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { useModal } from "@/stores/modal.store";
 import { orpc } from "@/utils/orpc";
 import { useUpdateTask } from "../hooks/use-tasks";
+import { TaskDatePicker } from "./task-date-picker";
 import { getTaskStatusIcon, TaskStatusSelector } from "./task-status-selector";
 
 export type GroupBy = "none" | "priority" | "deadline" | "status";
@@ -369,69 +386,47 @@ export function TaskList({
 								value={group.label}
 								className="border-none"
 							>
-								<AccordionTrigger
-									className="flex w-full flex-row items-center justify-between rounded-none border-none bg-background p-2 transition-colors hover:bg-muted hover:no-underline data-[state=open]:bg-muted"
+								<AccordionHeader
+									className="relative flex w-full flex-row items-center justify-between rounded-none border-none bg-background transition-colors hover:bg-muted data-[state=open]:bg-muted md:px-1"
 									style={{
-										borderLeft: group.status?.colorCode
-											? `6px solid ${group.status.colorCode}`
-											: undefined,
 										backgroundColor: group.status?.colorCode
-											? `color-mix(in srgb, ${group.status.colorCode} 6%, var(--background))`
+											? `color-mix(in srgb, ${group.status.colorCode} 6%, var(--card))`
 											: undefined,
 									}}
 								>
-									<div className="flex items-center gap-2">
-										<Button
-											variant={"ghost"}
-											size="icon-sm"
-											className="flex items-center hover:text-primary"
-										>
-											<IconChevronDown
-												data-slot="accordion-trigger-icon"
-												className="pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:hidden"
-											/>
-											<IconChevronUp
-												data-slot="accordion-trigger-icon"
-												className="pointer-events-none hidden shrink-0 group-aria-expanded/accordion-trigger:inline"
-											/>
-										</Button>
-										<h3 className="flex flex-row items-center gap-2 font-semibold text-foreground/70 text-sm">
-											{group.status &&
-												getTaskStatusIcon(
-													group.status.type,
-													group.status.colorCode,
-												)}
-											{group.label}
-											<span className="font-normal text-muted-foreground text-xs">
-												{group.tasks.length}
-											</span>
-										</h3>
-									</div>
-
-									{(groupBy === "status" || groupBy === "priority") && (
-										<Button
-											variant="ghost"
-											size="icon-xs"
-											onClick={(e) => {
-												e.stopPropagation();
-												open({
-													type: "CREATE_TASK",
-													modalSize: "lg",
-													data: {
-														data: {
-															statusPublicId: group.status?.publicId,
-															priority: group.tasks[0]?.priority,
-														},
-														projectPublicId,
-														statuses,
-													},
-												});
-											}}
-										>
-											<IconPlus />
-										</Button>
+									{group.status?.colorCode && (
+										<span
+											aria-hidden
+											className="pointer-events-none absolute inset-y-0 left-0 w-[6px]"
+											style={{ backgroundColor: group.status.colorCode }}
+										/>
 									)}
-								</AccordionTrigger>
+									<AccordionTrigger className="flex h-full flex-1 items-center gap-2 rounded-none border-y-border px-1 py-2 hover:no-underline">
+										<div className="flex items-center gap-2">
+											<div className="flex h-5 w-5 items-center justify-center rounded-md hover:text-primary">
+												<IconChevronDown
+													data-slot="accordion-trigger-icon"
+													className="pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:hidden"
+												/>
+												<IconChevronUp
+													data-slot="accordion-trigger-icon"
+													className="pointer-events-none hidden shrink-0 group-aria-expanded/accordion-trigger:inline"
+												/>
+											</div>
+											<h3 className="flex flex-row items-center gap-2 font-semibold text-foreground/70 text-xs">
+												{group.status &&
+													getTaskStatusIcon(
+														group.status.type,
+														group.status.colorCode,
+													)}
+												{group.label}
+												<span className="font-normal text-muted-foreground text-xs">
+													{group.tasks.length}
+												</span>
+											</h3>
+										</div>
+									</AccordionTrigger>
+								</AccordionHeader>
 								<AccordionContent className="flex flex-col p-0">
 									<div className="flex flex-col">
 										{group.tasks.map((task) => (
@@ -480,101 +475,214 @@ export function TaskListItem({
 	const isDone = !!task.completedAt;
 	const priority =
 		priorities.find((p) => p.value === task.priority) ?? priorities[0];
+	const isMobile = useIsMobile();
 
-	console.log(priority);
 	return (
-		<Item
-			tabIndex={0}
-			className="group cursor-pointer flex-nowrap gap-2 p-1 transition-colors duration-200 ease-out hover:bg-accent/30 md:gap-0"
-			onKeyDown={(e) => {
-				if (e.key === "Enter" || e.key === " ") {
-					open({
-						type: "TASK_DETAIL",
-						data: { taskId: task.publicId },
-					});
-				}
-			}}
-		>
-			<ItemMedia>
-				<Checkbox
-					style={{
-						borderColor: `${priority.color} !important`,
-						...(task.completedAt && {
-							backgroundColor: `${priority.color} !important`,
-						}),
-					}}
-					checked={isDone}
-					className={cn(
-						"rounded-full bg-transparent",
-						"md:hidden md:-translate-x-4",
-						"transition-all duration-200 ease-out",
-						"group-hover:block group-hover:translate-x-1",
-						"md:focus-visible:block md:focus-visible:translate-x-1",
-						isDone && "md:block md:translate-x-0",
-					)}
-					onCheckedChange={(checked) => {
-						onUpdate({
-							taskPublicId: task.publicId,
-							completedAt: checked ? new Date() : null,
-						});
-					}}
-				/>
-			</ItemMedia>
-			<ItemContent
-				className={cn(
-					"min-w-0 transition-[margin] duration-200 ease-out",
-					"group-hover:ml-1",
-					isDone && "ml-1",
-				)}
-				onClick={() =>
-					open({
-						type: "TASK_DETAIL",
-						modalSize: "lg",
-						data: { taskId: task.publicId },
-					})
-				}
-			>
-				<ItemTitle
-					className={cn(
-						"block truncate px-3 text-[15px] leading-tight transition-colors",
-						isDone && "text-muted-foreground line-through",
-					)}
-				>
-					{task.title}
-				</ItemTitle>
-				{task.deadline && (
-					<ItemDescription
-						className={cn(
-							"text-xs",
-
-							getDueLabel(task.deadline).color,
-						)}
+		<ContextMenu>
+			<ContextMenuTrigger
+				render={
+					<Item
+						tabIndex={0}
+						className="group cursor-pointer flex-nowrap gap-2 p-2 transition-colors duration-200 ease-out hover:bg-accent/30 data-[state=open]:bg-accent/30 md:gap-0"
+						onKeyDown={(e) => {
+							if (e.key === "Enter" || e.key === " ") {
+								open({
+									type: "TASK_DETAIL",
+									data: { taskId: task.publicId },
+								});
+							}
+						}}
 					>
-						{getDueLabel(task.deadline).date}
-					</ItemDescription>
-				)}
-			</ItemContent>
-			<ItemActions className="flex flex-row items-center gap-2">
-				<PrioritySelector
-					value={task.priority}
-					className="w-fit"
-					onPriorityChange={(priority) =>
-						onUpdate({ taskPublicId: task.publicId, priority })
-					}
-				/>
-				<TaskStatusSelector
-					className="w-fit"
-					statuses={statuses ?? []}
-					selectedStatusId={task.status?.publicId}
-					onStatusChange={(status) =>
+						<ItemMedia>
+							<Checkbox
+								style={{
+									borderColor: `${priority.color} !important`,
+									...(task.completedAt && {
+										backgroundColor: `${priority.color} !important`,
+									}),
+								}}
+								checked={isDone}
+								className={cn(
+									"rounded-full bg-transparent",
+									"md:hidden md:-translate-x-4",
+									"transition-all duration-200 ease-out",
+									"group-hover:block group-hover:translate-x-1",
+									"md:focus-visible:block md:focus-visible:translate-x-1",
+									isDone && "md:block md:translate-x-0",
+								)}
+								onCheckedChange={(checked) => {
+									onUpdate({
+										taskPublicId: task.publicId,
+										completedAt: checked ? new Date() : null,
+									});
+								}}
+							/>
+						</ItemMedia>
+						<ItemContent
+							className={cn(
+								"min-w-0 transition-[margin] duration-200 ease-out",
+								"group-hover:ml-1",
+								isDone && "ml-1",
+							)}
+							onClick={() =>
+								open({
+									type: "TASK_DETAIL",
+									modalSize: "lg",
+									data: { taskId: task.publicId },
+								})
+							}
+						>
+							<ItemTitle
+								className={cn(
+									"block truncate px-3 text-[15px] leading-tight transition-colors",
+									isDone && "text-muted-foreground line-through",
+								)}
+							>
+								{task.title}
+							</ItemTitle>
+						</ItemContent>
+						<ItemActions className="flex flex-row items-center gap-2">
+							{!isMobile && task.deadline && (
+								<TaskDatePicker
+									className="w-fit"
+									date={task.deadline}
+									onSelect={(date) =>
+										onUpdate({ taskPublicId: task.publicId, deadline: date })
+									}
+								/>
+							)}
+							<PrioritySelector
+								value={task.priority}
+								className="w-fit"
+								onPriorityChange={(priority) =>
+									onUpdate({ taskPublicId: task.publicId, priority })
+								}
+							/>
+							<TaskStatusSelector
+								className="w-fit"
+								statuses={statuses ?? []}
+								selectedStatusId={task.status?.publicId}
+								onStatusChange={(status) =>
+									onUpdate({
+										taskPublicId: task.publicId,
+										statusPublicId: status,
+									})
+								}
+							/>
+						</ItemActions>
+					</Item>
+				}
+			/>
+			<ContextMenuContent className="w-64">
+				<ContextMenuItem
+					onClick={() =>
 						onUpdate({
 							taskPublicId: task.publicId,
-							statusPublicId: status,
+							completedAt: isDone ? null : new Date(),
 						})
 					}
-				/>
-			</ItemActions>
-		</Item>
+				>
+					<IconCircleCheckFilled
+						className={cn("mr-2 h-4 w-4", isDone && "text-primary")}
+					/>
+					{isDone ? "Mark as uncompleted" : "Complete task"}
+				</ContextMenuItem>
+				<ContextMenuItem
+					onClick={() =>
+						open({
+							type: "TASK_DETAIL",
+							modalSize: "lg",
+							data: { taskId: task.publicId },
+						})
+					}
+				>
+					<IconPencil className="mr-2 h-4 w-4" />
+					View task
+				</ContextMenuItem>
+
+				<ContextMenuSeparator />
+
+				<ContextMenuSub>
+					<ContextMenuSubTrigger>
+						<IconCalendarStats className="mr-2 h-4 w-4" />
+						Due date
+					</ContextMenuSubTrigger>
+					<ContextMenuSubContent className="p-0">
+						<TaskDatePicker
+							date={task.deadline}
+							onSelect={(date) =>
+								onUpdate({ taskPublicId: task.publicId, deadline: date })
+							}
+							className="border-none bg-transparent"
+						/>
+					</ContextMenuSubContent>
+				</ContextMenuSub>
+
+				<ContextMenuSub>
+					<ContextMenuSubTrigger>
+						<priority.icon
+							className="mr-2 h-4 w-4"
+							style={{ color: priority.color }}
+						/>
+						Priority
+					</ContextMenuSubTrigger>
+					<ContextMenuSubContent>
+						{priorities.map((p) => (
+							<ContextMenuItem
+								key={p.id}
+								onClick={() =>
+									onUpdate({ taskPublicId: task.publicId, priority: p.value })
+								}
+							>
+								<p.icon className="mr-2 h-4 w-4" style={{ color: p.color }} />
+								{p.name}
+								{task.priority === p.value && (
+									<IconCheck className="ml-auto h-4 w-4" />
+								)}
+							</ContextMenuItem>
+						))}
+					</ContextMenuSubContent>
+				</ContextMenuSub>
+
+				<ContextMenuSub>
+					<ContextMenuSubTrigger>
+						{task.status &&
+							getTaskStatusIcon(
+								task.status.type,
+								task.status.colorCode,
+								"mr-2 h-4 w-4",
+							)}
+						Status
+					</ContextMenuSubTrigger>
+					<ContextMenuSubContent>
+						{statuses?.map((s) => (
+							<ContextMenuItem
+								key={s.publicId}
+								onClick={() =>
+									onUpdate({
+										taskPublicId: task.publicId,
+										statusPublicId: s.publicId,
+									})
+								}
+							>
+								{getTaskStatusIcon(s.type, s.colorCode, "mr-2 h-4 w-4")}
+								{s.name}
+								{task.status?.publicId === s.publicId && (
+									<IconCheck className="ml-auto h-4 w-4" />
+								)}
+							</ContextMenuItem>
+						))}
+					</ContextMenuSubContent>
+				</ContextMenuSub>
+
+				<ContextMenuSeparator />
+
+				<ContextMenuItem variant="destructive" onClick={onDelete}>
+					<IconTrash className="mr-2 h-4 w-4" />
+					Delete
+				</ContextMenuItem>
+			</ContextMenuContent>
+		</ContextMenu>
 	);
 }
 
@@ -594,7 +702,7 @@ export function TaskListItemSkeleton() {
 	);
 }
 
-const getDueLabel = (date?: Date | null) => {
+const _getDueLabel = (date?: Date | null) => {
 	const colors = {
 		thisWeek: "text-orange-500",
 		later: "text-muted-foreground",

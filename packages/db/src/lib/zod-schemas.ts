@@ -4,7 +4,11 @@ import {
 	createUpdateSchema,
 } from "drizzle-zod";
 import z from "zod";
-import { projects } from "../schema/project";
+import {
+	projectLabelMappings,
+	projectLabels,
+	projects,
+} from "../schema/project";
 import { spaces } from "../schema/space";
 import { statuses, statusesTypes } from "../schema/status";
 import { tasks } from "../schema/task";
@@ -132,3 +136,35 @@ export const UpdateStatus = createUpdateSchema(statuses).omit({
 	deletedAt: true,
 	deletedBy: true,
 });
+
+export const SelectProjectLabel = createSelectSchema(projectLabels).omit({
+	id: true,
+	spaceId: true,
+	createdBy: true,
+	createdAt: true,
+	updatedAt: true,
+	deletedAt: true,
+	deletedBy: true,
+});
+
+export const InsertProjectLabel = createInsertSchema(projectLabels, {
+	name: z.string().min(1, "Name is required").max(255, "Name is too long"),
+	colorCode: z.string().min(1, "Color code is required"),
+}).omit({
+	publicId: true,
+	createdAt: true,
+	updatedAt: true,
+	deletedAt: true,
+	deletedBy: true,
+});
+
+export const UpdateProjectLabel = createUpdateSchema(projectLabels).omit({
+	publicId: true,
+	createdAt: true,
+	updatedAt: true,
+	deletedAt: true,
+	deletedBy: true,
+});
+
+export const InsertProjectLabelMapping =
+	createInsertSchema(projectLabelMappings);

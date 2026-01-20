@@ -18,6 +18,7 @@ import {
 	ResponsiveModalTitle,
 } from "@/components/ui/responsive-modal";
 import { Separator } from "@/components/ui/separator";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { useModal } from "@/stores/modal.store";
 import { orpc } from "@/utils/orpc";
 import { useCreateProject } from "../hooks/use-project";
@@ -47,6 +48,7 @@ export function NewProjectForm({
 	const defaultStatus =
 		statuses.find((s) => s.type === "backlog") ?? statuses[0];
 
+	const isMobile = useIsMobile();
 	const {
 		handleSubmit,
 		control,
@@ -101,10 +103,7 @@ export function NewProjectForm({
 			},
 		);
 	};
-	useEffect(() => {
-		const titleElement = document.getElementById("name");
-		if (titleElement) titleElement.focus();
-	}, []);
+
 	const { open } = useModal();
 
 	return (
@@ -151,7 +150,13 @@ export function NewProjectForm({
 										id="name"
 										placeholder="Project name"
 										className="w-full resize-none border-none bg-transparent p-0 font-semibold text-2xl outline-none placeholder:text-muted-foreground/50 focus-visible:ring-0"
-										autoFocus
+										autoFocus={!isMobile}
+										onFocus={(e) => {
+											e.target.scrollIntoView({
+												behavior: "smooth",
+												block: "center",
+											});
+										}}
 										onKeyDown={(e) => {
 											if (e.key === "Enter") {
 												e.preventDefault();

@@ -2,7 +2,7 @@ import { and, count, countDistinct, desc, eq, isNull, sql } from "drizzle-orm";
 import type z from "zod";
 import { db } from "..";
 import type { InsertSpaceSchema, UpdateSpaceSchema } from "../lib/zod-schemas";
-import { projects, tasks } from "../schema";
+import { projectLabels, projects, tasks } from "../schema";
 import { spaces } from "../schema/space";
 
 export const getSpaceDetails = async (workspaceId: string, spaceId: bigint) => {
@@ -18,9 +18,8 @@ export const getSpaceDetails = async (workspaceId: string, spaceId: bigint) => {
 			deletedAt: spaces.deletedAt,
 			deletedBy: spaces.deletedBy,
 			createdBy: spaces.createdBy,
-
 			projectCount: countDistinct(projects.id),
-
+			projectLabelCount: countDistinct(projectLabels.id),
 			taskCount: countDistinct(
 				sql`CASE WHEN ${tasks.deletedAt}  IS NULL AND ${tasks.isArchived} IS FALSE THEN ${tasks.id} END`,
 			),
@@ -28,6 +27,7 @@ export const getSpaceDetails = async (workspaceId: string, spaceId: bigint) => {
 		.from(spaces)
 		.leftJoin(projects, eq(spaces.id, projects.spaceId))
 		.leftJoin(tasks, eq(projects.id, tasks.projectId))
+		.leftJoin(projectLabels, eq(projectLabels.spaceId, spaces.id))
 		.where(
 			and(
 				eq(spaces.organizationId, workspaceId),
@@ -184,6 +184,7 @@ export const create = async (args: {
 			createdBy: input.createdBy,
 		})
 		.returning({
+			id: spaces.id,
 			publicId: spaces.publicId,
 			name: spaces.name,
 		});

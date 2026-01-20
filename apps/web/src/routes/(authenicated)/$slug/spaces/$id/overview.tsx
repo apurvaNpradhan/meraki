@@ -8,8 +8,8 @@ export const Route = createFileRoute(
 	loader: async ({ context, params }) => {
 		const { queryClient, orpc } = context;
 		const spaces = queryClient.ensureQueryData(
-			orpc.space.byId.queryOptions({
-				input: { spaceId: params.id },
+			orpc.space.getOverview.queryOptions({
+				input: { spacePublicId: params.id },
 			}),
 		);
 		return { spaces };

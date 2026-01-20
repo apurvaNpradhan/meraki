@@ -40,7 +40,6 @@ export function NewTaskModal({
 	const { workspace } = useLoaderData({ from: "/(authenicated)/$slug" });
 
 	const createTask = useCreateTask({
-		workspaceId: workspace.id,
 		projectPublicId,
 	});
 
@@ -58,6 +57,8 @@ export function NewTaskModal({
 		defaultValues,
 	});
 
+	const [resetKey, setResetKey] = useState(0);
+
 	const onSubmit = (values: TaskFormValues) => {
 		createTask.mutate(
 			{
@@ -70,6 +71,7 @@ export function NewTaskModal({
 						close();
 					} else {
 						form.reset(defaultValues);
+						setResetKey((prev) => prev + 1);
 					}
 				},
 				onError: (error: Error) => {
@@ -111,6 +113,12 @@ export function NewTaskModal({
 									placeholder="Task title"
 									className="w-full resize-none font-semibold text-2xl outline-none placeholder:text-muted-foreground"
 									autoFocus
+									onFocus={(e) => {
+										e.target.scrollIntoView({
+											behavior: "smooth",
+											block: "center",
+										});
+									}}
 									onKeyDown={(e) => {
 										if (e.key === "Enter") {
 											e.preventDefault();
@@ -127,6 +135,7 @@ export function NewTaskModal({
 						name="description"
 						render={({ field }) => (
 							<ContentEditor
+								key={resetKey}
 								placeholder="Add description..."
 								initialContent={field.value ?? undefined}
 								onUpdate={field.onChange}

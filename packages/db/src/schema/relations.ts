@@ -7,7 +7,7 @@ import {
 	session,
 	user,
 } from "./auth";
-import { projects } from "./project";
+import { projectLabelMappings, projectLabels, projects } from "./project";
 import { projectStatuses } from "./project-status";
 import { spaces } from "./space";
 import { statuses } from "./status";
@@ -49,6 +49,7 @@ export const userRelations = relations(user, ({ many }) => ({
 	deletedProjectStatuses: many(projectStatuses, {
 		relationName: "projectStatusDeletedByUser",
 	}),
+	projectLabels: many(projectLabels),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -165,6 +166,7 @@ export const spaceRelations = relations(spaces, ({ one, many }) => ({
 		references: [organization.id],
 	}),
 	projects: many(projects),
+	projectLabels: many(projectLabels),
 }));
 
 export const projectRelations = relations(projects, ({ one, many }) => ({
@@ -190,6 +192,7 @@ export const projectRelations = relations(projects, ({ one, many }) => ({
 	}),
 	statuses: many(statuses),
 	tasks: many(tasks),
+	labelMappings: many(projectLabelMappings),
 }));
 
 export const statusRelations = relations(statuses, ({ one, many }) => ({
@@ -207,3 +210,36 @@ export const statusRelations = relations(statuses, ({ one, many }) => ({
 	}),
 	tasks: many(tasks),
 }));
+
+export const projectLabelRelations = relations(
+	projectLabels,
+	({ one, many }) => ({
+		labelMappings: many(projectLabelMappings),
+		space: one(spaces, {
+			fields: [projectLabels.spaceId],
+			references: [spaces.id],
+		}),
+		createdBy: one(user, {
+			fields: [projectLabels.createdBy],
+			references: [user.id],
+		}),
+		deletedBy: one(user, {
+			fields: [projectLabels.deletedBy],
+			references: [user.id],
+		}),
+	}),
+);
+
+export const projectLabelMappingsRelations = relations(
+	projectLabelMappings,
+	({ one }) => ({
+		project: one(projects, {
+			fields: [projectLabelMappings.projectId],
+			references: [projects.id],
+		}),
+		label: one(projectLabels, {
+			fields: [projectLabelMappings.labelId],
+			references: [projectLabels.id],
+		}),
+	}),
+);

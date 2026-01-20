@@ -140,6 +140,7 @@ interface PrioritySelectorProps {
 	onPriorityChange?: (priority: number) => void;
 	showLabel?: boolean;
 	className?: string;
+	size?: "default" | "sm" | "lg" | "icon" | "icon-xs";
 }
 
 export function PrioritySelector({
@@ -147,6 +148,7 @@ export function PrioritySelector({
 	onPriorityChange,
 	showLabel = false,
 	className,
+	size = "sm",
 }: PrioritySelectorProps) {
 	return (
 		<GenericSelector
@@ -156,6 +158,7 @@ export function PrioritySelector({
 			showLabel={showLabel}
 			placeholder="Priority"
 			className={className}
+			size={size}
 		/>
 	);
 }

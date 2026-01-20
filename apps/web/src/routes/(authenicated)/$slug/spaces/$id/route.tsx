@@ -1,5 +1,5 @@
 import type { RouterOutputs } from "@meraki/api/routers/index";
-import { IconChevronDown, IconDots } from "@tabler/icons-react";
+import { IconDots } from "@tabler/icons-react";
 import {
 	createFileRoute,
 	Outlet,
@@ -7,7 +7,7 @@ import {
 	useNavigate,
 } from "@tanstack/react-router";
 import { RenderIcon } from "@/components/icon-and-colorpicker";
-import MainLayout from "@/components/layout/app-layout";
+import MainLayout, { AuotHidingSidebar } from "@/components/layout/app-layout";
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
@@ -15,11 +15,9 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSpace } from "@/features/spaces/hooks/use-space";
-import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/(authenicated)/$slug/spaces/$id")({
 	loader: async ({ context, params }) => {
@@ -88,14 +86,13 @@ function RouteComponent() {
 
 	function Header({ space }: { space: RouterOutputs["space"]["getOverview"] }) {
 		const navigate = useNavigate();
-		const sidebar = useSidebar();
 		return (
 			<div className="flex w-full flex-col gap-2">
-				<div className="flex w-full flex-row items-center justify-between px-4 pt-2">
+				<div className="flex flex-1 items-center gap-2">
 					<div className="flex flex-1 items-center gap-2">
-						{sidebar.state === "collapsed" && <SidebarTrigger />}
 						<div className="flex cursor-pointer items-center gap-1">
 							<div className="flex items-center gap-2 px-1">
+								<AuotHidingSidebar />
 								<RenderIcon
 									icon={space.icon}
 									color={space.colorCode}
@@ -121,7 +118,7 @@ function RouteComponent() {
 					</DropdownMenu>
 				</div>
 				<div className="flex w-full flex-row items-center justify-between border-b px-2">
-					<div className="hidden flex-1 items-center justify-between md:flex">
+					<div className="flex flex-1 flex-row items-center justify-between overflow-x-auto">
 						<Tabs
 							className="mr-4"
 							value={activeTab.to}
@@ -141,40 +138,6 @@ function RouteComponent() {
 								))}
 							</TabsList>
 						</Tabs>
-					</div>
-
-					<div className="flex flex-1 items-center justify-between md:hidden">
-						<DropdownMenu>
-							<DropdownMenuTrigger
-								render={
-									<Button
-										variant="ghost"
-										size="sm"
-										className="gap-1 font-medium"
-									>
-										{activeTab.name}
-										<IconChevronDown size={14} />
-									</Button>
-								}
-							/>
-							<DropdownMenuContent align="end" className="w-[160px]">
-								{tabs.map((tab) => (
-									<DropdownMenuItem
-										key={tab.to}
-										onSelect={() =>
-											navigate({ to: tab.to, params: { slug, id } })
-										}
-										className={cn(
-											"flex items-center justify-between",
-											activeTab.to === tab.to &&
-												"bg-accent text-accent-foreground",
-										)}
-									>
-										{tab.name}
-									</DropdownMenuItem>
-								))}
-							</DropdownMenuContent>
-						</DropdownMenu>
 					</div>
 				</div>
 			</div>

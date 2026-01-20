@@ -37,13 +37,15 @@ interface StatusSelectorProps {
 	readOnly?: boolean;
 	selectedStatusId?: string;
 	onStatusChange?: (statusId: string) => void;
+	size?: "default" | "sm" | "lg" | "icon" | "icon-xs";
 }
 export const getStatusIcon = (
 	type: string,
 	color: string,
 	className?: string,
+	size = 16,
 ) => {
-	const props = { size: 16, style: { color }, className };
+	const props = { size, style: { color }, className };
 	switch (type) {
 		case "backlog":
 			return <IconCircleDashed {...props} />;
@@ -68,6 +70,7 @@ export function StatusSelector({
 	readOnly = false,
 	selectedStatusId,
 	onStatusChange,
+	size = "sm",
 }: StatusSelectorProps) {
 	const id = useId();
 	const [open, setOpen] = useState<boolean>(false);
@@ -118,7 +121,7 @@ export function StatusSelector({
 					<Button
 						id={id}
 						variant="ghost"
-						size="sm"
+						size={size}
 						role="combobox"
 						aria-expanded={open}
 						className={cn(!currentStatus && "text-muted-foreground", className)}
@@ -128,7 +131,12 @@ export function StatusSelector({
 			>
 				{currentStatus ? (
 					<div className="flex items-center gap-2">
-						{getStatusIcon(currentStatus.type, currentStatus.colorCode)}
+						{getStatusIcon(
+							currentStatus.type,
+							currentStatus.colorCode,
+							undefined,
+							size === "default" ? 20 : 16,
+						)}
 						{showLabel && (
 							<span className="truncate font-semibold">
 								{currentStatus.name}

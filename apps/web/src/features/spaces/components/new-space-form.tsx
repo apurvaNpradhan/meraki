@@ -15,6 +15,7 @@ import {
 	ResponsiveModalHeader,
 	ResponsiveModalTitle,
 } from "@/components/ui/responsive-modal";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { useModal } from "@/stores/modal.store";
 import { useCreateSpace } from "../hooks/use-space";
 
@@ -22,6 +23,7 @@ const formSchema = InsertSpaceInput;
 type FormValues = z.infer<typeof formSchema>;
 
 export function NewSpaceForm() {
+	const isMobile = useIsMobile();
 	const { close, setDirty } = useModal();
 	const navigate = useNavigate();
 	const { workspace } = useLoaderData({ from: "/(authenicated)/$slug" });
@@ -106,7 +108,13 @@ export function NewSpaceForm() {
 									{...field}
 									placeholder="Space name"
 									className="w-full resize-none font-semibold text-xl outline-none placeholder:text-muted-foreground"
-									autoFocus
+									autoFocus={!isMobile}
+									onFocus={(e) => {
+										e.target.scrollIntoView({
+											behavior: "smooth",
+											block: "center",
+										});
+									}}
 									onKeyDown={(e) => {
 										if (e.key === "Enter") {
 											e.preventDefault();

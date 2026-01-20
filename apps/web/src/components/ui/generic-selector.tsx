@@ -32,6 +32,7 @@ interface GenericSelectorProps<T> {
 	showLabel?: boolean;
 	placeholder?: string;
 	className?: string;
+	size?: "default" | "sm" | "lg" | "icon" | "icon-xs";
 }
 
 export function GenericSelector<T>({
@@ -41,6 +42,7 @@ export function GenericSelector<T>({
 	showLabel = false,
 	placeholder = "Select...",
 	className,
+	size = "sm",
 }: GenericSelectorProps<T>) {
 	const id = useId();
 	const [open, setOpen] = useState<boolean>(false);
@@ -65,7 +67,7 @@ export function GenericSelector<T>({
 					<Button
 						id={id}
 						variant="ghost"
-						size="sm"
+						size={size}
 						className={cn("flex w-full gap-2 px-2", className)}
 						role="combobox"
 						onClick={(e) => e.stopPropagation()}
@@ -73,15 +75,32 @@ export function GenericSelector<T>({
 					>
 						{selectedItem ? (
 							<>
-								<selectedItem.icon className="size-4 text-muted-foreground" />
+								<selectedItem.icon
+									className={cn(
+										size === "default" || size === "lg" ? "size-5" : "size-4",
+										"text-muted-foreground",
+									)}
+								/>
 								{showLabel && (
-									<span className="font-medium text-xs">
+									<span
+										className={cn(
+											"font-medium",
+											size === "default" || size === "lg"
+												? "text-base"
+												: "text-xs",
+										)}
+									>
 										{selectedItem.name}
 									</span>
 								)}
 							</>
 						) : (
-							<span className="text-muted-foreground text-xs">
+							<span
+								className={cn(
+									"text-muted-foreground",
+									size === "default" || size === "lg" ? "text-base" : "text-xs",
+								)}
+							>
 								{placeholder}
 							</span>
 						)}

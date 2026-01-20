@@ -1,3 +1,4 @@
+import * as projectLabelRepo from "@meraki/db/repository/project-label.repo";
 import * as spaceRepo from "@meraki/db/repository/space.repo";
 import { ORPCError } from "@orpc/server";
 import { generateKeyBetween } from "fractional-indexing";
@@ -55,6 +56,14 @@ export const spaceRouter = {
 					position: newPosition,
 				},
 			});
+
+			if (result) {
+				await projectLabelRepo.createDefaultLabels({
+					spaceId: result.id,
+					userId: context.session.user.id,
+				});
+			}
+
 			return result;
 		}),
 	update: protectedProcedure
@@ -64,7 +73,7 @@ export const spaceRouter = {
 				input: UpdateSpaceInput.partial(),
 			}),
 		)
-		.handler(async ({ context, input }) => {
+		.handler(async ({ input }) => {
 			const spaceId = await spaceRepo.getIdByPublicId(input.spacePublicId);
 			if (!spaceId) {
 				throw new ORPCError("NOT_FOUND", {
@@ -94,7 +103,7 @@ export const spaceRouter = {
 		}),
 	hardDelete: protectedProcedure
 		.input(z.object({ spacePublicId: z.string() }))
-		.handler(async ({ context, input }) => {
+		.handler(async ({ input }) => {
 			const spaceId = await spaceRepo.getIdByPublicId(input.spacePublicId);
 			if (!spaceId) {
 				throw new ORPCError("NOT_FOUND", {
