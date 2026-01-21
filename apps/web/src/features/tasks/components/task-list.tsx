@@ -13,7 +13,7 @@ import {
 } from "@tabler/icons-react";
 
 import { useQuery } from "@tanstack/react-query";
-import { useLoaderData } from "@tanstack/react-router";
+import { useLoaderData, useNavigate } from "@tanstack/react-router";
 import {
 	differenceInCalendarDays,
 	format,
@@ -471,11 +471,23 @@ export function TaskListItem({
 	onDelete: () => void;
 	statuses?: Status[];
 }) {
-	const { open } = useModal();
+	// const { open } = useModal(); // unused
 	const isDone = !!task.completedAt;
 	const priority =
 		priorities.find((p) => p.value === task.priority) ?? priorities[0];
 	const isMobile = useIsMobile();
+	const navigate = useNavigate();
+	const { workspace } = useLoaderData({ from: "/(authenicated)/$slug" });
+
+	const handleNavigate = () => {
+		navigate({
+			to: "/$slug/task/$taskId",
+			params: {
+				slug: workspace.slug,
+				taskId: task.publicId,
+			},
+		});
+	};
 
 	return (
 		<ContextMenu>
@@ -486,10 +498,7 @@ export function TaskListItem({
 						className="group cursor-pointer flex-nowrap gap-2 p-2 transition-colors duration-200 ease-out hover:bg-accent/30 data-[state=open]:bg-accent/30 md:gap-0"
 						onKeyDown={(e) => {
 							if (e.key === "Enter" || e.key === " ") {
-								open({
-									type: "TASK_DETAIL",
-									data: { taskId: task.publicId },
-								});
+								handleNavigate();
 							}
 						}}
 					>
@@ -524,13 +533,7 @@ export function TaskListItem({
 								"group-hover:ml-1",
 								isDone && "ml-1",
 							)}
-							onClick={() =>
-								open({
-									type: "TASK_DETAIL",
-									modalSize: "lg",
-									data: { taskId: task.publicId },
-								})
-							}
+							onClick={handleNavigate}
 						>
 							<ItemTitle
 								className={cn(
@@ -587,15 +590,7 @@ export function TaskListItem({
 					/>
 					{isDone ? "Mark as uncompleted" : "Complete task"}
 				</ContextMenuItem>
-				<ContextMenuItem
-					onClick={() =>
-						open({
-							type: "TASK_DETAIL",
-							modalSize: "lg",
-							data: { taskId: task.publicId },
-						})
-					}
-				>
+				<ContextMenuItem onClick={handleNavigate}>
 					<IconPencil className="mr-2 h-4 w-4" />
 					View task
 				</ContextMenuItem>

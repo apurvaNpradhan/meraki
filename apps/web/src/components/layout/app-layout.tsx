@@ -1,6 +1,7 @@
 import React from "react";
 import { AppSidebar } from "@/components/layout/sidebar/app-sidebar";
 import {
+	SidebarInset,
 	SidebarProvider,
 	SidebarTrigger,
 	useSidebar,
@@ -34,7 +35,8 @@ export default function MainLayout({
 	children,
 	header,
 	headersNumber = 2,
-}: MainLayoutProps) {
+	rightSidebar,
+}: MainLayoutProps & { rightSidebar?: React.ReactNode }) {
 	const height = {
 		1: "h-[calc(100svh-40px)] lg:h-[calc(100svh-56px)]",
 		2: "h-[calc(100svh-80px)] lg:h-[calc(100svh-96px)]",
@@ -42,21 +44,24 @@ export default function MainLayout({
 	return (
 		<SidebarProvider>
 			<AppSidebar />
-			<div className="h-svh w-full lg:p-2">
-				<div className="flex h-full w-full flex-col items-center justify-start overflow-hidden bg-container lg:rounded-md lg:border">
-					<div className="flex w-full items-center">{header}</div>
-					<div
-						className={cn(
-							"w-full overflow-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
-							isEmptyHeader(header)
-								? "h-full"
-								: height[headersNumber as keyof typeof height],
-						)}
-					>
-						<div className="w-full">{children}</div>
+			<SidebarInset>
+				<div className="h-svh w-full lg:p-2">
+					<div className="flex h-full w-full flex-col items-center justify-start overflow-hidden bg-container lg:rounded-md lg:border">
+						<div className="flex w-full items-center">{header}</div>
+						<div
+							className={cn(
+								"w-full overflow-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+								isEmptyHeader(header)
+									? "h-full"
+									: height[headersNumber as keyof typeof height],
+							)}
+						>
+							<div className="w-full">{children}</div>
+						</div>
 					</div>
 				</div>
-			</div>
+			</SidebarInset>
+			{rightSidebar}
 		</SidebarProvider>
 	);
 }

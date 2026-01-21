@@ -26,6 +26,7 @@ import { Route as authenicatedOnboardingWorkspaceRouteImport } from './routes/(a
 import { Route as authenicatedOnboardingCompleteRouteImport } from './routes/(authenicated)/onboarding/complete'
 import { Route as authenicatedSlugHomeRouteImport } from './routes/(authenicated)/$slug/home'
 import { Route as authenicatedSlugInboxIndexRouteImport } from './routes/(authenicated)/$slug/inbox/index'
+import { Route as authenicatedSlugTaskTaskIdRouteImport } from './routes/(authenicated)/$slug/task/$taskId'
 import { Route as authenicatedSlugSpacesIdRouteRouteImport } from './routes/(authenicated)/$slug/spaces/$id/route'
 import { Route as authenicatedSlugProjectsIdRouteRouteImport } from './routes/(authenicated)/$slug/projects/$id/route'
 import { Route as authenicatedSlugSpacesIdIndexRouteImport } from './routes/(authenicated)/$slug/spaces/$id/index'
@@ -128,6 +129,12 @@ const authenicatedSlugInboxIndexRoute =
   authenicatedSlugInboxIndexRouteImport.update({
     id: '/inbox/',
     path: '/inbox/',
+    getParentRoute: () => authenicatedSlugRouteRoute,
+  } as any)
+const authenicatedSlugTaskTaskIdRoute =
+  authenicatedSlugTaskTaskIdRouteImport.update({
+    id: '/task/$taskId',
+    path: '/task/$taskId',
     getParentRoute: () => authenicatedSlugRouteRoute,
   } as any)
 const authenicatedSlugSpacesIdRouteRoute =
@@ -238,6 +245,7 @@ export interface FileRoutesByFullPath {
   '/onboarding/': typeof authenicatedOnboardingIndexRoute
   '/$slug/projects/$id': typeof authenicatedSlugProjectsIdRouteRouteWithChildren
   '/$slug/spaces/$id': typeof authenicatedSlugSpacesIdRouteRouteWithChildren
+  '/$slug/task/$taskId': typeof authenicatedSlugTaskTaskIdRoute
   '/$slug/inbox': typeof authenicatedSlugInboxIndexRoute
   '/$slug/projects/$id/calendar': typeof authenicatedSlugProjectsIdCalendarRoute
   '/$slug/projects/$id/notes': typeof authenicatedSlugProjectsIdNotesRoute
@@ -267,6 +275,7 @@ export interface FileRoutesByTo {
   '/onboarding/complete': typeof authenicatedOnboardingCompleteRoute
   '/onboarding/workspace': typeof authenicatedOnboardingWorkspaceRoute
   '/onboarding': typeof authenicatedOnboardingIndexRoute
+  '/$slug/task/$taskId': typeof authenicatedSlugTaskTaskIdRoute
   '/$slug/inbox': typeof authenicatedSlugInboxIndexRoute
   '/$slug/projects/$id/calendar': typeof authenicatedSlugProjectsIdCalendarRoute
   '/$slug/projects/$id/notes': typeof authenicatedSlugProjectsIdNotesRoute
@@ -302,6 +311,7 @@ export interface FileRoutesById {
   '/(authenicated)/onboarding/': typeof authenicatedOnboardingIndexRoute
   '/(authenicated)/$slug/projects/$id': typeof authenicatedSlugProjectsIdRouteRouteWithChildren
   '/(authenicated)/$slug/spaces/$id': typeof authenicatedSlugSpacesIdRouteRouteWithChildren
+  '/(authenicated)/$slug/task/$taskId': typeof authenicatedSlugTaskTaskIdRoute
   '/(authenicated)/$slug/inbox/': typeof authenicatedSlugInboxIndexRoute
   '/(authenicated)/$slug/projects/$id/calendar': typeof authenicatedSlugProjectsIdCalendarRoute
   '/(authenicated)/$slug/projects/$id/notes': typeof authenicatedSlugProjectsIdNotesRoute
@@ -336,6 +346,7 @@ export interface FileRouteTypes {
     | '/onboarding/'
     | '/$slug/projects/$id'
     | '/$slug/spaces/$id'
+    | '/$slug/task/$taskId'
     | '/$slug/inbox'
     | '/$slug/projects/$id/calendar'
     | '/$slug/projects/$id/notes'
@@ -365,6 +376,7 @@ export interface FileRouteTypes {
     | '/onboarding/complete'
     | '/onboarding/workspace'
     | '/onboarding'
+    | '/$slug/task/$taskId'
     | '/$slug/inbox'
     | '/$slug/projects/$id/calendar'
     | '/$slug/projects/$id/notes'
@@ -399,6 +411,7 @@ export interface FileRouteTypes {
     | '/(authenicated)/onboarding/'
     | '/(authenicated)/$slug/projects/$id'
     | '/(authenicated)/$slug/spaces/$id'
+    | '/(authenicated)/$slug/task/$taskId'
     | '/(authenicated)/$slug/inbox/'
     | '/(authenicated)/$slug/projects/$id/calendar'
     | '/(authenicated)/$slug/projects/$id/notes'
@@ -543,6 +556,13 @@ declare module '@tanstack/react-router' {
       path: '/inbox'
       fullPath: '/$slug/inbox'
       preLoaderRoute: typeof authenicatedSlugInboxIndexRouteImport
+      parentRoute: typeof authenicatedSlugRouteRoute
+    }
+    '/(authenicated)/$slug/task/$taskId': {
+      id: '/(authenicated)/$slug/task/$taskId'
+      path: '/task/$taskId'
+      fullPath: '/$slug/task/$taskId'
+      preLoaderRoute: typeof authenicatedSlugTaskTaskIdRouteImport
       parentRoute: typeof authenicatedSlugRouteRoute
     }
     '/(authenicated)/$slug/spaces/$id': {
@@ -703,6 +723,7 @@ interface authenicatedSlugRouteRouteChildren {
   authenicatedSlugHomeRoute: typeof authenicatedSlugHomeRoute
   authenicatedSlugProjectsIdRouteRoute: typeof authenicatedSlugProjectsIdRouteRouteWithChildren
   authenicatedSlugSpacesIdRouteRoute: typeof authenicatedSlugSpacesIdRouteRouteWithChildren
+  authenicatedSlugTaskTaskIdRoute: typeof authenicatedSlugTaskTaskIdRoute
   authenicatedSlugInboxIndexRoute: typeof authenicatedSlugInboxIndexRoute
   authenicatedSlugSettingsWorkspaceGeneralRoute: typeof authenicatedSlugSettingsWorkspaceGeneralRoute
   authenicatedSlugSettingsWorkspacePeopleRoute: typeof authenicatedSlugSettingsWorkspacePeopleRoute
@@ -716,6 +737,7 @@ const authenicatedSlugRouteRouteChildren: authenicatedSlugRouteRouteChildren = {
     authenicatedSlugProjectsIdRouteRouteWithChildren,
   authenicatedSlugSpacesIdRouteRoute:
     authenicatedSlugSpacesIdRouteRouteWithChildren,
+  authenicatedSlugTaskTaskIdRoute: authenicatedSlugTaskTaskIdRoute,
   authenicatedSlugInboxIndexRoute: authenicatedSlugInboxIndexRoute,
   authenicatedSlugSettingsWorkspaceGeneralRoute:
     authenicatedSlugSettingsWorkspaceGeneralRoute,

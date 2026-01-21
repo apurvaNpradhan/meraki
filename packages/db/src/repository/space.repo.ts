@@ -1,43 +1,62 @@
-import { and, count, countDistinct, desc, eq, isNull, sql } from "drizzle-orm";
+import { and, count, desc, eq, isNull, sql } from "drizzle-orm";
 import type z from "zod";
 import { db } from "..";
 import type { InsertSpaceSchema, UpdateSpaceSchema } from "../lib/zod-schemas";
-import { projectLabels, projects, tasks } from "../schema";
+import { projects, tasks } from "../schema";
 import { spaces } from "../schema/space";
 
 export const getSpaceDetails = async (workspaceId: string, spaceId: bigint) => {
-	const result = await db
-		.select({
-			publicId: spaces.publicId,
-			name: spaces.name,
-			description: spaces.description,
-			colorCode: spaces.colorCode,
-			icon: spaces.icon,
-			createdAt: spaces.createdAt,
-			updatedAt: spaces.updatedAt,
-			deletedAt: spaces.deletedAt,
-			deletedBy: spaces.deletedBy,
-			createdBy: spaces.createdBy,
-			projectCount: countDistinct(projects.id),
-			projectLabelCount: countDistinct(projectLabels.id),
-			taskCount: countDistinct(
-				sql`CASE WHEN ${tasks.deletedAt}  IS NULL AND ${tasks.isArchived} IS FALSE THEN ${tasks.id} END`,
-			),
-		})
-		.from(spaces)
-		.leftJoin(projects, eq(spaces.id, projects.spaceId))
-		.leftJoin(tasks, eq(projects.id, tasks.projectId))
-		.leftJoin(projectLabels, eq(projectLabels.spaceId, spaces.id))
-		.where(
-			and(
-				eq(spaces.organizationId, workspaceId),
-				eq(spaces.id, spaceId),
-				isNull(spaces.deletedAt),
-			),
-		)
-		.groupBy(spaces.id);
-
-	return result[0];
+	const res = await db.query.spaces.findFirst({
+		where: and(
+			eq(spaces.id, spaceId),
+			eq(spaces.organizationId, workspaceId),
+			isNull(spaces.deletedAt),
+		),
+		columns: {
+			publicId: true,
+			name: true,
+			description: true,
+			colorCode: true,
+			icon: true,
+			createdAt: true,
+			updatedAt: true,
+			deletedAt: true,
+			deletedBy: true,
+			createdBy: true,
+		},
+		with: {
+			projectLabels: {
+				columns: {
+					id: true,
+					publicId: true,
+					name: true,
+					colorCode: true,
+				},
+			},
+		},
+		extras: {
+			projectCount: sql<number>`
+(
+  SELECT COUNT( p.id)
+  FROM ${projects} AS p
+  WHERE p.space_id = "spaces"."id"
+)
+`.as("projectCount"),
+			taskCount: sql<number>`
+(
+  SELECT COUNT(t.id)
+  FROM ${tasks} AS t
+  JOIN ${projects} AS p
+    ON p.id = t.project_id
+  WHERE
+    p.space_id = "spaces"."id"
+    AND t.deleted_at IS NULL
+    AND t.is_archived IS FALSE
+)
+`.as("taskCount"),
+		},
+	});
+	return res;
 };
 
 export const getSpaceCount = async (workspaceId: string) => {
